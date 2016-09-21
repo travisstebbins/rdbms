@@ -8,11 +8,22 @@ using namespace std;
 class Table
 {
 	string name;
-	unordered_map<string, tuple<> > tableHashMap;
+	unordered_map<string, tuple<> > data;
 	vector<pair<string, int> > attributes;
+	vector<string> primaryKeys;
 	
 public:
-	//left empty so that database would compile
+	// constructors
 	Table() {}
-	Table(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys) {}
+	Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys);
+	// data manipulation functions
+	Table select(vector<string> boolExpressions);
+	Table project(vector<string> desiredAttributes);
+	Table rename(vector<string> newNames);
+	void show();
+	void insertRecord(vector<string> entry);
+	void insertRecord(Table relationship);
+	void deleteRecord(vector<string> boolExpressions);
+	void updateRecord(vecto<string> attributes, vector<string> values, vector<string> boolExpressions);
+	void writeToDisk();
 };
