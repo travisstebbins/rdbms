@@ -1,3 +1,15 @@
+/****************************************************************************************************************
+*Filename: DataBase.h 												*
+*Initial Author: Andrew Meserole										*
+*Project: RDBMS													*
+*Description:													*
+*This class holds all of the tables (relationships) and views and contains the functions used to create,	*
+*delete, modify, and query tables and views. The parser interfaces with the database class in the main 		*
+*function by parsing the input and calling the correct functions on the database class with the correct		*
+*arguments. Views are exactly the same as tables, except they are stored in a separate data structure 		*
+*from the tables in the Database class.										*
+*****************************************************************************************************************/
+
 #include <unordered_map>
 #include "Table.h"
 #include <string>
