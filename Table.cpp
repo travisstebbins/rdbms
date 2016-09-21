@@ -58,17 +58,32 @@ Table Table::select(string _name, vector<string> boolExpressions)
 
 Table Table::project(string _name, vector<string> desiredAttributes)
 {
-
+	// how should this handle projections that don't include the primary key(s)?
 }
 
+// written assuming attributes and newNames have same size
 Table Table::rename(string _name, vector<string> newNames)
 {
-
+	vector<pair<string, int>> newAttributes = attributes;
+	vector<string> newPrimaryKeys = primaryKeys;
+	for (int i = 0; i < newAttributes.size(); ++i)
+	{
+		for (int j = 0; j < newPrimaryKeys.size(); ++j)
+		{
+			if (newAttributes[i].first == newPrimaryKeys[j])
+			{
+				newPrimaryKeys[j] == newNames[i];
+			}
+		}
+		newAttributes[i].first = newNames[i];
+	}
+	Table view(_name, newAttributes, newPrimaryKeys);
+	return view;
 }
 
 string Table::show()
 {
-
+	string s = "";
 }
 
 void Table::insertRecord(vector<string> entry)
