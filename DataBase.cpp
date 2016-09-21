@@ -9,6 +9,12 @@
 
 #include "DataBase.h"
 
+DataBase::DataBase()
+{
+	dataBaseHashTable = {};
+	viewHashTable = {};
+}
+
 void DataBase::createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys)
 {
 	unordered_map<string, Table>::const_iterator checkNameUniq = dataBaseHashTable.find(tableName);
@@ -17,6 +23,7 @@ void DataBase::createTable(string tableName, vector<pair<string, int>> attribute
 	{
 		Table newTable = Table(tableName, attributes, primaryKeys);
 		dataBaseHashTable[tableName] = newTable;
+		newTable.writeToDisk();
 	}
 	else
 		throw "Table name already in use.";
@@ -44,4 +51,27 @@ Table DataBase::getTable(string tableName)
 	}
 	else
 		throw "Table does not exist.";
+}
+
+Table DataBase::setUnion(string tableName1, string tableName2)
+{
+	Table t = Table();	//Not how function will work just for compilation purposes
+	return t;
+}
+
+Table DataBase::setDifference(string tableName1, string tableName2)
+{
+	Table t = Table();	//Not how function will work just for compilation purposes
+	return t;	
+}
+
+Table DataBase::cossProduct(string tableName1, string tableName2)
+{
+	Table t = Table();	//Not how function will work just for compilation purposes
+	return t;
+}
+
+void readTableFromDisk(string fileName)
+{
+	
 }
