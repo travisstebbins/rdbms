@@ -8,9 +8,10 @@ using namespace std;
 class Table
 {
 	string name;
-	unordered_map<string, tuple<> > data;
+	unordered_map<size_t, tuple<> > data;
 	vector<pair<string, int> > attributes;
 	vector<string> primaryKeys;
+	vector<int> primaryKeyIndices;
 
 	// private functions
 	bool evaluate(tuple<> entry, vector<string> boolExpressions);
