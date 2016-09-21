@@ -1,12 +1,13 @@
 #include <unordered_map>
 #include <tuple>
 #include <string>
+#include <vector>
 
 using namespace std;
 
 class Table
 {
-	unordered_map<string, tuple> tableHashMap;
-	
-	
-}
+	string name;
+	unordered_map<string, tuple<> > tableHashMap;
+	vector<pair<string, int> > attributes;
+};
