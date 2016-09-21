@@ -1,10 +1,10 @@
-all: test
+all: main
 
-test: Table.o test.cpp
-	g++ -std=c++11 -c -g test.cpp -o test Table.o
+main: Table.o
+	g++ -std=c++11 -o main main.cpp Table.o
 
-Table: Table.h Table.cpp
+Table.o: Table.h Table.cpp
 	g++ -std=c++11 -c -g Table.cpp
 
 clean:
-	rm *.o test
+	rm *.o main
