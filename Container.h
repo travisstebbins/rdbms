@@ -23,6 +23,9 @@ class Container {
 
 		Type getType() const { return _type; }
 
+		void setVarchar(varchar vc) { data._varchar = vc; }
+		void setInt(int i) { data._int = i; }
+
 		void operator=(const Container &c);
 
 	private:
