@@ -35,6 +35,6 @@ class Table
 		void insertRecord(vector<string> entry);
 		void insertRecord(Table relationship);
 		void deleteRecord(vector<string> boolExpressions);
-		void updateRecord(vector<string> attributes, vector<string> values, vector<string> boolExpressions);
+		void updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions);
 		void writeToDisk();
 };

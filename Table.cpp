@@ -122,12 +122,10 @@ void Table::insertRecord(vector<string> entry)
 	vector<Container> newEntry;
 	for (int i = 0; i < entry.size(); ++i)
 	{
-		if (entry[i][0] == '\"')
+		if (attributes[i].second > -1)
 		{
-			string value = entry[i];
-			value.erase(remove(value.begin(), value.end(), '\"'), value.end());
 			varchar vc(attributes[i].second);
-			vc.setString(value);
+			vc.setString(entry[i]);
 			Container c(Container::VARCHAR, vc);
 			newEntry.push_back(c);
 		}
@@ -161,9 +159,34 @@ void Table::deleteRecord(vector<string> boolExpressions)
 	}
 }
 
-void Table::updateRecord(vector<string> attributes, vector<string> values, vector<string> boolExpressions)
+void Table::updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions)
 {
-
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		if (evaluate(it->second, boolExpressions))
+		{
+			for (int i = 0; i < attributes.size(); ++i)
+			{
+				for (int j = 0; j < desiredAttributes.size(); ++j)
+				{
+					if (attributes[i].first == desiredAttributes[j])
+					{
+						if (attributes[i].second > -1)
+						{
+							varchar vc(attributes[i].second);
+							vc.setString(values[j]);
+							(it->second)[i].setVarchar(vc);
+						}
+						else
+						{
+							int newInt = strtol(values[j].c_str(), NULL, 10);
+							(it->second)[i].setInt(newInt);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void Table::writeToDisk()
