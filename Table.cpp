@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "Table.h"
 
 using namespace std;
@@ -251,7 +249,7 @@ string Table::show()
 	string s = "";
 	for (int i = 0; i < attributes.size(); ++i)
 	{
-		s += attributes[i].first + "\t";
+		s += attributes[i].first + "\t\t";
 	}
 	s += "\n";
 	for (auto it = data.begin(); it != data.end(); ++it)
@@ -260,11 +258,11 @@ string Table::show()
 		{
 			if ((it->second)[i].getType() == Container::VARCHAR)
 			{
-				s += (it->second)[i].getVarchar().getString() + "\t";
+				s += (it->second)[i].getVarchar().getString() + "\t\t";
 			}
 			else
 			{
-				s += (it->second)[i].getInt() + "\t";
+				s += to_string((it->second)[i].getInt()) + "\t\t";
 			}
 			
 		}
