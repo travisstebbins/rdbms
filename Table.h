@@ -3,18 +3,9 @@
 #include <string>
 #include <vector>
 
+#include "Container.h"
+
 using namespace std;
-
-class varchar
-{
-	string data;
-	int limit;
-
-	public:
-		varchar(int _limit);
-		string getString() { return data; }
-		void setString(string s);
-};
 
 class Table
 {

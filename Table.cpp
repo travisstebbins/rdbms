@@ -107,29 +107,29 @@ string get_elem_int(tuple<> t)
 
 string Table::show()
 {
-	string s = "";
-	for (int i = 0; i < attributes.size(); ++i)
-	{
-		s += attributes[i].first + "\t";
-	}
-	s += "\n";
-	for (auto it = data.begin(); it != data.end(); ++it)
-	{
-		for (int i = 0; i < tuple_size<decltype(it->second)>::value; ++i)
-		{
-			if (attributes[i].second == 0)
-			{
-				s += get_elem_string<i>(it->second) + "\t";
-			}
-			else
-			{
-				s += get_elem_int<i>(it->second) + "\t";
-			}
+	// string s = "";
+	// for (int i = 0; i < attributes.size(); ++i)
+	// {
+	// 	s += attributes[i].first + "\t";
+	// }
+	// s += "\n";
+	// for (auto it = data.begin(); it != data.end(); ++it)
+	// {
+	// 	for (int i = 0; i < tuple_size<decltype(it->second)>::value; ++i)
+	// 	{
+	// 		if (attributes[i].second == 0)
+	// 		{
+	// 			s += get_elem_string<i>(it->second) + "\t";
+	// 		}
+	// 		else
+	// 		{
+	// 			s += get_elem_int<i>(it->second) + "\t";
+	// 		}
 			
-		}
-		s += "\n";
-	}
-	return s;
+	// 	}
+	// 	s += "\n";
+	// }
+	// return s;
 }
 
 void Table::insertRecord(vector<string> entry)
