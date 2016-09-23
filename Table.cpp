@@ -8,6 +8,10 @@ int Table::evaluateHelper (vector<Container> entry, string boolExpression)
 	string operand1 = "";
 	string op = "";
 	string operand2 = "";
+	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\r'), boolExpression.end());
+	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\n'), boolExpression.end());
+	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\t'), boolExpression.end());
+	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), ' '), boolExpression.end());
 	while(isalnum(boolExpression[currentIndex]))
 	{
 		operand1 += boolExpression[currentIndex++];
