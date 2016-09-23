@@ -4,9 +4,123 @@
 
 using namespace std;
 
+int Table::evaluateHelper (vector<Container> entry, string boolExpression)
+{
+	int currentIndex = 0;
+	string operand1 = "";
+	string op = "";
+	string operand2 = "";
+	while(isalnum(boolExpression[currentIndex]))
+	{
+		operand1 += boolExpression[currentIndex++];
+	}
+	while(!isalnum(boolExpression[currentIndex]))
+	{
+		op += boolExpression[currentIndex++];
+	}
+	while(currentIndex < boolExpression.size())
+	{
+		operand2 += boolExpression[currentIndex++];
+	}
+	for (int i = 0; i < attributes.size(); ++i)
+	{
+		if (attributes[i].first == operand1)
+		{
+			if(attributes[i].second > -1)
+			{
+				string value = entry[i].getVarchar().getString();
+				if (op == "==")
+				{
+					return (value == operand2) ? 1 : 0;
+				}
+				else if (op == "!=")
+				{
+					return (value != operand2) ? 1 : 0;
+				}
+				else if (op == "<")
+				{
+					return (value < operand2) ? 1 : 0;
+				}
+				else if (op == ">")
+				{
+					return (value > operand2) ? 1 : 0;
+				}
+				else if (op == "<=")
+				{
+					return (value <= operand2) ? 1 : 0;
+				}
+				else if (op == ">=")
+				{
+					return (value >= operand2) ? 1 : 0;
+				}
+				else
+				{
+					throw "Invalid operator";
+				}
+			}
+			else
+			{
+				int value = entry[i].getInt();
+				int operand2_int = strtol(operand2.c_str(), NULL, 10);
+				if (op == "==")
+				{
+					return (value == operand2_int) ? 1 : 0;
+				}
+				else if (op == "!=")
+				{
+					return (value != operand2_int) ? 1 : 0;
+				}
+				else if (op == "<")
+				{
+					return (value < operand2_int) ? 1 : 0;
+				}
+				else if (op == ">")
+				{
+					return (value > operand2_int) ? 1 : 0;
+				}
+				else if (op == "<=")
+				{
+					return (value <= operand2_int) ? 1 : 0;
+				}
+				else if (op == ">=")
+				{
+					return (value >= operand2_int) ? 1 : 0;
+				}
+				else
+				{
+					throw "Invalid operator";
+				}
+			}
+		}
+	}
+}
+
 bool Table::evaluate(vector<Container> entry, vector<string> boolExpressions)
 {
-
+	stack<int> evalStack;
+	for (int i = 0; i < boolExpressions.size(); ++i)
+	{
+		if (boolExpressions[i] != "||" && boolExpressions[i] != "&&")
+		{
+			evalStack.push(evaluateHelper(entry, boolExpressions[i]));
+		}
+		else
+		{
+			int val1 = evalStack.top();
+			evalStack.pop();
+			int val2 = evalStack.top();
+			evalStack.pop();
+			if (boolExpressions[i] == "||")
+			{
+				evalStack.push(max(val1, val2));
+			}
+			else
+			{
+				evalStack.push(min(val1, val2));
+			}
+		}
+	}
+	return (evalStack.top());
 }
 
 void Table::insertRecord(vector<Container> entry)

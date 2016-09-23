@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <stack>
+#include <cctype>
 
 #include "Container.h"
 
@@ -21,6 +23,7 @@ class Table
 
 		// private functions
 		bool evaluate(vector<Container> entry, vector<string> boolExpressions);
+		int evaluateHelper (vector<Container> entry, string boolExpression);
 		void insertRecord(vector<Container> entry);
 		
 	public:
