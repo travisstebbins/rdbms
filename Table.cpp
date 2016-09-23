@@ -219,7 +219,18 @@ Table Table::project(string _name, vector<string> desiredAttributes)
 		{
 			newEntry.push_back((it->second)[newAttributeIndices[i]]);
 		}
-		view.insertRecord(newEntry);
+		try
+		{
+			view.insertRecord(newEntry);
+		}
+		catch(char const* c)
+		{
+			cout << c << endl;
+		}
+		catch(...)
+		{
+			cout << "Unknown exception in project function" << endl;
+		}
 	}
 	return view;
 }
@@ -298,7 +309,18 @@ void Table::insertRecord(Table relationship)
 	unordered_map<size_t, vector<Container>> newData = relationship.data;
 	for (auto it = newData.begin(); it != newData.end(); ++it)
 	{
-		insertRecord(it->second);
+		try
+		{
+			insertRecord(it->second);
+		}
+		catch(char const* c)
+		{
+			cout << c << endl;
+		}
+		catch(...)
+		{
+			cout << "Unknown error in insertRecord(Table relationship)" << endl;
+		}
 	}
 }
 
