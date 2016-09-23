@@ -1,5 +1,6 @@
+#pragma once
+
 #include <unordered_map>
-#include <tuple>
 #include <string>
 #include <vector>
 
@@ -10,15 +11,15 @@ using namespace std;
 class Table
 {
 	string name;
-	unordered_map<size_t, tuple<> > data;
+	unordered_map<size_t, vector<Container>> data;
 	// 0 = VARCHAR, 1 = INTEGER
 	vector<pair<string, int> > attributes;
 	vector<string> primaryKeys;
 	vector<int> primaryKeyIndices;
 
 	// private functions
-	bool evaluate(tuple<> entry, vector<string> boolExpressions);
-	void insertRecord(tuple<> entry);
+	bool evaluate(vector<Container> entry, vector<string> boolExpressions);
+	void insertRecord(vector<Container> entry);
 	
 public:
 	// constructors
