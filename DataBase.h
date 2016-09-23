@@ -10,6 +10,8 @@
 *from the tables in the Database class.										*
 *****************************************************************************************************************/
 
+#pragma once
+
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -22,6 +24,8 @@ using namespace std;
 
 class DataBase 
 {
+	// friend class Table;
+private:
 	unordered_map<string, Table> dataBaseHashTable;
 	unordered_map<string, Table> viewHashTable;
 	
@@ -29,7 +33,10 @@ public:
 
 	DataBase();
 	void createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys);
+	void createTable(Table newTable);
 	void dropTable(string tableName);
+	void insertIntoTable(string tableName, vector<string> entry);
+	string showTable(string tableName);
 	Table setUnion(string tableName1, string tableName2);
 	Table setDifference(string tableName1, string tableName2);
 	Table cossProduct(string tableName1, string tableName2);
