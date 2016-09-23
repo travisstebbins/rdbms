@@ -5,10 +5,22 @@
 
 using namespace std;
 
+class varchar
+{
+	string data;
+	int limit;
+
+	public:
+		varchar(int _limit);
+		string getString() { return data; }
+		void setString(string s);
+};
+
 class Table
 {
 	string name;
 	unordered_map<size_t, tuple<> > data;
+	// 0 = VARCHAR, 1 = INTEGER
 	vector<pair<string, int> > attributes;
 	vector<string> primaryKeys;
 	vector<int> primaryKeyIndices;

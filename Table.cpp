@@ -1,6 +1,18 @@
+#include <iostream>
+
 #include "Table.h"
 
 using namespace std;
+
+varchar::varchar(int _limit)
+	: limit (_limit) {}
+
+void varchar::setString(string s) {
+	if (s.length() > limit)
+		throw "Varchar exceeded maximum size";
+	else
+		data = s;
+}
 
 bool Table::evaluate(tuple<> entry, vector<string> boolExpressions)
 {
@@ -81,9 +93,43 @@ Table Table::rename(string _name, vector<string> newNames)
 	return view;
 }
 
+template<int i>
+string get_elem_string(tuple<> t)
+{
+    return get<i>(t);
+}
+
+template<int i>
+string get_elem_int(tuple<> t)
+{
+    return get<i>(t);
+}
+
 string Table::show()
 {
 	string s = "";
+	for (int i = 0; i < attributes.size(); ++i)
+	{
+		s += attributes[i].first + "\t";
+	}
+	s += "\n";
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		for (int i = 0; i < tuple_size<decltype(it->second)>::value; ++i)
+		{
+			if (attributes[i].second == 0)
+			{
+				s += get_elem_string<i>(it->second) + "\t";
+			}
+			else
+			{
+				s += get_elem_int<i>(it->second) + "\t";
+			}
+			
+		}
+		s += "\n";
+	}
+	return s;
 }
 
 void Table::insertRecord(vector<string> entry)
