@@ -118,8 +118,27 @@ string Table::show()
 }
 
 void Table::insertRecord(vector<string> entry)
-{
-
+{	
+	vector<Container> newEntry;
+	for (int i = 0; i < entry.size(); ++i)
+	{
+		if (entry[i][0] == '\"')
+		{
+			string value = entry[i];
+			value.erase(remove(value.begin(), value.end(), '\"'), value.end());
+			varchar vc(attributes[i].second);
+			vc.setString(value);
+			Container c(Container::VARCHAR, vc);
+			newEntry.push_back(c);
+		}
+		else
+		{
+			int value = strtol(entry[i].c_str(), NULL, 10);
+			Container c(Container::INTEGER, value);
+			newEntry.push_back(c);
+		}
+	}
+	insertRecord(newEntry);
 }
 
 void Table::insertRecord(Table relationship)
