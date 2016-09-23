@@ -73,48 +73,48 @@ Table Table::project(string _name, vector<string> desiredAttributes)
 // written assuming attributes and newNames have same size
 Table Table::rename(string _name, vector<string> newNames)
 {
-	// vector<pair<string, int>> newAttributes = attributes;
-	// vector<string> newPrimaryKeys = primaryKeys;
-	// for (int i = 0; i < newAttributes.size(); ++i)
-	// {
-	// 	for (int j = 0; j < newPrimaryKeys.size(); ++j)
-	// 	{
-	// 		if (newAttributes[i].first == newPrimaryKeys[j])
-	// 		{
-	// 			newPrimaryKeys[j] == newNames[i];
-	// 		}
-	// 	}
-	// 	newAttributes[i].first = newNames[i];
-	// }
-	// Table view(_name, newAttributes, newPrimaryKeys);
-	// return view;
+	vector<pair<string, int>> newAttributes = attributes;
+	vector<string> newPrimaryKeys = primaryKeys;
+	for (int i = 0; i < newAttributes.size(); ++i)
+	{
+		for (int j = 0; j < newPrimaryKeys.size(); ++j)
+		{
+			if (newAttributes[i].first == newPrimaryKeys[j])
+			{
+				newPrimaryKeys[j] == newNames[i];
+			}
+		}
+		newAttributes[i].first = newNames[i];
+	}
+	Table view(_name, newAttributes, newPrimaryKeys);
+	return view;
 }
 
 string Table::show()
 {
-	// string s = "";
-	// for (int i = 0; i < attributes.size(); ++i)
-	// {
-	// 	s += attributes[i].first + "\t";
-	// }
-	// s += "\n";
-	// for (auto it = data.begin(); it != data.end(); ++it)
-	// {
-	// 	for (int i = 0; i < tuple_size<decltype(it->second)>::value; ++i)
-	// 	{
-	// 		if (attributes[i].second == 0)
-	// 		{
-	// 			s += get_elem_string<i>(it->second) + "\t";
-	// 		}
-	// 		else
-	// 		{
-	// 			s += get_elem_int<i>(it->second) + "\t";
-	// 		}
+	string s = "";
+	for (int i = 0; i < attributes.size(); ++i)
+	{
+		s += attributes[i].first + "\t";
+	}
+	s += "\n";
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		for (int i = 0; i < it->second.size(); ++i)
+		{
+			if ((it->second)[i].getType() == Container::VARCHAR)
+			{
+				s += (it->second)[i].getVarchar().getString() + "\t";
+			}
+			else
+			{
+				s += (it->second)[i].getInt() + "\t";
+			}
 			
-	// 	}
-	// 	s += "\n";
-	// }
-	// return s;
+		}
+		s += "\n";
+	}
+	return s;
 }
 
 void Table::insertRecord(vector<string> entry)
