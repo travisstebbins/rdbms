@@ -152,7 +152,13 @@ void Table::insertRecord(Table relationship)
 
 void Table::deleteRecord(vector<string> boolExpressions)
 {
-
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		if (evaluate(it->second, boolExpressions))
+		{
+			data.erase(it);
+		}
+	}
 }
 
 void Table::updateRecord(vector<string> attributes, vector<string> values, vector<string> boolExpressions)
