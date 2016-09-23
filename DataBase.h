@@ -11,11 +11,12 @@
 *****************************************************************************************************************/
 
 #include <unordered_map>
-#include "Table.h"
 #include <string>
 #include <vector>
 #include <utility>
 #include <iostream>
+#include "Table.h"
+//#include "json/src/json.hpp"
 
 using namespace std;
 
@@ -26,6 +27,7 @@ class DataBase
 	
 public:
 
+	DataBase();
 	void createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys);
 	void dropTable(string tableName);
 	Table setUnion(string tableName1, string tableName2);
