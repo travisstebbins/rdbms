@@ -4,33 +4,30 @@
 
 using namespace std;
 
-varchar::varchar(int _limit)
-	: limit (_limit) {}
-
-void varchar::setString(string s) {
-	if (s.length() > limit)
-		throw "Varchar exceeded maximum size";
-	else
-		data = s;
-}
-
-bool Table::evaluate(tuple<> entry, vector<string> boolExpressions)
+bool Table::evaluate(vector<Container> entry, vector<string> boolExpressions)
 {
 
 }
 
-void Table::insertRecord(tuple<> entry)
+void Table::insertRecord(vector<Container> entry)
 {
 	string hashString = "";
 	for (int i = 0; i < primaryKeyIndices.size(); ++i)
 	{
-		hashString += attributes[primaryKeyIndices[i]].first;
+		if (entry[primaryKeyIndices[i]].getType() == Container::VARCHAR)
+		{
+			hashString += entry[primaryKeyIndices[i]].getVarchar().getString();
+		}
+		else
+		{
+			hashString += entry[primaryKeyIndices[i]].getInt();
+		}		
 	}
 	hash<string> str_hash;
 	size_t hash = str_hash(hashString);
 
-	unordered_map<size_t, tuple<> >::const_iterator checkEntryUniq = data.find(hash);	
-	if(checkEntryUniq != data.end())
+	unordered_map<size_t, vector<Container>>::const_iterator checkEntryUniq = data.find(hash);	
+	if(checkEntryUniq == data.end())
 	{
 		data[hash] = entry;
 	}
@@ -76,33 +73,21 @@ Table Table::project(string _name, vector<string> desiredAttributes)
 // written assuming attributes and newNames have same size
 Table Table::rename(string _name, vector<string> newNames)
 {
-	vector<pair<string, int>> newAttributes = attributes;
-	vector<string> newPrimaryKeys = primaryKeys;
-	for (int i = 0; i < newAttributes.size(); ++i)
-	{
-		for (int j = 0; j < newPrimaryKeys.size(); ++j)
-		{
-			if (newAttributes[i].first == newPrimaryKeys[j])
-			{
-				newPrimaryKeys[j] == newNames[i];
-			}
-		}
-		newAttributes[i].first = newNames[i];
-	}
-	Table view(_name, newAttributes, newPrimaryKeys);
-	return view;
-}
-
-template<int i>
-string get_elem_string(tuple<> t)
-{
-    return get<i>(t);
-}
-
-template<int i>
-string get_elem_int(tuple<> t)
-{
-    return get<i>(t);
+	// vector<pair<string, int>> newAttributes = attributes;
+	// vector<string> newPrimaryKeys = primaryKeys;
+	// for (int i = 0; i < newAttributes.size(); ++i)
+	// {
+	// 	for (int j = 0; j < newPrimaryKeys.size(); ++j)
+	// 	{
+	// 		if (newAttributes[i].first == newPrimaryKeys[j])
+	// 		{
+	// 			newPrimaryKeys[j] == newNames[i];
+	// 		}
+	// 	}
+	// 	newAttributes[i].first = newNames[i];
+	// }
+	// Table view(_name, newAttributes, newPrimaryKeys);
+	// return view;
 }
 
 string Table::show()
