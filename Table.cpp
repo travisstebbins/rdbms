@@ -160,8 +160,9 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 	{
 		for (int j = 0; j < attributes.size(); ++j)
 		{
-			if (primaryKeys[i] == attributes[i].first)
+			if (primaryKeys[i] == attributes[j].first)
 			{
+				cout << "logged primary key index" << endl;
 				primaryKeyIndices.push_back(j);
 			}
 		}
@@ -252,6 +253,26 @@ Table Table::rename(string _name, vector<string> newNames)
 		newAttributes[i].first = newNames[i];
 	}
 	Table view(_name, newAttributes, newPrimaryKeys);
+	cout << "primary key indices size: " << view.primaryKeyIndices.size() << endl;
+	for (int i = 0; i < view.primaryKeyIndices.size(); ++i)
+	{
+		cout << "Primary key kindex " << i << ": " << view.primaryKeyIndices[i] << endl;
+	}
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		try
+		{
+			view.insertRecord(it->second);
+		}		
+		catch(char const* c)
+		{
+			cout << c << endl;
+		}
+		catch(...)
+		{
+			cout << "Unknown exception in rename function" << endl;
+		}
+	}
 	return view;
 }
 
