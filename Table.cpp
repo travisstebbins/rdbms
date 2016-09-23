@@ -67,7 +67,49 @@ Table Table::select(string _name, vector<string> boolExpressions)
 
 Table Table::project(string _name, vector<string> desiredAttributes)
 {
-	// how should this handle projections that don't include the primary key(s)?
+	for (int i = 0; i < primaryKeys.size(); ++i)
+	{
+		bool foundPrimaryKey = false;
+		for (int j = 0; j < desiredAttributes.size(); ++j)
+		{
+			if (primaryKeys[i] == desiredAttributes[j])
+			{
+				foundPrimaryKey = true;
+			}
+		}
+		if (foundPrimaryKey)
+		{
+			foundPrimaryKey = false;
+		}
+		else
+		{
+			throw "At least all of the table's primary keys must be projected";
+		}
+	}
+	vector<pair<string, int>> newAttributes;
+	vector<int> newAttributeIndices;
+	for (int i = 0; i < attributes.size(); ++i)
+	{
+		for (int j = 0; j < desiredAttributes.size(); ++j)
+		{
+			if (attributes[i].first == desiredAttributes[j])
+			{
+				newAttributes.push_back(attributes[i]);
+				newAttributeIndices.push_back(i);
+			}
+		}
+	}
+	Table view(_name, newAttributes, primaryKeys);
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		vector<Container> newEntry;
+		for (int i = 0; i < newAttributeIndices.size(); ++i)
+		{
+			newEntry.push_back((it->second)[newAttributeIndices[i]]);
+		}
+		view.insertRecord(newEntry);
+	}
+	return view;
 }
 
 // written assuming attributes and newNames have same size
