@@ -183,24 +183,20 @@ Table Table::select(string _name, vector<string> boolExpressions)
 
 Table Table::project(string _name, vector<string> desiredAttributes)
 {
+	vector<string> primaryKeyMatches;
 	for (int i = 0; i < primaryKeys.size(); ++i)
 	{
-		bool foundPrimaryKey = false;
 		for (int j = 0; j < desiredAttributes.size(); ++j)
 		{
 			if (primaryKeys[i] == desiredAttributes[j])
 			{
-				foundPrimaryKey = true;
+				primaryKeyMatches.push_back(primaryKeys[i]);
 			}
 		}
-		if (foundPrimaryKey)
-		{
-			foundPrimaryKey = false;
-		}
-		else
-		{
-			throw "At least all of the table's primary keys must be projected";
-		}
+	}
+	if (primaryKeyMatches.size() == 0)
+	{
+		throw "At least one primary key must be projected";
 	}
 	vector<pair<string, int>> newAttributes;
 	vector<int> newAttributeIndices;
@@ -215,7 +211,7 @@ Table Table::project(string _name, vector<string> desiredAttributes)
 			}
 		}
 	}
-	Table view(_name, newAttributes, primaryKeys);
+	Table view(_name, newAttributes, primaryKeyMatches);
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
 		vector<Container> newEntry;
