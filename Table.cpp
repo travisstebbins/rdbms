@@ -143,7 +143,11 @@ void Table::insertRecord(vector<string> entry)
 
 void Table::insertRecord(Table relationship)
 {
-
+	unordered_map<size_t, vector<Container>> newData = relationship.data;
+	for (auto it = newData.begin(); it != newData.end(); ++it)
+	{
+		insertRecord(it->second);
+	}
 }
 
 void Table::deleteRecord(vector<string> boolExpressions)
