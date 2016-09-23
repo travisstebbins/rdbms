@@ -250,7 +250,7 @@ Table Table::rename(string _name, vector<string> newNames)
 
 string Table::show()
 {
-	string s = "";
+	string s = "Table: " + name + "\n";
 	for (int i = 0; i < attributes.size(); ++i)
 	{
 		s += attributes[i].first + "\t\t";
