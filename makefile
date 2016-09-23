@@ -1,6 +1,6 @@
 all: main
 
-main: Table.o
+main: Table.o main.cpp
 	g++ -std=c++11 -o main main.cpp Table.o Container.o Varchar.o
 
 Table.o: Container.o Table.h Table.cpp
