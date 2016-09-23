@@ -11,6 +11,8 @@ class Container {
 
 		template<typename T>
 		Container(Type type, T value);
+		Container(Type type, varchar value);
+		Container(Type type, int value);
 
 		Container(const Container &c);
 

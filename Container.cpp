@@ -1,6 +1,6 @@
 #include "Container.h"
 
-template<typename T>
+template<class T>
 Container::Container(Type type, T value)
 {
 	_type = type;
@@ -12,6 +12,18 @@ Container::Container(Type type, T value)
 	{
 		data._int = value;
 	}
+}
+
+Container::Container(Type type, varchar value)
+{
+	_type = type;
+	data._varchar = value;
+}
+
+Container::Container(Type type, int value)
+{
+	_type = type;
+	data._int = value;
 }
 
 Container::Container(const Container &c)
