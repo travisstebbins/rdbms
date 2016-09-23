@@ -9,11 +9,14 @@
 #include <iostream>
 
 #include "Container.h"
+// #include "DataBase.h"
 
 using namespace std;
 
+
 class Table
 {
+	// friend class DataBase;
 	private:
 		string name;
 		unordered_map<size_t, vector<Container>> data;
@@ -36,6 +39,7 @@ class Table
 		Table project(string _name, vector<string> desiredAttributes);
 		Table rename(string _name, vector<string> newNames);
 		string show();
+		string getTableName();
 		void insertRecord(vector<string> entry);
 		void insertRecord(Table relationship);
 		void deleteRecord(vector<string> boolExpressions);

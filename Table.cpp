@@ -303,6 +303,11 @@ string Table::show()
 	return s;
 }
 
+string Table::getTableName()
+{
+	return name;
+}
+
 void Table::insertRecord(vector<string> entry)
 {	
 	vector<Container> newEntry;
