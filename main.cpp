@@ -39,10 +39,13 @@ int main()
 		cout << db.showTable("animals") << endl;
 		//cout << animals.show() << endl;
 		
-		
-		// Table dogs = animals.select("dogs", {"kind == dog"});
-		// cout << dogs.show() << endl;
-
+		//Table animals = db.getTable("animals");
+		//Table dogs = animals.select("dogs", {"kind == dog"});
+		//cout << dogs.show() << endl;
+		Table dogs = db.selectTable("animals", "dogs", {"kind == dog"});
+		//Table dogs = db.getTable("animals").select("dogs", {"kind == dog"});
+		db.createTable(dogs);
+		cout << db.showTable("dogs") << endl;
 		// Table old_dogs = dogs.select("old_dogs", {"years>10"});
 		// cout << old_dogs.show() << endl;
 
