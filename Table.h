@@ -45,4 +45,5 @@ class Table
 		void deleteRecord(vector<string> boolExpressions);
 		void updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions);
 		void writeToDisk();
+		Table& operator=(const Table& other);
 };

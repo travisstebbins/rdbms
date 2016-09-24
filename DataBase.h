@@ -41,5 +41,6 @@ public:
 	Table setDifference(string tableName1, string tableName2);
 	Table cossProduct(string tableName1, string tableName2);
 	Table getTable(string tableName);
+	Table selectTable(string tableName, string _name, vector<string> boolExpressions);
 	void readTableFromDisk(string fileName);
 };

@@ -35,10 +35,21 @@ void DataBase::createTable(Table newTable)
 	auto checkNameUniq = dataBaseHashTable.find(tableName);
 	if(checkNameUniq == dataBaseHashTable.end())
 	{
-		//dataBaseHashTable[tableName] = *checkNameUniq;
+		dataBaseHashTable[tableName] = newTable;
 	}
 	else 
 		throw "Table already exists";
+}
+
+Table DataBase::selectTable(string tableName, string _name, vector<string> boolExpressions)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	if(getTable != dataBaseHashTable.end())
+	{
+		return getTable->second.select(_name, boolExpressions);
+	}
+	else
+		throw "Table does not exist";
 }
 
 void DataBase::dropTable(string tableName)

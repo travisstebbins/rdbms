@@ -391,6 +391,18 @@ void Table::updateRecord(vector<string> desiredAttributes, vector<string> values
 	}
 }
 
+Table& Table::operator=(const Table& other)
+{
+	if(&other == this)
+		return *this;
+	this->name = other.name;
+	this->data = other.data;
+	this->attributes = other.attributes;
+	this->primaryKeys = other.primaryKeys;
+	this->primaryKeyIndices = other.primaryKeyIndices;
+	return *this;
+}
+
 void Table::writeToDisk()
 {
 
