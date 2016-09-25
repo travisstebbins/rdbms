@@ -2,6 +2,8 @@
 #include "Catch/include/catch.hpp"
 #include "DataBase.h"
 #include <iostream>
+#include <vector>
+#include <typeinfo>
 /*
 SCENARIO("A database table is created", "createTable") {
 	pair<string, int> xcoord = {"x", 5};
@@ -22,6 +24,12 @@ SCENARIO("A database table is created", "createTable") {
 */
 //int main()
 //{
+
+template <typename T, typename V>
+bool typechecker(T t, V v){
+	return (typeid(t).name()) == (typeid(v).name());
+}
+
 SCENARIO("rdbms online", "main"){
 	GIVEN("some data to work with"){	
 		pair<string, int> p1 {"name", 20};
@@ -32,11 +40,12 @@ SCENARIO("rdbms online", "main"){
 		
         	DataBase db;
         	db.createTable("animals", attributes1, primaryKeys1);
-		//WHEN("a database table is created"){
-		//	THEN("we double check some of its data"){
-		//		Table comparison = extern getTable("animals");
-		//		REQUIRE(comparison == db);  //TODO: test this one more thoroughly later
-		//	}
+		WHEN("creating a database"){
+			DataBase dc;
+			//REQUIRE(!attributes1.empty());  //these two things can be commented out if needed,
+			//REQUIRE(!primaryKeys1.empty()); //but ultimately a table doensn't necessarily require elements to exist
+			dc.createTable("animalia", attributes1, primaryKeys1);
+		}
 		//}
        		// TEST_CASE("Values are inserted into animals"){
         	//Table animals("animals", attributes1, primaryKeys1);
@@ -50,20 +59,38 @@ SCENARIO("rdbms online", "main"){
         	// animals.insertRecord(v3);
         	// animals.insertRecord(v4);
         	// animals.insertRecord(v5);
-	
-	        db.insertIntoTable("animals", v1);
-	        db.insertIntoTable("animals", v2);
-	        db.insertIntoTable("animals", v3);
-       		db.insertIntoTable("animals", v4);
-        	db.insertIntoTable("animals", v5);
+		
+		WHEN("inserting into the database"){
+			vector<string> testvec;
+			REQUIRE(typechecker(v1,testvec));
+			REQUIRE(typechecker(v2,testvec));
+			REQUIRE(typechecker(v3,testvec));
+			REQUIRE(typechecker(v4,testvec));
+			REQUIRE(typechecker(v5,testvec));
+			//dc.insertIntoTable("animalia", v1);
+			db.insertIntoTable("animals", v1);
+			db.insertIntoTable("animals", v2);	
+			db.insertIntoTable("animals", v3);
+			db.insertIntoTable("animals", v4);
+			db.insertIntoTable("animals", v5);
+		}
+	        //db.insertIntoTable("animals", v1);
+	        //db.insertIntoTable("animals", v2);
+	        //db.insertIntoTable("animals", v3);
+       		//db.insertIntoTable("animals", v4);
+        	//db.insertIntoTable("animals", v5);
         	// }
         	cout << db.showTable("animals") << endl;
         	//cout << animals.show() << endl;
 
         	//Table animals = db.getTable("animals");
         	//Table dogs = animals.select("dogs", {"kind == dog"});
-        	//cout << dogs.show() << endl;
+        	//cout << dogs.show() << endl
         	Table dogs = db.selectTable("animals", "dogs", {"kind == dog"});
+		WHEN("selecting elements from a table"){
+			Table cats = db.selectTable("animals","cats", {"type == cat"});
+			Table birds = db.selectTable("animals", "birds", {"type == bird"});
+		}
         	//Table dogs = db.getTable("animals").select("dogs", {"kind == dog"});
         	db.createTable(dogs);
         	cout << db.showTable("dogs") << endl;
