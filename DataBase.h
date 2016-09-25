@@ -36,7 +36,9 @@ public:
 	void createTable(Table newTable);
 	void dropTable(string tableName);
 	void insertIntoTable(string tableName, vector<string> entry);
+	void insertIntoTable(string tableName, Table relationships);
 	string showTable(string tableName);
+	Table projectTable(string tableName, string _name, vector<string> desiredAttributes);
 	Table setUnion(string tableName1, string tableName2);
 	Table setDifference(string tableName1, string tableName2);
 	Table cossProduct(string tableName1, string tableName2);
