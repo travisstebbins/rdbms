@@ -41,6 +41,17 @@ void DataBase::createTable(Table newTable)
 		throw "Table already exists";
 }
 
+Table DataBase::projectTable(string tableName, string _name, vector<string> desiredAttributes)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	if (getTable != dataBaseHashTable.end())
+	{
+		return getTable->second.project(_name, desiredAttributes);
+	}
+	else
+		throw "Table does not exist";
+}
+
 Table DataBase::selectTable(string tableName, string _name, vector<string> boolExpressions)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
@@ -88,6 +99,17 @@ void DataBase::insertIntoTable(string tableName, vector<string> entry)
 	
 }
 
+void DataBase::insertIntoTable(string tableName, Table relationships)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	if(getTable != dataBaseHashTable.end())
+	{
+		getTable->second.insertRecord(relationships);
+	}
+	else
+		throw "Table could not be found";
+}
+
 string DataBase::showTable(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
@@ -101,8 +123,18 @@ string DataBase::showTable(string tableName)
 
 Table DataBase::setUnion(string tableName1, string tableName2)
 {
-	Table t = Table();	//Not how function will work just for compilation purposes
-	return t;
+	
+	auto getTable1 = dataBaseHashTable.find(tableName1);
+	auto getTable2 = dataBaseHashTable.find(tableName2);
+	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
+	{
+		Table tableUnion = Table(getTable1->second);
+		// tableUnion.insertRecord(getTable1->second);
+		tableUnion.insertRecord(getTable2->second);
+		return tableUnion;
+	}
+	else
+		throw "One of the tables could not be found";
 }
 
 Table DataBase::setDifference(string tableName1, string tableName2)

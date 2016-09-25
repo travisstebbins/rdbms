@@ -46,19 +46,25 @@ int main()
 		//Table dogs = db.getTable("animals").select("dogs", {"kind == dog"});
 		db.createTable(dogs);
 		cout << db.showTable("dogs") << endl;
-		// Table old_dogs = dogs.select("old_dogs", {"years>10"});
-		// cout << old_dogs.show() << endl;
+		Table old_dogs = db.selectTable("dogs", "old_dogs", {"years>10"});
+		cout << old_dogs.show() << endl;
 
 		// Table cats = animals.select("cats", {"kind==cat"});
-		// cout << cats.show() << endl;
+		Table cats = db.selectTable("animals","cats", {"kind==cat"});
+		db.createTable(cats);
+		cout << cats.show() << endl;
 
-		// Table projection = animals.project("projection", {"name", "kind"});
-		// cout << projection.show() << endl;
+		Table projection = db.projectTable("animals", "projection", {"name", "kind"});
+		cout << projection.show() << endl;
 
-		// pair<string, int> p4 {"kind", 10};		
-		// Table species("species", {p4}, {"kind"});
-		// species.insertRecord(animals.project("temp", {"kind"}));
-		// cout << species.show() << endl;
+		pair<string, int> p4 {"kind", 10};		
+		Table species("species", {p4}, {"kind"});
+		db.createTable(species);
+		db.insertIntoTable("species", db.projectTable("animals","temp", {"kind"}));
+		cout << db.showTable("species") << endl;
+
+		Table dogsandcats = db.setUnion("dogs", "cats");
+		cout << dogsandcats.show() << endl;
 
 		// this isn't working right
 		// Table a = (animals.project("temp", {"name", "kind"})).rename("a", {"aname", "akind"});
