@@ -2,7 +2,10 @@
 
 ## Cloning Repo
 Since there are submodules you have to recursively clone in the repo.  
-`git clone --recursive https://github.tamu.edu/ameserole/rdbms.git`
+`git clone --recursive https://github.tamu.edu/ameserole/rdbms.git`  
+
+## View Deliverable 2  
+`git checkout Deliverable-2`  
 
 ## Running Unit Test
 To run the unit tests run the following commands:  
