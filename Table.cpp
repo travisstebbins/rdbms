@@ -306,6 +306,11 @@ string Table::show()
 	return s;
 }
 
+vector<pair<string, int> > Table::getAttributes()
+{
+	return attributes;
+}
+
 string Table::getTableName()
 {
 	return name;

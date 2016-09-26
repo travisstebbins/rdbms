@@ -126,12 +126,20 @@ Table DataBase::setUnion(string tableName1, string tableName2)
 	
 	auto getTable1 = dataBaseHashTable.find(tableName1);
 	auto getTable2 = dataBaseHashTable.find(tableName2);
+	
 	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
 	{
-		Table tableUnion = Table(getTable1->second);
-		// tableUnion.insertRecord(getTable1->second);
-		tableUnion.insertRecord(getTable2->second);
-		return tableUnion;
+		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+
+		if(table1Attr == table2Attr)
+		{
+			Table tableUnion = Table(getTable1->second);
+			tableUnion.insertRecord(getTable2->second);
+			return tableUnion;
+		}
+		else
+			throw "Tables are not union compatible"
 	}
 	else
 		throw "One of the tables could not be found";
