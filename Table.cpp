@@ -409,40 +409,41 @@ void Table::writeToDisk()
 	ofstream ofs(fName, ofstream::out);// creates the output file object, that outputs to a text file, will change name
 
 	ofs <<  "name: " + name + "\n";//first line of table chunk
-	ofs << "attributes: {" ;//first line of table chunk
+	ofs << "attributes: " ;//first line of table chunk
 	for (int i = 0; i < attributes.size(); ++i)
 	{
 		int atb_num = attributes[i].second;
 		//logs all atribute pairs on second line of .table file
 		ofs << attributes[i].first + " " + to_string(atb_num) + ",";
 	}
-	ofs << "}\n";//end of attributes
+	ofs << "\n";//end of attributess
     
     
-	ofs << "primary keys = {";//start of primary keys
+	ofs << "primary keys: ";//start of primary keys
 	for (int i = 0; i < primaryKeys.size(); ++i)
 	{
 		ofs << primaryKeys[i] << ",";
 	}
-	ofs << "}\n";//end of primary keys
+	ofs << "\n";//end of primary keys
     
     string s = "";
 	
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
+		ofs << "data: ";
 		for (int i = 0; i < it->second.size(); ++i)
 		{
 			if ((it->second)[i].getType() == Container::VARCHAR)
 			{
-				s += (it->second)[i].getVarchar().getString() + "\t\t";
+				ofs << (it->second)[i].getVarchar().getString() + ",";
 			}
 			else
 			{
-				s += to_string((it->second)[i].getInt()) + "\t\t";
+				ofs << to_string((it->second)[i].getInt()) + ",";
 			}
 			
 		}
-		s += "\n";
+		ofs << "\n";
 	}
 	ofs.close();
 }
