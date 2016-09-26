@@ -32,13 +32,13 @@ SCENARIO("A database table is created", "createTable") {
 
 
 template <typename T, typename V>
-bool typechecker(T t, V v){
-	return (typeid(t).name()) == (typeid(v).name());
+bool typechecker(T t, V v){	//capable of recieving inputs of any type. this function is used to ensure that the proper variable
+	return (typeid(t).name()) == (typeid(v).name()); // types are being stored.
 }
 
-SCENARIO("RDBMS online", "main"){
-	GIVEN("Some data to work with"){	
-		pair<string, int> p1 {"name", 20};
+SCENARIO("RDBMS online", "main"){	//can be thought of as somewhat similar to how an int main() function is. it's less of a function 
+	GIVEN("Some data to work with"){	//and more of a way to keep track of (and, if desired, format the output of)
+		pair<string, int> p1 {"name", 20}; //error handling
 		pair<string, int> p2 {"kind", 8};
 		pair<string, int> p3 {"years", -1};
 		vector<pair<string, int>> attributes1 = {p1, p2, p3};
@@ -62,8 +62,8 @@ SCENARIO("RDBMS online", "main"){
 		
 		WHEN("Inserting into the database"){
 			vector<string> testvec;
-			REQUIRE(typechecker(v1,testvec));
-			REQUIRE(typechecker(v2,testvec));
+			REQUIRE(typechecker(v1,testvec)); //the REQUIRE blocks, similar to their name, require the result of what is
+			REQUIRE(typechecker(v2,testvec)); //contained within its parenthesis to be true
 			REQUIRE(typechecker(v3,testvec));
 			REQUIRE(typechecker(v4,testvec));
 			REQUIRE(typechecker(v5,testvec));
