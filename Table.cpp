@@ -146,6 +146,7 @@ void Table::insertRecord(vector<Container> entry)
 	if(checkEntryUniq == data.end())
 	{
 		data[hash] = entry;
+		writeToDisk();
 	}
 	else
 		throw "Entry already exists.";
@@ -167,6 +168,7 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 			}
 		}
 	}
+	writeToDisk();
 }
 
 Table Table::select(string _name, vector<string> boolExpressions)
@@ -273,6 +275,7 @@ Table Table::rename(string _name, vector<string> newNames)
 			cout << "Unknown exception in rename function" << endl;
 		}
 	}
+	writeToDisk();
 	return view;
 }
 
@@ -328,6 +331,7 @@ void Table::insertRecord(vector<string> entry)
 		}
 	}
 	insertRecord(newEntry);
+	writeToDisk();
 }
 
 void Table::insertRecord(Table relationship)
@@ -348,6 +352,7 @@ void Table::insertRecord(Table relationship)
 			cout << "Unknown error in insertRecord(Table relationship)" << endl;
 		}
 	}
+	writeToDisk();
 }
 
 void Table::deleteRecord(vector<string> boolExpressions)
@@ -359,6 +364,7 @@ void Table::deleteRecord(vector<string> boolExpressions)
 			data.erase(it);
 		}
 	}
+	writeToDisk();
 }
 
 void Table::updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions)
@@ -389,6 +395,7 @@ void Table::updateRecord(vector<string> desiredAttributes, vector<string> values
 			}
 		}
 	}
+	writeToDisk();
 }
 
 Table& Table::operator=(const Table& other)
