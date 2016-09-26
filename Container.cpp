@@ -1,5 +1,6 @@
 #include "Container.h"
 
+// constructor (probably not necessary)
 template<class T>
 Container::Container(Type type, T value)
 {
@@ -14,18 +15,21 @@ Container::Container(Type type, T value)
 	}
 }
 
+// constructor for varchars
 Container::Container(Type type, varchar value)
 {
 	_type = type;
 	data._varchar = value;
 }
 
+// constructor for ints
 Container::Container(Type type, int value)
 {
 	_type = type;
 	data._int = value;
 }
 
+// copy constructor
 Container::Container(const Container &c)
 {
 	_type = c.getType();
@@ -39,6 +43,7 @@ Container::Container(const Container &c)
 	}
 }
 
+// returns the stored varchar
 varchar Container::getVarchar() const
 {
 	if (_type == VARCHAR)
@@ -51,6 +56,7 @@ varchar Container::getVarchar() const
 	}
 }
 
+// returns the stored integer
 int Container::getInt() const
 {
 	if (_type == INTEGER)
@@ -63,6 +69,7 @@ int Container::getInt() const
 	}
 }
 
+// overloaded copy assignment
 void Container::operator=(const Container &c)
 {
 	_type = c.getType();
