@@ -90,9 +90,20 @@ SCENARIO("RDBMS online", "main"){	//can be thought of as somewhat similar to how
 		
 		WHEN("Insert table object to database")
 		{
-			Table dogs = db.selectTable("animals", "dogs", {"kind == dog"});
-			db.createTable(dogs);
+			Table birds = db.selectTable("animals", "birds", {"type == bird"});
+			db.createTable(birds);
 		}
+		
+		Table dogs = db.selectTable("animals", "dogs", {"kind == dog"});
+		Table cats = db.selectTable("animals","cats", {"type == cat"});
+				
+		db.createTable(dogs);
+		db.createTable(cats);
+
+		pair<string, int> p4 {"kind", 10};		
+		Table species("species", {p4}, {"kind"});
+		db.createTable(species);
+		db.insertIntoTable("species", db.projectTable("animals","temp", {"kind"}));
 		
 		WHEN("Taking set difference of two tables")
 		{
