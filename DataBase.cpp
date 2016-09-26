@@ -237,8 +237,8 @@ void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creat
 	}
 }
 
-
 /*
+Used these resources to help understand how to implement my readfrom function.
 http://stackoverflow.com/questions/19912751/how-to-initialize-a-vector-of-vector-of-strings-using-for-loop-in-c
 http://www.cplusplus.com/forum/beginner/85227/
 http://www.cplusplus.com/forum/beginner/85227/
