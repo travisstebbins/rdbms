@@ -150,6 +150,7 @@ void Table::insertRecord(vector<Container> entry)
 	}
 	else
 		throw "Entry already exists.";
+	writeToDisk();
 }
 
 Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys)
@@ -435,20 +436,21 @@ Table& Table::operator=(const Table& other)
 	return *this;
 }
 
-void Table::writeToDisk()
+void Table::writeToDisk()//writes a table to a .table file
 {
 	string fName = name + ".table";
-	ofstream ofs(fName, ofstream::out);// creates the output file object, that outputs to a text file, will change name
+	ofstream ofs(fName, ofstream::out);// creates the output file object, that outputs to a .table file
 
 	ofs <<  "name: " + name + "\n";//first line of table chunk
 	ofs << "attributes: " ;//first line of table chunk
 	for (int i = 0; i < attributes.size(); ++i)
 	{
 		int atb_num = attributes[i].second;
-		//logs all atribute pairs on second line of .table file
-		ofs << attributes[i].first + " " + to_string(atb_num) + ",";
+		
+		
+		ofs << attributes[i].first + " " + to_string(atb_num) + ",";//logs attr. pairs below name in file
 	}
-	ofs << "\n";//end of attributess
+	ofs << "\n";//end of attributes
     
     
 	ofs << "primary keys: ";//start of primary keys
@@ -457,25 +459,33 @@ void Table::writeToDisk()
 		ofs << primaryKeys[i] << ",";
 	}
 	ofs << "\n";//end of primary keys
-    
-    string s = "";
 	
+	
+	
+	/*
+		did data logging differently using string s due to weird problem I had with just
+		outputting to ofs. Also done this ways so I could test if data was outputting how I
+		Wanted it to
+	*/
+	string s = "";//Data string
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
-		ofs << "data: ";
+		s += "data: ";
 		for (int i = 0; i < it->second.size(); ++i)
 		{
 			if ((it->second)[i].getType() == Container::VARCHAR)
 			{
-				ofs << (it->second)[i].getVarchar().getString() + ",";
+				s += (it->second)[i].getVarchar().getString() + ",";
 			}
 			else
 			{
-				ofs << to_string((it->second)[i].getInt()) + ",";
+				s += to_string((it->second)[i].getInt()) + ",";
 			}
 			
 		}
-		ofs << "\n";
+		s += "\n";
 	}
-	ofs.close();
+	ofs << s;//
+	
+	ofs.close();//close file
 }
