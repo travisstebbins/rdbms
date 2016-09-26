@@ -110,6 +110,17 @@ void DataBase::insertIntoTable(string tableName, Table relationships)
 		throw "Table could not be found";
 }
 
+void DataBase::deleteFromTable(string tableName, vector<string> boolExpressions)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	if(getTable != dataBaseHashTable.end())
+	{
+		getTable->second.deleteRecord(boolExpressions);
+	}
+	else
+		throw "Table could not found";
+}
+
 string DataBase::showTable(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
@@ -126,12 +137,20 @@ Table DataBase::setUnion(string tableName1, string tableName2)
 	
 	auto getTable1 = dataBaseHashTable.find(tableName1);
 	auto getTable2 = dataBaseHashTable.find(tableName2);
+	
 	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
 	{
-		Table tableUnion = Table(getTable1->second);
-		// tableUnion.insertRecord(getTable1->second);
-		tableUnion.insertRecord(getTable2->second);
-		return tableUnion;
+		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+
+		if(table1Attr == table2Attr)
+		{
+			Table tableUnion = Table(getTable1->second);
+			tableUnion.insertRecord(getTable2->second);
+			return tableUnion;
+		}
+		else
+			throw "Tables are not union compatible";
 	}
 	else
 		throw "One of the tables could not be found";
@@ -139,14 +158,71 @@ Table DataBase::setUnion(string tableName1, string tableName2)
 
 Table DataBase::setDifference(string tableName1, string tableName2)
 {
-	Table t = Table();	//Not how function will work just for compilation purposes
-	return t;	
+	auto getTable1 = dataBaseHashTable.find(tableName1);
+	auto getTable2 = dataBaseHashTable.find(tableName2);
+	
+	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
+	{
+		
+		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+
+		if(table1Attr == table2Attr)
+		{
+			Table tableDiff;
+			tableDiff = getTable1->second;
+			const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second.getData();
+			const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second.getData();
+			for(auto iter = tableData1.begin(); iter != tableData1.end(); iter++)
+			{
+				if(tableData2.find(iter->first) != tableData2.end())
+					tableDiff.deleteRecord(iter->first);					
+			}
+			return tableDiff;
+		}
+		else
+			"Tables are not difference compatible";
+	}
+	else
+		throw "One of the tables could not be found";
 }
 
-Table DataBase::cossProduct(string tableName1, string tableName2)
+Table DataBase::crossProduct(string tableName1, string tableName2)
 {
-	Table t = Table();	//Not how function will work just for compilation purposes
-	return t;
+	auto getTable1 = dataBaseHashTable.find(tableName1);
+	auto getTable2 = dataBaseHashTable.find(tableName2);
+	
+	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
+	{
+		string tableName = tableName1 + "x" + tableName2;
+		
+		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+		vector<pair<string, int> > tableAttr = table1Attr;
+		tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());
+		
+		vector<string> primaryKeys = getTable1->second.getPrimaryKeys();
+		
+		Table tableCross(tableName, tableAttr, primaryKeys);
+		
+		const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second.getData();
+		const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second.getData();
+		
+		for(auto iter1 = tableData1.begin(); iter1 != tableData1.end(); iter1++)
+		{
+			for(auto iter2 = tableData2.begin(); iter2 != tableData2.end(); iter2++)
+			{
+				vector<Container> data = iter1->second;
+				vector<Container> data2 = iter2->second;
+				data.insert(data.end(), data2.begin(), data2.end());
+				tableCross.insertRecord(data);
+			}
+		}	
+		
+		return tableCross;
+	}
+	else
+		throw "One of the tables could not be found";
 }
 
 void DataBase::readTableFromDisk(string fileName)

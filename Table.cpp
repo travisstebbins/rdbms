@@ -146,6 +146,7 @@ void Table::insertRecord(vector<Container> entry)
 	if(checkEntryUniq == data.end())
 	{
 		data[hash] = entry;
+		writeToDisk();
 	}
 	else
 		throw "Entry already exists.";
@@ -162,11 +163,12 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 		{
 			if (primaryKeys[i] == attributes[j].first)
 			{
-				cout << "logged primary key index" << endl;
+				// cout << "logged primary key index" << endl;
 				primaryKeyIndices.push_back(j);
 			}
 		}
 	}
+	writeToDisk();
 }
 
 Table Table::select(string _name, vector<string> boolExpressions)
@@ -273,6 +275,7 @@ Table Table::rename(string _name, vector<string> newNames)
 			cout << "Unknown exception in rename function" << endl;
 		}
 	}
+	writeToDisk();
 	return view;
 }
 
@@ -303,9 +306,24 @@ string Table::show()
 	return s;
 }
 
+vector<pair<string, int> > Table::getAttributes()
+{
+	return attributes;
+}
+
 string Table::getTableName()
 {
 	return name;
+}
+
+const unordered_map<size_t, vector<Container>>& Table::getData()
+{
+	return data;
+}
+
+vector<string> Table::getPrimaryKeys()
+{
+	return primaryKeys;
 }
 
 void Table::insertRecord(vector<string> entry)
@@ -328,6 +346,7 @@ void Table::insertRecord(vector<string> entry)
 		}
 	}
 	insertRecord(newEntry);
+	writeToDisk();
 }
 
 void Table::insertRecord(Table relationship)
@@ -348,6 +367,7 @@ void Table::insertRecord(Table relationship)
 			cout << "Unknown error in insertRecord(Table relationship)" << endl;
 		}
 	}
+	writeToDisk();
 }
 
 void Table::deleteRecord(vector<string> boolExpressions)
@@ -359,6 +379,17 @@ void Table::deleteRecord(vector<string> boolExpressions)
 			data.erase(it);
 		}
 	}
+	writeToDisk();
+}
+
+void Table::deleteRecord(size_t key)
+{
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		if(it->first == key)
+			data.erase(it);
+	}
+	writeToDisk();
 }
 
 void Table::updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions)
@@ -389,6 +420,7 @@ void Table::updateRecord(vector<string> desiredAttributes, vector<string> values
 			}
 		}
 	}
+	writeToDisk();
 }
 
 Table& Table::operator=(const Table& other)
