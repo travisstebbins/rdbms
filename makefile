@@ -1,4 +1,8 @@
-all: main
+all: testerfile
+#main
+
+testerfile: Table.o DataBase.o testerfile.cpp
+	g++ -std=c++11 -o testerfile testerfile.cpp Table.o DataBase.o Container.o Varchar.o
 
 main: Table.o DataBase.o main.cpp
 	g++ -std=c++11 -o main main.cpp Table.o DataBase.o Container.o Varchar.o
@@ -16,4 +20,4 @@ Varchar.o: Varchar.h Varchar.cpp
 	g++ -std=c++11 -c -g Varchar.cpp
 	
 clean:
-	rm *.o main
+	rm *.o testerfile

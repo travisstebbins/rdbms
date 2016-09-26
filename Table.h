@@ -17,7 +17,6 @@ using namespace std;
 
 class Table
 {
-	// friend class DataBase;
 	private:
 		string name;
 		// key -> entry
@@ -32,7 +31,6 @@ class Table
 		// private functions
 		bool evaluate(vector<Container> entry, vector<string> boolExpressions);
 		int evaluateHelper (vector<Container> entry, string boolExpression);
-		void insertRecord(vector<Container> entry);
 		
 	public:
 		// constructors
@@ -44,9 +42,14 @@ class Table
 		Table rename(string _name, vector<string> newNames);
 		string show();
 		string getTableName();
+		vector<pair<string, int> > getAttributes();
+		vector<string> getPrimaryKeys();
+		const unordered_map<size_t, vector<Container>>& getData();
 		void insertRecord(vector<string> entry);
 		void insertRecord(Table relationship);
+		void insertRecord(vector<Container> entry);
 		void deleteRecord(vector<string> boolExpressions);
+		void deleteRecord(size_t key);
 		void updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions);
 		void writeToDisk();
 		Table& operator=(const Table& other);

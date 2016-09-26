@@ -170,9 +170,11 @@ void Table::insertRecord(vector<Container> entry)
 	if(checkEntryUniq == data.end())
 	{
 		data[hash] = entry;
+		writeToDisk();
 	}
 	else
 		throw "Entry already exists.";
+	writeToDisk();
 }
 
 // constructor
@@ -188,10 +190,12 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 		{
 			if (primaryKeys[i] == attributes[j].first)
 			{
+				// cout << "logged primary key index" << endl;
 				primaryKeyIndices.push_back(j);
 			}
 		}
 	}
+	writeToDisk();
 }
 
 // select entries from the table and return as a new Table object
@@ -309,6 +313,7 @@ Table Table::rename(string _name, vector<string> newNames)
 			cout << "Unknown exception in rename function" << endl;
 		}
 	}
+	writeToDisk();
 	return view;
 }
 
@@ -342,12 +347,27 @@ string Table::show()
 	return s;
 }
 
+vector<pair<string, int> > Table::getAttributes()
+{
+	return attributes;
+}
+
 string Table::getTableName()
 {
 	return name;
 }
 
 // insert a record given a vector of strings
+const unordered_map<size_t, vector<Container>>& Table::getData()
+{
+	return data;
+}
+
+vector<string> Table::getPrimaryKeys()
+{
+	return primaryKeys;
+}
+
 void Table::insertRecord(vector<string> entry)
 {	
 	vector<Container> newEntry;
@@ -371,6 +391,7 @@ void Table::insertRecord(vector<string> entry)
 		}
 	}
 	insertRecord(newEntry);
+	writeToDisk();
 }
 
 // insert an entire existing table's entries into this table
@@ -393,6 +414,7 @@ void Table::insertRecord(Table relationship)
 			cout << "Unknown error in insertRecord(Table relationship)" << endl;
 		}
 	}
+	writeToDisk();
 }
 
 // delete all records that satisfy the boolean expression
@@ -407,6 +429,17 @@ void Table::deleteRecord(vector<string> boolExpressions)
 			data.erase(it);
 		}
 	}
+	writeToDisk();
+}
+
+void Table::deleteRecord(size_t key)
+{
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		if(it->first == key)
+			data.erase(it);
+	}
+	writeToDisk();
 }
 
 // update the desired attributes with the given new values for all entries that satisfy
@@ -446,6 +479,7 @@ void Table::updateRecord(vector<string> desiredAttributes, vector<string> values
 			}
 		}
 	}
+	writeToDisk();
 }
 
 // overloaded = operator
@@ -461,21 +495,22 @@ Table& Table::operator=(const Table& other)
 	return *this;
 }
 
-// write the table to a file on the disk
-void Table::writeToDisk()
+
+void Table::writeToDisk()//writes a table to a .table file
 {
 	string fName = name + ".table";
-	ofstream ofs(fName, ofstream::out);// creates the output file object, that outputs to a text file, will change name
+	ofstream ofs(fName, ofstream::out);// creates the output file object, that outputs to a .table file
 
 	ofs <<  "name: " + name + "\n";//first line of table chunk, stores table name
 	ofs << "attributes: " ;//second line of table chunk, stores table attributes
 	for (int i = 0; i < attributes.size(); ++i)
 	{
 		int atb_num = attributes[i].second;
-		//logs all atribute pairs on second line of .table file
-		ofs << attributes[i].first + " " + to_string(atb_num) + ",";
+		
+		
+		ofs << attributes[i].first + " " + to_string(atb_num) + ",";//logs attr. pairs below name in file
 	}
-	ofs << "\n";//end of attributess
+	ofs << "\n";//end of attributes
     
     
 	ofs << "primary keys: ";//start of primary keys
@@ -484,26 +519,31 @@ void Table::writeToDisk()
 		ofs << primaryKeys[i] << ",";
 	}
 	ofs << "\n";//end of primary keys
-    
-    string s = "";
 	
-	// loop through table and print all data
+	/*
+		did data logging differently using string s due to weird problem I had with just
+		outputting to ofs. Also done this ways so I could test if data was outputting how I
+		Wanted it to
+	*/
+	string s = "";//Data string
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
-		ofs << "data: ";
+		s += "data: ";
 		for (int i = 0; i < it->second.size(); ++i)
 		{
 			if ((it->second)[i].getType() == Container::VARCHAR)
 			{
-				ofs << (it->second)[i].getVarchar().getString() + ",";
+				s += (it->second)[i].getVarchar().getString() + ",";
 			}
 			else
 			{
-				ofs << to_string((it->second)[i].getInt()) + ",";
+				s += to_string((it->second)[i].getInt()) + ",";
 			}
 			
 		}
-		ofs << "\n";
+		s += "\n";
 	}
-	ofs.close();
+	ofs << s;//
+	
+	ofs.close();//close file
 }
