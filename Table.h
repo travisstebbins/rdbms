@@ -11,7 +11,6 @@
 #include <sstream>
 
 #include "Container.h"
-// #include "DataBase.h"
 
 using namespace std;
 
@@ -21,10 +20,13 @@ class Table
 	// friend class DataBase;
 	private:
 		string name;
+		// key -> entry
 		unordered_map<size_t, vector<Container>> data;
-		// 0 = VARCHAR, 1 = INTEGER
+		// n = VARCHAR, -1 = INTEGER
 		vector<pair<string, int> > attributes;
+		// stores the table's primary keys
 		vector<string> primaryKeys;
+		// used to easily access the table's primary keys
 		vector<int> primaryKeyIndices;
 
 		// private functions

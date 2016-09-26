@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "DataBase.h"
-#include "Catch/include/catch.hpp"
+//#include "Catch/include/catch.hpp"
 
 using namespace std;
 
@@ -67,8 +67,8 @@ int main()
 		cout << dogsandcats.show() << endl;
 
 		// this isn't working right
-		// Table a = (animals.project("temp", {"name", "kind"})).rename("a", {"aname", "akind"});
-		// cout << a.show() << endl;
+		Table a = (db.getTable("animals").project("temp", {"name", "kind"})).rename("a", {"aname", "akind"});
+		cout << a.show() << endl;
 	}
 	catch (char const* c)
 	{
