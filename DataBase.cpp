@@ -116,6 +116,7 @@ string DataBase::showTable(string tableName)
 	if(getTable != dataBaseHashTable.end())
 	{
 		return getTable->second.show();
+		cout << "made it into show\n";
 	}
 	else
 		throw "Table could not be found";
@@ -149,48 +150,45 @@ Table DataBase::cossProduct(string tableName1, string tableName2)
 	return t;
 }
 
-void DataBase::readTableFromDisk(string fileName)
+void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creates a table from it
 {
 	ifstream ifs (fileName, ifstream::in);//inputfile creator
 	
 	string tName;//name to be used as arg
 	vector<pair<string, int> > tAttributes;//atribute vector to be used as arg
-	vector<string> tPrimKeys;
-	vector<vector<string>> tData;
+	vector<string> tPrimKeys;//Primary keys of table
+	vector<vector<string>> tData;//The data that will be logged into the table
 	
 	string line;//most recent line received from ifstream
 	if (ifs.is_open())
 	{
-		while (getline(ifs,line))
+		while (getline(ifs,line))//while there is still stuff in the file
 		{
-			if(line.find("name: ") == 0)
+			if(line.find("name: ") == 0)//name found
 			{
-				tName = line.erase(0,5);
-				cout << tName + "\n";
+				tName = line.erase(0,6);//erase "name: "
 			}
-			else if(line.find("attributes: ") == 0)
+			else if(line.find("attributes: ") == 0)//attributes found
 			{
-				line = line.erase(0,11);//erase "attributes: "
+				line = line.erase(0,12);//erase "attributes: "
 				string s_one;
 				stringstream ssline_one(line);
 				
-				while(getline(ssline_one,s_one,','))//eliminates 
+				while(getline(ssline_one,s_one,','))//separates the line by commas
 				{
 					stringstream ssline_two(s_one);
 					string s_two;
-					int i = 0;
-					string a;
-					int b;
-					
-					
-					while(getline(ssline_two,s_two,' '))// I can assume that itw will be <string int>
+					int i = 0;//used in if statement
+					string a;//second element of pair
+					int b;//second element of pair
+					while(getline(ssline_two,s_two,' '))// I can assume that it will be <string, int>
 					{
-						if(i == 0)
+						if(i == 0)//is first half of split
 						{
 							a = s_two;
 							i++;
 						}
-						else
+						else//second half of splt
 						{
 							b = stoi(s_two);
 						}
@@ -199,37 +197,49 @@ void DataBase::readTableFromDisk(string fileName)
 					pair<string, int> tempPair = make_pair(a,b);
 					tAttributes.push_back(tempPair);
 				}
-				//add code here
 			}
-			else if(line.find("primary keys: ") == 0)
+			else if(line.find("primary keys: ") == 0)//found primary keys
 			{
-				line = line.erase(0,13);
+				line = line.erase(0,14);//erase "primary keys: "
 				stringstream ssline(line);//stringstream line
-				string s;
-				while(getline(ssline,s,','))
+				string s;//holds getline
+				while(getline(ssline,s,','))//split on commas
 				{
-					tPrimKeys.push_back(s);
+					tPrimKeys.push_back(s);//add to key vector
 				}
 			}
-			else if(line.find("data: ") == 0)
+			else if(line.find("data: ") == 0)//data is found
 			{
 				vector<string> tempVect;//used to store within tData
-				line = line.erase(0,5);//erases "data: ""
+				line = line.erase(0,6);//erases "data: ""
+				
 				stringstream ssline(line);//stringstream line
 				string s;//used with while loop
+				
 				while(getline(ssline,s,','))//while line isn't empty
 				{
 					tempVect.push_back(s);//push string back into 
 				}
-				tData.push_back(tempVect);
+				
+				tData.push_back(tempVect);//pushes string vector into vector vector
 			}
 					
 		}
-		ifs.close();
-		createTable(tName, tAttributes, tPrimKeys);//creates table
+		ifs.close();//closes filestream
+		Table t = Table(tName, tAttributes, tPrimKeys);//creates table
+		
 		for(int i = 0; i < tData.size(); i++)
 		{
-			insertIntoTable(tName, tData[i]);//adds entries to table
+			t.insertRecord(tData[i]);//adds entries to table
 		}
+		createTable(t);
+		t.writeToDisk();//saves again for consistency
 	}
 }
+
+
+/*
+http://stackoverflow.com/questions/19912751/how-to-initialize-a-vector-of-vector-of-strings-using-for-loop-in-c
+http://www.cplusplus.com/forum/beginner/85227/
+http://www.cplusplus.com/forum/beginner/85227/
+*/
