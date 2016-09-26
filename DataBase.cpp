@@ -12,12 +12,11 @@
 DataBase::DataBase()
 {
 	dataBaseHashTable = {};
-	viewHashTable = {};
 }
 
 void DataBase::createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys)
 {
-	unordered_map<string, Table>::const_iterator checkNameUniq = dataBaseHashTable.find(tableName);
+	auto checkNameUniq = dataBaseHashTable.find(tableName);
 	
 	if(checkNameUniq == dataBaseHashTable.end())
 	{
@@ -33,6 +32,7 @@ void DataBase::createTable(Table newTable)
 {
 	string tableName = newTable.getTableName();
 	auto checkNameUniq = dataBaseHashTable.find(tableName);
+	
 	if(checkNameUniq == dataBaseHashTable.end())
 	{
 		dataBaseHashTable[tableName] = newTable;
@@ -44,6 +44,7 @@ void DataBase::createTable(Table newTable)
 Table DataBase::projectTable(string tableName, string _name, vector<string> desiredAttributes)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
+	
 	if (getTable != dataBaseHashTable.end())
 	{
 		return getTable->second.project(_name, desiredAttributes);
@@ -55,6 +56,7 @@ Table DataBase::projectTable(string tableName, string _name, vector<string> desi
 Table DataBase::selectTable(string tableName, string _name, vector<string> boolExpressions)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
+	
 	if(getTable != dataBaseHashTable.end())
 	{
 		return getTable->second.select(_name, boolExpressions);
@@ -65,7 +67,7 @@ Table DataBase::selectTable(string tableName, string _name, vector<string> boolE
 
 void DataBase::dropTable(string tableName)
 {
-	unordered_map<string, Table>::const_iterator checkNameExist = dataBaseHashTable.find(tableName);
+	auto checkNameExist = dataBaseHashTable.find(tableName);
 	
 	if(checkNameExist != dataBaseHashTable.end())
 	{
@@ -77,7 +79,7 @@ void DataBase::dropTable(string tableName)
 
 Table DataBase::getTable(string tableName)
 {
-	unordered_map<string, Table>::const_iterator getTable = dataBaseHashTable.find(tableName);
+	auto getTable = dataBaseHashTable.find(tableName);
 	
 	if(getTable != dataBaseHashTable.end())
 	{
@@ -90,6 +92,7 @@ Table DataBase::getTable(string tableName)
 void DataBase::insertIntoTable(string tableName, vector<string> entry)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
+	
 	if(getTable != dataBaseHashTable.end())
 	{
 		getTable->second.insertRecord(entry);
@@ -102,6 +105,7 @@ void DataBase::insertIntoTable(string tableName, vector<string> entry)
 void DataBase::insertIntoTable(string tableName, Table relationships)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
+	
 	if(getTable != dataBaseHashTable.end())
 	{
 		getTable->second.insertRecord(relationships);
@@ -113,6 +117,7 @@ void DataBase::insertIntoTable(string tableName, Table relationships)
 void DataBase::deleteFromTable(string tableName, vector<string> boolExpressions)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
+	
 	if(getTable != dataBaseHashTable.end())
 	{
 		getTable->second.deleteRecord(boolExpressions);
@@ -124,6 +129,7 @@ void DataBase::deleteFromTable(string tableName, vector<string> boolExpressions)
 string DataBase::showTable(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
+	
 	if(getTable != dataBaseHashTable.end())
 	{
 		return getTable->second.show();
@@ -143,7 +149,7 @@ Table DataBase::setUnion(string tableName1, string tableName2)
 		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
 		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
 
-		if(table1Attr == table2Attr)
+		if(table1Attr == table2Attr)	//Vector of attributes have to be the same in order to be union compatible
 		{
 			Table tableUnion = Table(getTable1->second);
 			tableUnion.insertRecord(getTable2->second);
@@ -167,15 +173,17 @@ Table DataBase::setDifference(string tableName1, string tableName2)
 		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
 		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
 
-		if(table1Attr == table2Attr)
+		if(table1Attr == table2Attr)		//Vector of attributes have to be the same in order to be difference compatible
 		{
 			Table tableDiff;
-			tableDiff = getTable1->second;
+			tableDiff = getTable1->second;	//Left hand side of set difference
+			
 			const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second.getData();
 			const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second.getData();
+			
 			for(auto iter = tableData1.begin(); iter != tableData1.end(); iter++)
 			{
-				if(tableData2.find(iter->first) != tableData2.end())
+				if(tableData2.find(iter->first) != tableData2.end())	//remove from left hand table those that match in right hand table
 					tableDiff.deleteRecord(iter->first);					
 			}
 			return tableDiff;
@@ -199,9 +207,9 @@ Table DataBase::crossProduct(string tableName1, string tableName2)
 		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
 		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
 		vector<pair<string, int> > tableAttr = table1Attr;
-		tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());
+		tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());	//vector holding the combined attributes
 		
-		vector<string> primaryKeys = getTable1->second.getPrimaryKeys();
+		vector<string> primaryKeys = getTable1->second.getPrimaryKeys();			//just use keys from the first table
 		
 		Table tableCross(tableName, tableAttr, primaryKeys);
 		
@@ -214,8 +222,8 @@ Table DataBase::crossProduct(string tableName1, string tableName2)
 			{
 				vector<Container> data = iter1->second;
 				vector<Container> data2 = iter2->second;
-				data.insert(data.end(), data2.begin(), data2.end());
-				tableCross.insertRecord(data);
+				data.insert(data.end(), data2.begin(), data2.end());	//Combine into one vector of attributes
+				tableCross.insertRecord(data);							//Insert combined record into table
 			}
 		}	
 		

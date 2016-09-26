@@ -1,6 +1,3 @@
 [submodule "Catch"]
 	path = Catch
 	url = https://github.com/philsquared/Catch
-[submodule "jsoncpp"]
-	path = jsoncpp
-	url = https://github.com/open-source-parsers/jsoncpp.git
