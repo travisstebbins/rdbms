@@ -41,9 +41,11 @@ class Table
 		string show();
 		string getTableName();
 		vector<pair<string, int> > getAttributes();
+		const unordered_map<size_t, vector<Container>>& getData();
 		void insertRecord(vector<string> entry);
 		void insertRecord(Table relationship);
 		void deleteRecord(vector<string> boolExpressions);
+		void deleteRecord(size_t key);
 		void updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions);
 		void writeToDisk();
 		Table& operator=(const Table& other);

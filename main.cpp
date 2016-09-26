@@ -54,6 +54,9 @@ int main()
 		db.createTable(cats);
 		cout << cats.show() << endl;
 
+		Table differ = db.setDifference("animals", "cats");
+		cout << differ.show() << endl;
+		
 		Table projection = db.projectTable("animals", "projection", {"name", "kind"});
 		cout << projection.show() << endl;
 

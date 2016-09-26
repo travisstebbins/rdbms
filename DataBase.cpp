@@ -139,7 +139,7 @@ Table DataBase::setUnion(string tableName1, string tableName2)
 			return tableUnion;
 		}
 		else
-			throw "Tables are not union compatible"
+			throw "Tables are not union compatible";
 	}
 	else
 		throw "One of the tables could not be found";
@@ -147,8 +147,32 @@ Table DataBase::setUnion(string tableName1, string tableName2)
 
 Table DataBase::setDifference(string tableName1, string tableName2)
 {
-	Table t = Table();	//Not how function will work just for compilation purposes
-	return t;	
+	auto getTable1 = dataBaseHashTable.find(tableName1);
+	auto getTable2 = dataBaseHashTable.find(tableName2);
+	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
+	{
+		
+		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+
+		if(table1Attr == table2Attr)
+		{
+			Table tableDiff;
+			tableDiff = getTable1->second;
+			const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second.getData();
+			const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second.getData();
+			for(auto iter = tableData1.begin(); iter != tableData1.end(); iter++)
+			{
+				if(tableData2.find(iter->first) != tableData2.end())
+					tableDiff.deleteRecord(iter->first);					
+			}
+			return tableDiff;
+		}
+		else
+			"Tables are not difference compatible";
+	}
+	else
+		throw "One of the tables could not be found";
 }
 
 Table DataBase::cossProduct(string tableName1, string tableName2)

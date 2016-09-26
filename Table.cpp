@@ -316,6 +316,11 @@ string Table::getTableName()
 	return name;
 }
 
+const unordered_map<size_t, vector<Container>>& Table::getData()
+{
+	return data;
+}
+
 void Table::insertRecord(vector<string> entry)
 {	
 	vector<Container> newEntry;
@@ -368,6 +373,16 @@ void Table::deleteRecord(vector<string> boolExpressions)
 		{
 			data.erase(it);
 		}
+	}
+	writeToDisk();
+}
+
+void Table::deleteRecord(size_t key)
+{
+	for (auto it = data.begin(); it != data.end(); ++it)
+	{
+		if(it->first == key)
+			data.erase(it);
 	}
 	writeToDisk();
 }
