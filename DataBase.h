@@ -37,6 +37,7 @@ public:
 	void dropTable(string tableName);
 	void insertIntoTable(string tableName, vector<string> entry);
 	void insertIntoTable(string tableName, Table relationships);
+	void deleteFromTable(string name, vector<string> boolExpressions);
 	string showTable(string tableName);
 	Table projectTable(string tableName, string _name, vector<string> desiredAttributes);
 	Table setUnion(string tableName1, string tableName2);

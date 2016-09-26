@@ -163,7 +163,7 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 		{
 			if (primaryKeys[i] == attributes[j].first)
 			{
-				cout << "logged primary key index" << endl;
+				// cout << "logged primary key index" << endl;
 				primaryKeyIndices.push_back(j);
 			}
 		}

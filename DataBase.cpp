@@ -110,6 +110,17 @@ void DataBase::insertIntoTable(string tableName, Table relationships)
 		throw "Table could not be found";
 }
 
+void DataBase::deleteFromTable(string tableName, vector<string> boolExpressions)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	if(getTable != dataBaseHashTable.end())
+	{
+		getTable->second.deleteRecord(boolExpressions);
+	}
+	else
+		throw "Table could not found";
+}
+
 string DataBase::showTable(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
