@@ -321,6 +321,11 @@ const unordered_map<size_t, vector<Container>>& Table::getData()
 	return data;
 }
 
+vector<string> Table::getPrimaryKeys()
+{
+	return primaryKeys;
+}
+
 void Table::insertRecord(vector<string> entry)
 {	
 	vector<Container> newEntry;

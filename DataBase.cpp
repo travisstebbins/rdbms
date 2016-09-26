@@ -149,6 +149,7 @@ Table DataBase::setDifference(string tableName1, string tableName2)
 {
 	auto getTable1 = dataBaseHashTable.find(tableName1);
 	auto getTable2 = dataBaseHashTable.find(tableName2);
+	
 	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
 	{
 		
@@ -175,10 +176,42 @@ Table DataBase::setDifference(string tableName1, string tableName2)
 		throw "One of the tables could not be found";
 }
 
-Table DataBase::cossProduct(string tableName1, string tableName2)
+Table DataBase::crossProduct(string tableName1, string tableName2)
 {
-	Table t = Table();	//Not how function will work just for compilation purposes
-	return t;
+	auto getTable1 = dataBaseHashTable.find(tableName1);
+	auto getTable2 = dataBaseHashTable.find(tableName2);
+	
+	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
+	{
+		string tableName = tableName1 + "x" + tableName2;
+		
+		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+		vector<pair<string, int> > tableAttr = table1Attr;
+		tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());
+		
+		vector<string> primaryKeys = getTable1->second.getPrimaryKeys();
+		
+		Table tableCross(tableName, tableAttr, primaryKeys);
+		
+		const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second.getData();
+		const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second.getData();
+		
+		for(auto iter1 = tableData1.begin(); iter1 != tableData1.end(); iter1++)
+		{
+			for(auto iter2 = tableData2.begin(); iter2 != tableData2.end(); iter2++)
+			{
+				vector<Container> data = iter1->second;
+				vector<Container> data2 = iter2->second;
+				data.insert(data.end(), data2.begin(), data2.end());
+				tableCross.insertRecord(data);
+			}
+		}	
+		
+		return tableCross;
+	}
+	else
+		throw "One of the tables could not be found";
 }
 
 void DataBase::readTableFromDisk(string fileName)

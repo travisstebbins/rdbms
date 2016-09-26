@@ -66,6 +66,9 @@ int main()
 		db.insertIntoTable("species", db.projectTable("animals","temp", {"kind"}));
 		cout << db.showTable("species") << endl;
 
+		Table cross = db.crossProduct("animals", "species");
+		cout << cross.show() << endl;
+		
 		Table dogsandcats = db.setUnion("dogs", "cats");
 		cout << dogsandcats.show() << endl;
 
