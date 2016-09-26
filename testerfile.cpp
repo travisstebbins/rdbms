@@ -4,6 +4,10 @@
 #include <iostream>
 #include <vector>
 #include <typeinfo>
+
+//This file contains some of the implemented test cases.
+//to run it, replace the makefile with makefile_modified, rename makefile_modified to makefile, and use "make" normally.
+
 /*
 SCENARIO("A database table is created", "createTable") {
 	pair<string, int> xcoord = {"x", 5};
