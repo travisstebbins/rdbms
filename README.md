@@ -4,6 +4,16 @@
 Since there are submodules you have to recursively clone in the repo.  
 `git clone --recursive https://github.tamu.edu/ameserole/rdbms.git`
 
+## Running Unit Test
+To run the unit tests run the following commands:  
+`make`  
+`./testerfile`  
+
+##View Test Output:  
+To view a test output of the data base run the following commands:  
+`make main`  
+`./main`  
+
 ## Submodules
 Here are the sources for the submodules we are using.
 
