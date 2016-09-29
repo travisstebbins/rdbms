@@ -69,87 +69,226 @@ TEST_CASE("Initialize and Insert Into Table", "[Table]")
 	}
 
 
-	// SECTION("Check Table insertRecord(Table)")
-	// {
-		// Table testTable2("testTable2", attributes1, primaryKeys1);
-		// Table testTable3("testTable3", attributes1, primaryKeys1);
+	SECTION("Check Table insertRecord(Table)")
+	{
+		Table testTable2("testTable2", attributes1, primaryKeys1);
+		Table testTable3("testTable3", attributes1, primaryKeys1);
 
-		// testTable3.insertRecord(v1);
-		// testTable3.insertRecord(v2);
-		// testTable3.insertRecord(v3);
-		// testTable3.insertRecord(v4);
-		// testTable3.insertRecord(v5);
+		testTable3.insertRecord(v1);
+		testTable3.insertRecord(v2);
+		testTable3.insertRecord(v3);
+		testTable3.insertRecord(v4);
+		testTable3.insertRecord(v5);
 
 
-		// testTable.insertRecord(v1);
-		// testTable.insertRecord(v2);
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
 
-		// testTable2.insertRecord(v3);
-		// testTable2.insertRecord(v4);
-		// testTable2.insertRecord(v5);
-		// cout << "Section: Check Table insertRecord(Table)" << endl;
-		// cout << "testTable before\n" << testTable.show() << endl;
-		// cout << "testTable2 before\n" << testTable2.show() << endl;
+		testTable2.insertRecord(v3);
+		testTable2.insertRecord(v4);
+		testTable2.insertRecord(v5);
+		cout << "Section: Check Table insertRecord(Table)" << endl;
+		cout << "testTable before\n" << testTable.show() << endl;
+		cout << "testTable2 before\n" << testTable2.show() << endl;
 
-		// testTable.insertRecord(testTable2);
-		// cout << "testTable after testTable.insertRecord(testTable2)" << endl;
-		// cout << testTable.show() << endl;
+		testTable.insertRecord(testTable2);
+		cout << "testTable after testTable.insertRecord(testTable2)" << endl;
+		cout << testTable.show() << endl;
 
-		// REQUIRE(testTable == testTable3);
-	// }
+		REQUIRE(testTable == testTable3);
+	}
 	
-	// SECTION("Check void deleteRecord(vector<string> boolExpressions)")
-	// {
-		// Table testTable2("testTable2", attributes1, primaryKeys1);
-		// Table testTable3("testTable3", attributes1, primaryKeys1);
+	
+}
+
+TEST_CASE("Test Delete and Update Record From Table", "[Table]")
+{
+	pair<string, int> p1 {"name", 20};
+	pair<string, int> p2 {"kind", 8};
+	pair<string, int> p3 {"years", -1};
+	vector<pair<string, int>> attributes1 = {p1, p2, p3};
+	vector<string> primaryKeys1 = {"name", "kind"};
+	
+	Table testTable("testTable", attributes1, primaryKeys1);
+	
+	vector<string> v1 = {"Joe", "cat", "4"};
+	vector<string> v2 = {"Spot", "dog", "10"};
+	vector<string> v3 = {"Snoopy", "dog", "3"};
+	vector<string> v4 = {"Tweety", "bird", "1"};
+	vector<string> v5 = {"Joe", "bird", "2"};
+	
+	SECTION("Check void deleteRecord(vector<string> boolExpressions)")
+	{
+		Table testTable2("testTable2", attributes1, primaryKeys1);
+		Table testTable3("testTable3", attributes1, primaryKeys1);
 		
-		// testTable3.insertRecord(v1);
-		// testTable3.insertRecord(v2);
-		// testTable3.insertRecord(v3);
-		// testTable3.insertRecord(v4);
-		// testTable3.insertRecord(v5);
+		testTable3.insertRecord(v1);
+		testTable3.insertRecord(v2);
+		testTable3.insertRecord(v3);
+		testTable3.insertRecord(v4);
+		testTable3.insertRecord(v5);
 		
-		// testTable2.insertRecord(v3);
-		// testTable2.insertRecord(v4);
+		testTable2.insertRecord(v3);
+		testTable2.insertRecord(v4);
 
 		
-		// cout << "Section: Check Table deleteRecord(Table)" << endl;
-		// cout << "testTable3 before\n" << testTable3.show() << endl;
+		cout << "Section: Check Table deleteRecord(Table)" << endl;
+		cout << "testTable3 before\n" << testTable3.show() << endl;
 		
-		// testTable3.deleteRecord({"name == Joe"});
+		// testTable3.deleteRecord({"kind == dog"});
 		// testTable3.deleteRecord({"name == Spot"});
 		// testerfile.cpp:101: FAILED:
 		// due to unexpected exception with message:
 		// std::bad_alloc		
 		
-		// cout << "testTable3 after\n" << testTable3.show() << endl;
+		cout << "testTable3 after\n" << testTable3.show() << endl;
 		
 		// REQUIRE(testTable3 == testTable2);
 		
-	// }
+	}
 	
-	// SECTION("Check void deleteRecord(size_t key)")
-	// {
-		// Table testTable2("testTable2", attributes1, primaryKeys1);
-		// Table testTable3("testTable3", attributes1, primaryKeys1);
+	SECTION("Check void deleteRecord(size_t key)")
+	{
+		Table testTable2("testTable2", attributes1, primaryKeys1);
+		Table testTable3("testTable3", attributes1, primaryKeys1);
 		
-		// testTable3.insertRecord(v1);
-		// testTable3.insertRecord(v2);
-		// testTable3.insertRecord(v3);
-		// testTable3.insertRecord(v4);
-		// testTable3.insertRecord(v5);
+		testTable3.insertRecord(v1);
+		testTable3.insertRecord(v2);
+		testTable3.insertRecord(v3);
+		testTable3.insertRecord(v4);
+		testTable3.insertRecord(v5);
 		
-		// testTable2.insertRecord(v3);
-		// testTable2.insertRecord(v4);
+		testTable2.insertRecord(v3);
+		testTable2.insertRecord(v4);
 
 		
-		// cout << "Section: Check Table deleteRecord(size_t key)" << endl;
-		// cout << "testTable3 before\n" << testTable3.show() << endl;
+		cout << "Section: Check Table deleteRecord(size_t key)" << endl;
+		cout << "testTable3 before\n" << testTable3.show() << endl;
 		
-		// cout << "testTable3 after\n" << testTable3.show() << endl;
+		cout << "testTable3 after\n" << testTable3.show() << endl;
 		
 		// REQUIRE(testTable3 == testTable2);
-	// }
+	}
+	
+	SECTION("Check updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions)")
+	{
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		testTable.insertRecord(v4);
+		testTable.insertRecord(v5);
+
+		// Table a = (db.getTable("animals").project("temp", {"name", "kind"})).rename("a", {"aname", "akind"});
+		// cout << a.show() << endl;
+	}
+}
+
+TEST_CASE("Test Select, Project, and Rename", "[Table]")
+{
+	pair<string, int> p1 {"name", 20};
+	pair<string, int> p2 {"kind", 8};
+	pair<string, int> p3 {"years", -1};
+	vector<pair<string, int>> attributes1 = {p1, p2, p3};
+	vector<string> primaryKeys1 = {"name", "kind"};
+	
+	Table testTable("testTable", attributes1, primaryKeys1);
+	
+	vector<string> v1 = {"Joe", "cat", "4"};
+	vector<string> v2 = {"Spot", "dog", "10"};
+	vector<string> v3 = {"Snoopy", "dog", "3"};
+	vector<string> v4 = {"Tweety", "bird", "1"};
+	vector<string> v5 = {"Joe", "bird", "2"};
+
+	SECTION("Test Table select(string _name, vector<string> boolExpressions)")
+	{
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		testTable.insertRecord(v4);
+		testTable.insertRecord(v5);
+		
+		Table testTable2("testTable2", attributes1, primaryKeys1);
+		Table testTable3("testTable3", attributes1, primaryKeys1);
+
+		testTable3.insertRecord(v2);
+		testTable3.insertRecord(v3);
+
+		testTable2 = testTable.select("dogs",{"kind == dog"});
+
+		cout << "Section: Test Select" << endl;
+		cout << "Table of dogs\n" << testTable3.show() << endl;
+		cout << "Selected table of dogs\n" << testTable2.show() << endl;
+
+		REQUIRE(testTable2 == testTable3);
+	}
+	
+	SECTION("Test Table project(string _name, vector<string> desiredAttributes)")
+	{
+		pair<string, int> p4 {"name", 20};
+		pair<string, int> p5 {"kind", 8};
+		vector<pair<string, int>> attributes2 = {p4, p5};
+		vector<string> primaryKeys2 = {"name", "kind"};
+		
+		Table testTable2("testTable2", attributes2, primaryKeys2);
+		vector<string> v6 = {"Joe", "cat"};
+		vector<string> v7 = {"Spot", "dog"};
+		vector<string> v8 = {"Snoopy", "dog"};
+		
+		testTable2.insertRecord(v6);
+		testTable2.insertRecord(v7);
+		testTable2.insertRecord(v8);
+		
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		
+		Table testTable3 = testTable.project("projection", {"name", "kind"});
+		
+		cout << "Section: Test Project" << endl;
+		cout << "How the projected table should look\n" << testTable2.show() << endl;
+		cout << "The projected table\n" << testTable3.show() << endl;
+		
+		REQUIRE(testTable2 == testTable3);
+	}
+	
+	SECTION("Test Table rename(string _name, vector<string> newNames)")
+	{
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		testTable.insertRecord(v4);
+		testTable.insertRecord(v5);
+		
+		pair<string, int> p1 {"nickname", 20};
+		pair<string, int> p2 {"type", 8};
+		pair<string, int> p3 {"days", -1};
+		vector<pair<string, int>> attributes2 = {p1, p2, p3};
+		vector<string> primaryKeys2 = {"nickname", "type"};
+		
+		Table testTable2("testTable2", attributes2, primaryKeys2);
+		
+		vector<string> v6 = {"Joe", "cat", "4"};
+		vector<string> v7 = {"Spot", "dog", "10"};
+		vector<string> v8 = {"Snoopy", "dog", "3"};
+		vector<string> v9 = {"Tweety", "bird", "1"};
+		vector<string> v10 = {"Joe", "bird", "2"};
+		
+		testTable2.insertRecord(v6);
+		testTable2.insertRecord(v7);
+		testTable2.insertRecord(v8);
+		testTable2.insertRecord(v9);
+		testTable2.insertRecord(v10);
+		
+		Table testTable3 = testTable.rename("rename", {"nickname", "type", "days"});
+		
+		cout << "Section: Test rename" << endl;
+		cout << "How renamed table should look\n" << testTable2.show() << endl;
+		cout << "How renamed table looks\n" << testTable3.show() << endl;
+		
+		REQUIRE(testTable3 == testTable2);	
+	}
+	
+	
 }
 
 

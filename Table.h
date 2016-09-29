@@ -53,15 +53,15 @@ class Table
 		void updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions);
 		void writeToDisk();
 		Table& operator=(const Table& other);
-		// inline bool operator==(const Table& rhs) const
-		// {
-			// if(!(this->attributes == rhs.attributes))
-				// return false;
-			// if(!(this->primaryKeys == rhs.primaryKeys))
-				// return false;
-			// if(!(this->data == rhs.data))
-				// return false;
-			// return true;
-		// }
+		inline bool operator==(const Table& rhs) const
+		{
+			if(!(this->attributes == rhs.attributes))
+				return false;
+			if(!(this->primaryKeys == rhs.primaryKeys))
+				return false;
+			if(!(this->data == rhs.data))
+				return false;
+			return true;
+		}
 };
 

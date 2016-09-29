@@ -70,10 +70,10 @@ int Container::getInt() const
 }
 
 // overloaded copy assignment
-Container& Container::operator=(const Container &c)
+void Container::operator=(const Container &c)
 {
-	if(&c == this)
-		return *this;
+	// if(&c == this)
+		// return *this;
 	_type = c.getType();
 	if (_type == VARCHAR)
 	{
@@ -84,7 +84,7 @@ Container& Container::operator=(const Container &c)
 		this->data._int = c.getInt();
 	}
 	
-	return *this;
+	//return *this;
 	// Container newContainer(c.getType(), (c.getType() == VARCHAR) ? c.getVarchar() : c.getInt());
 	// return newContainer;
 }

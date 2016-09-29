@@ -10,7 +10,6 @@ class varchar
 	int limit;
 
 	public:
-		varchar() {data = "t"; limit = 0;}
 		varchar(int _limit);
 		~varchar() {}
 		string getString() { return data; }
@@ -25,8 +24,8 @@ class varchar
 			// this->limit = other.getLimit();
 			// return *this;
 		// }
-		// inline bool operator==(const varchar& rhs) const
-		// {
-			// return (this->data == rhs.data);
-		// }
+		inline bool operator==(const varchar& rhs) const
+		{
+			return (this->data == rhs.data);
+		}
 };
