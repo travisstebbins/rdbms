@@ -15,14 +15,32 @@ void commandOrQuery(string instruction);  //this is a relatively simple function
 					  //for the existence of "<-", or the existence of "<" followed by "-", whichever is easier to implement.
 
 
-/* --- command functions --- */
-int commandParse(string instr);	//gets the name of the table on which we are performing the command on
-				//parses through and looks for command instruction keywords: OPEN, CLOSE, WRITE, EXIT, SHOW, CREATE, UPDATE, INSERT, DELETE, DROP
-				//each of these keywords correspond to a command function. most of those functions take a table name, if any input at all.
-				//the create, update, insert, and delete functions will take a bit more work, as they all require more parsing to determine
+/* ---------- command functions ---------- */
+//TODO: implement a method (unless one has been implemented already) to keep track of all non-view tables currently open
+//when EXIT is called, that list of tables will be written to the disk before the program is closed
+
+void commandParse(string instr); //gets the name of the table on which we are performing the command on
+				 //parses through and looks for command instruction keywords: OPEN, CLOSE, WRITE, EXIT, SHOW, CREATE, UPDATE, INSERT, DELETE, DROP
+				 //each of these keywords correspond to a command function. most of those functions take a table name, if any input at all.
+				 //the create, update, insert, and delete functions will take a bit more work, as they all require more parsing to determine
+
+void commandOpen(string filename); //TODO: make a test case with the catch framework that REQUIRE()s the last six characters to be ".table"
+//				     TODO: do this for all commands involving file I/O
+//I'm assuming what this function does is read table info stored on a disk, then bring that table into scope by writing it into a table object that the program
+//can access
+//if this is not the case, I'll change the return type to Table so that I can write tables into scope as needed.
 
 
+void commandClose(string filename); //TODO: ask about a close function
+				    //maybe just use drop table without saving first?
 
+void commandWrite(string filename); //TODO: ask Ryan how the Table::writeToDisk() function works
+
+void commandExit();		    //TODO: find a way to save all non-view tables before closing
+
+void commandShow(string tablename);
+
+void commandDrop(string tablename);
 
 //the following comment block concerns the insert function, and possibly the delete and update functions. but definitely the insert function.
 //
@@ -31,11 +49,13 @@ int commandParse(string instr);	//gets the name of the table on which we are per
 //      queryParse, which will get a view table which will be used as an input for whichever command function called for the
 //      query (which is to say, whichever command function preceded the query call in the instruction string)
 //      the name of the query will be something like "cmd_query"  
+//
 
-/* ------------------------- */
 
-/* --- query functions ----- */
+/* --------------------------------------- */
+
+/* ---------- query functions ------------ */
 Table queryParse(string qname, string instr);
 
 
-/* ------------------------- */
+/* --------------------------------------- */
