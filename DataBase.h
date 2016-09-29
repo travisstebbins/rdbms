@@ -41,6 +41,7 @@ public:
 	//Creates a new Table object and inserts it into the hash table of tables
 	//Table newTable table object to be inserted into databse
 	void createTable(Table newTable);
+
 	
 	void createView(Table newView);
 	
