@@ -33,7 +33,9 @@ int main()
 		cout << db.showTable("animals") << endl;
 
 		Table dogs = db.selectTable("animals", "dogs", {"kind == dog"});
-
+		
+		dogs.deleteRecord({"name == Spot"});
+		
 		db.createTable(dogs);
 		cout << db.showTable("dogs") << endl;
 		Table old_dogs = db.selectTable("dogs", "old_dogs", {"years>9"});
@@ -65,6 +67,8 @@ int main()
 		// this isn't working right
 		Table a = (db.getTable("animals").project("temp", {"name", "kind"})).rename("a", {"aname", "akind"});
 		cout << a.show() << endl;
+		
+		
 	}
 	catch (char const* c)
 	{
