@@ -40,6 +40,7 @@ public:
 	//Creates a new Table object and inserts it into the hash table of tables
 	//Table newTable table object to be inserted into databse
 	void createTable(Table newTable);
+
 	
 	//Delete the table from the hash table of tables 
 	//Table name (string)
