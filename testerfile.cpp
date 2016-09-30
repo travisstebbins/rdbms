@@ -101,7 +101,7 @@ TEST_CASE("Initialize and Insert Into Table", "[Table]")
 	
 }
 
-TEST_CASE("Test Delete and Update Record From Table", "[Table]")
+TEST_CASE("Test Table Delete and Update Record From Table", "[Table]")
 {
 	pair<string, int> p1 {"name", 20};
 	pair<string, int> p2 {"kind", 8};
@@ -183,7 +183,7 @@ TEST_CASE("Test Delete and Update Record From Table", "[Table]")
 	}
 }
 
-TEST_CASE("Test Select, Project, and Rename", "[Table]")
+TEST_CASE("Test Table Select, Project, and Rename", "[Table]")
 {
 	pair<string, int> p1 {"name", 20};
 	pair<string, int> p2 {"kind", 8};
@@ -291,7 +291,297 @@ TEST_CASE("Test Select, Project, and Rename", "[Table]")
 	
 }
 
+TEST_CASE("Test DataBase Initialize, Insert, and Delete", "[DataBase]")
+{
+	SECTION("Initialize DataBase")
+	{
+		pair<string, int> p1 {"name", 20};
+		pair<string, int> p2 {"kind", 8};
+		pair<string, int> p3 {"years", -1};
+		vector<pair<string, int>> attributes1 = {p1, p2, p3};
+		vector<string> primaryKeys1 = {"name", "kind"};
 
+		DataBase db;
+		db.createTable("animals", attributes1, primaryKeys1);
+
+		Table testTable = db.getTable("animals");
+
+		REQUIRE(testTable.getAttributes() == attributes1);
+		REQUIRE(testTable.getPrimaryKeys() == primaryKeys1);
+	}
+
+	pair<string, int> p1 {"name", 20};
+	pair<string, int> p2 {"kind", 8};
+	pair<string, int> p3 {"years", -1};
+	vector<pair<string, int>> attributes1 = {p1, p2, p3};
+	vector<string> primaryKeys1 = {"name", "kind"};
+
+	DataBase db;
+	db.createTable("animals", attributes1, primaryKeys1);
+
+	vector<string> v1 = {"Joe", "cat", "4"};
+	vector<string> v2 = {"Spot", "dog", "10"};
+	vector<string> v3 = {"Snoopy", "dog", "3"};
+	vector<string> v4 = {"Tweety", "bird", "1"};
+	vector<string> v5 = {"Joe", "bird", "2"};
+
+	Table testTable("testTable", attributes1, primaryKeys1);
+
+	SECTION("Test void insertIntoTable(string tableName, vector<string> entry)")
+	{
+		
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		testTable.insertRecord(v4);
+		testTable.insertRecord(v5);
+
+		db.insertIntoTable("animals", v1);
+		db.insertIntoTable("animals", v2);
+		db.insertIntoTable("animals", v3);
+		db.insertIntoTable("animals", v4);
+		db.insertIntoTable("animals", v5);
+
+		cout << "insertIntoTable Test" << endl;
+		cout << testTable.show() << endl;
+		cout << db.showTable("animals") << endl;
+
+		REQUIRE(testTable == db.getTable("animals"));
+	}
+
+	SECTION("Test void insertIntoTable(string tableName, Table relationships)")
+	{
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+
+		db.insertIntoTable("animals", v4);
+		db.insertIntoTable("animals", v5);
+
+		Table testTable2("testTable2", attributes1, primaryKeys1);
+		testTable2.insertRecord(v1);
+		testTable2.insertRecord(v2);
+		testTable2.insertRecord(v3);
+		testTable2.insertRecord(v4);
+		testTable2.insertRecord(v5);
+
+		db.insertIntoTable("animals", testTable);
+
+		REQUIRE(testTable2 == db.getTable("animals"));
+	}
+
+	SECTION("Test void deleteFromTable(string name, vector<string> boolExpressions)")
+	{
+		db.insertIntoTable("animals", v1);
+		db.insertIntoTable("animals", v2);
+		db.insertIntoTable("animals", v3);
+		db.insertIntoTable("animals", v4);
+		db.insertIntoTable("animals", v5);
+
+		//not going to work until deleteRecord is fixed
+	}
+
+}
+
+TEST_CASE("Test DataBase Select Table and Project Table", "[DataBase]")
+{
+	pair<string, int> p1 {"name", 20};
+	pair<string, int> p2 {"kind", 8};
+	pair<string, int> p3 {"years", -1};
+	vector<pair<string, int>> attributes1 = {p1, p2, p3};
+	vector<string> primaryKeys1 = {"name", "kind"};
+
+	DataBase db;
+	db.createTable("animals", attributes1, primaryKeys1);
+
+	vector<string> v1 = {"Joe", "cat", "4"};
+	vector<string> v2 = {"Spot", "dog", "10"};
+	vector<string> v3 = {"Snoopy", "dog", "3"};
+	vector<string> v4 = {"Tweety", "bird", "1"};
+	vector<string> v5 = {"Joe", "bird", "2"};
+
+	Table testTable("testTable", attributes1, primaryKeys1);
+
+	SECTION("Test Table selectTable(string tableName, string _name, vector<string> boolExpressions)")
+	{
+		db.insertIntoTable("animals", v1);
+		db.insertIntoTable("animals", v2);
+		db.insertIntoTable("animals", v3);
+		db.insertIntoTable("animals", v4);
+		db.insertIntoTable("animals", v5);
+
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+
+		Table testTable2 = db.selectTable("animals", "dogs",{"kind == dog"});
+
+		REQUIRE("testTable == testTable2");
+	}
+
+	SECTION("Test Table projectTable(string tableName, string _name, vector<string> desiredAttributes)")
+	{
+		pair<string, int> p4 {"name", 20};
+		pair<string, int> p5 {"kind", 8};
+		vector<pair<string, int>> attributes2 = {p4, p5};
+		vector<string> primaryKeys2 = {"name", "kind"};
+
+		Table testTable2("testTable2", attributes2, primaryKeys2);
+		vector<string> v6 = {"Joe", "cat"};
+		vector<string> v7 = {"Spot", "dog"};
+		vector<string> v8 = {"Snoopy", "dog"};
+		
+		testTable2.insertRecord(v6);
+		testTable2.insertRecord(v7);
+		testTable2.insertRecord(v8);
+
+		db.insertIntoTable("animals", v1);
+		db.insertIntoTable("animals", v2);
+		db.insertIntoTable("animals", v3);
+
+
+		Table testTable3 = db.projectTable("animals", "projection", {"name", "kind"});
+		REQUIRE(testTable2 == testTable3);
+	}
+}
+
+TEST_CASE("Test Union Difference and Cross Product", "[DataBase]")
+{
+	pair<string, int> p1 {"name", 20};
+	pair<string, int> p2 {"kind", 8};
+	pair<string, int> p3 {"years", -1};
+	vector<pair<string, int>> attributes1 = {p1, p2, p3};
+	vector<string> primaryKeys1 = {"name", "kind"};
+
+	DataBase db;
+	db.createTable("animals", attributes1, primaryKeys1);
+
+	vector<string> v1 = {"Joe", "cat", "4"};
+	vector<string> v2 = {"Spot", "dog", "10"};
+	vector<string> v3 = {"Snoopy", "dog", "3"};
+	vector<string> v4 = {"Tweety", "bird", "1"};
+	vector<string> v5 = {"Joe", "bird", "2"};
+
+	Table testTable("testTable", attributes1, primaryKeys1);
+
+	SECTION("Test Table setUnion(string tableName1, string tableName2)")
+	{
+		db.createTable("testTable", attributes1, primaryKeys1);
+		db.createTable("testTable2", attributes1, primaryKeys1);
+		
+		db.insertIntoTable("testTable", v1);
+		db.insertIntoTable("testTable", v2);
+
+		db.insertIntoTable("testTable2", v3);
+		db.insertIntoTable("testTable2", v4);
+		db.insertIntoTable("testTable2", v5);
+
+		Table testTable3("testTable3", attributes1, primaryKeys1);
+
+		testTable3.insertRecord(v1);
+		testTable3.insertRecord(v2);
+		testTable3.insertRecord(v3);
+		testTable3.insertRecord(v4);
+		testTable3.insertRecord(v5);
+
+		Table testTable4 = db.setUnion("testTable", "testTable2");
+		REQUIRE(testTable4 == testTable3);
+	}
+
+	SECTION("Test Table setDifference(string tableName1, string tableName2)")
+	{
+		//not going to work until deleteRecord works
+
+		// db.createTable("testTable", attributes1, primaryKeys1);
+		// db.createTable("testTable2", attributes1, primaryKeys1);
+
+		// db.insertIntoTable("testTable", v1);
+		// db.insertIntoTable("testTable", v2);
+		// db.insertIntoTable("testTable", v3);
+		// db.insertIntoTable("testTable", v4);
+		// db.insertIntoTable("testTable", v5);
+
+		// db.insertIntoTable("testTable2", v4);
+		// db.insertIntoTable("testTable2", v5);
+
+		// Table testTable3("testTable3", attributes1, primaryKeys1);
+		// testTable3.insertRecord(v1);
+		// testTable3.insertRecord(v2);
+		// testTable3.insertRecord(v3);
+
+		// Table testTable4 = db.setDifference("testTable", "testTable2");
+
+		// REQUIRE(testTable3 == testTable4);
+	}
+
+	SECTION("Test Table crossProduct(string tableName1, string tableName2)")
+	{
+		pair<string, int> p4 {"test", 20};
+		pair<string, int> p5 {"birthday", -1};
+
+		vector<pair<string, int>> attributes2 = {p4, p5};
+		vector<string> primaryKeys2 = {"test"};
+
+		vector<string> v6 = {"One", "1027"};
+		vector<string> v7 = {"Two", "228"};
+
+		vector<pair<string, int>> attributes3 = {p1, p2, p3, p4, p5};
+		
+		db.createTable("testTable", attributes2, primaryKeys2);
+		db.insertIntoTable("testTable", v6);
+		db.insertIntoTable("testTable", v7);
+		
+		db.insertIntoTable("animals", v1);
+		db.insertIntoTable("animals", v2);
+
+		Table testTable2("testTable2", attributes3, primaryKeys1);
+
+		vector<string> v8 = {"Joe", "cat", "4", "One", "1027"};
+		vector<string> v9 = {"Spot", "dog", "10", "Two", "228"};
+
+		testTable2.insertRecord(v8);
+		testTable2.insertRecord(v9);
+
+
+		Table testTable3 = db.crossProduct("animals", "testTable");
+
+		REQUIRE(testTable2 == testTable3);
+
+	}
+}
+
+TEST_CASE("Test Read and Write to Disk", "[DataBase]")
+{
+	SECTION("Round Trip Test")
+	{
+		pair<string, int> p1 {"name", 20};
+		pair<string, int> p2 {"kind", 8};
+		pair<string, int> p3 {"years", -1};
+		vector<pair<string, int>> attributes1 = {p1, p2, p3};
+		vector<string> primaryKeys1 = {"name", "kind"};
+
+		DataBase db;
+
+		vector<string> v1 = {"Joe", "cat", "4"};
+		vector<string> v2 = {"Spot", "dog", "10"};
+		vector<string> v3 = {"Snoopy", "dog", "3"};
+		vector<string> v4 = {"Tweety", "bird", "1"};
+		vector<string> v5 = {"Joe", "bird", "2"};
+
+		Table testTable("testTable", attributes1, primaryKeys1);
+
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		testTable.insertRecord(v4);
+		testTable.insertRecord(v5);
+
+		testTable.writeToDisk();
+
+		db.readTableFromDisk("testTable.table");
+
+		REQUIRE(testTable == db.getTable("testTable"));
+	}
+}
 
 // SCENARIO("RDBMS online", "main"){	//can be thought of as somewhat similar to how an int main() function is. it's less of a function 
 	// GIVEN("Some data to work with"){	//and more of a way to keep track of (and, if desired, format the output of)
