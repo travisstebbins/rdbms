@@ -11,6 +11,7 @@
 //					more often than not, this information can be found in DataBase.cpp or wherever the function in question is stored
 
 class Parser{
+	//string<vector> commandHistory; //TODO: implement this and send it to a file maybe
 	void commandOrQuery(string instruction);  //this is a relatively simple function. query instructions will always have an arrow "<-" somewhere in them (unless
 						  //the query is part of (or rather, a source of input for) a command instruction) commandOrQuery will check either 
 						  //for the existence of "<-", or the existence of "<" followed by "-", whichever is easier to implement.
