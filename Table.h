@@ -29,8 +29,8 @@ class Table
 		vector<int> primaryKeyIndices;
 
 		// private functions
-		bool evaluate(vector<Container> entry, vector<string> boolExpressions);
-		int evaluateHelper (vector<Container> entry, string boolExpression);
+		bool evaluate(vector<Container>& entry, vector<string> boolExpressions);
+		int evaluateHelper (vector<Container>& entry, string boolExpression);
 		
 	public:
 		// constructors

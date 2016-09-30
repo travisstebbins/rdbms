@@ -32,41 +32,49 @@ int main()
 		db.insertIntoTable("animals", v5);
 		cout << db.showTable("animals") << endl;
 
-		Table dogs = db.selectTable("animals", "dogs", {"kind == dog"});
+		Table testTable("testTable", attributes1, primaryKeys1);
 		
-		dogs.deleteRecord({"name == Spot"});
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		testTable.insertRecord(v4);
+		testTable.insertRecord(v5);
 		
-		db.createTable(dogs);
-		cout << db.showTable("dogs") << endl;
-		Table old_dogs = db.selectTable("dogs", "old_dogs", {"years>9"});
-		cout << old_dogs.show() << endl;
-
-
-		Table cats = db.selectTable("animals","cats", {"kind==cat"});
-		db.createTable(cats);
-		cout << cats.show() << endl;
-
-		Table differ = db.setDifference("animals", "cats");
-		cout << differ.show() << endl;
+		testTable.deleteRecord({"years>9"});
 		
-		Table projection = db.projectTable("animals", "projection", {"name", "kind"});
-		cout << projection.show() << endl;
-
-		pair<string, int> p4 {"kind", 10};		
-		Table species("species", {p4}, {"kind"});
-		db.createTable(species);
-		db.insertIntoTable("species", db.projectTable("animals","temp", {"kind"}));
-		cout << db.showTable("species") << endl;
-
-		Table cross = db.crossProduct("animals", "species");
-		cout << cross.show() << endl;
+		cout << testTable.show() << endl;
 		
-		Table dogsandcats = db.setUnion("dogs", "cats");
-		cout << dogsandcats.show() << endl;
+		// db.createTable(dogs);
+		// cout << db.showTable("dogs") << endl;
+		// Table old_dogs = db.selectTable("dogs", "old_dogs", {"years>9"});
+		// cout << old_dogs.show() << endl;
+
+
+		// Table cats = db.selectTable("animals","cats", {"kind==cat"});
+		// db.createTable(cats);
+		// cout << cats.show() << endl;
+
+		// Table differ = db.setDifference("animals", "cats");
+		// cout << differ.show() << endl;
+		
+		// Table projection = db.projectTable("animals", "projection", {"name", "kind"});
+		// cout << projection.show() << endl;
+
+		// pair<string, int> p4 {"kind", 10};		
+		// Table species("species", {p4}, {"kind"});
+		// db.createTable(species);
+		// db.insertIntoTable("species", db.projectTable("animals","temp", {"kind"}));
+		// cout << db.showTable("species") << endl;
+
+		// Table cross = db.crossProduct("animals", "species");
+		// cout << cross.show() << endl;
+		
+		// Table dogsandcats = db.setUnion("dogs", "cats");
+		// cout << dogsandcats.show() << endl;
 
 		// this isn't working right
-		Table a = (db.getTable("animals").project("temp", {"name", "kind"})).rename("a", {"aname", "akind"});
-		cout << a.show() << endl;
+		// Table a = (db.getTable("animals").project("temp", {"name", "kind"})).rename("a", {"aname", "akind"});
+		// cout << a.show() << endl;
 		
 		
 	}

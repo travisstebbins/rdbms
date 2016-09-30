@@ -4,7 +4,7 @@ using namespace std;
 
 // evaluates an inndividual boolean expression, given an entry and a string
 //  boolean expression
-int Table::evaluateHelper (vector<Container> entry, string boolExpression)
+int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 {
 	int currentIndex = 0;
 	string operand1 = "";
@@ -109,10 +109,11 @@ int Table::evaluateHelper (vector<Container> entry, string boolExpression)
 			}
 		}
 	}
+	
 }
 
 // evaluates an entire boolean expression
-bool Table::evaluate(vector<Container> entry, vector<string> boolExpressions)
+bool Table::evaluate(vector<Container>& entry, vector<string> boolExpressions)
 {
 	// stack used for evaluating expression
 	stack<int> evalStack;
@@ -421,23 +422,28 @@ void Table::insertRecord(Table relationship)
 void Table::deleteRecord(vector<string> boolExpressions)
 {
 	// loop through table
-	for (auto it = data.begin(); it != data.end(); ++it)
+	auto it = data.begin();
+	while(it != data.end())
 	{
-		// evaluate entry with expression
-		if (evaluate(it->second, boolExpressions))
+		auto temp = it;
+		it++;
+		if (evaluate(temp->second, boolExpressions))
 		{
-			data.erase(it);
-		}
+			data.erase(temp);
+		}	
 	}
 	writeToDisk();
 }
 
 void Table::deleteRecord(size_t key)
 {
-	for (auto it = data.begin(); it != data.end(); ++it)
+	auto it = data.begin();
+	while(it != data.end())
 	{
-		if(it->first == key)
-			data.erase(it);
+		auto temp = it;
+		it++;
+		if(temp->first == key)
+			data.erase(temp);
 	}
 	writeToDisk();
 }
