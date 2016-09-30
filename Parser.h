@@ -17,7 +17,7 @@ void commandOrQuery(string instruction);  //this is a relatively simple function
 
 /* ---------- command functions ---------- */
 //TODO: implement a method (unless one has been implemented already) to keep track of all non-view tables currently open
-//when EXIT is called, that list of tables will be written to the disk before the program is closed
+
 
 void commandParse(string instr); //gets the name of the table on which we are performing the command on
 				 //parses through and looks for command instruction keywords: OPEN, CLOSE, WRITE, EXIT, SHOW, CREATE, UPDATE, INSERT, DELETE, DROP
@@ -50,6 +50,15 @@ void commandDrop(string tablename);
 //      query (which is to say, whichever command function preceded the query call in the instruction string)
 //      the name of the query will be something like "cmd_query"  
 //
+
+void commandInsert(string instr); //this one is gonna be a bear to implement. see above string block for one example as to why.
+
+void commandDelete(string instr); //this one pretty much does the opposite of Insert, with the fortunate exception (hopefully) of
+				  //not having to worry about getting information from a query
+
+void commandUpdate(string instr); //to implement this one, I'm thinking I just get the entry I'm trying to update, storing that in a
+				  //string vector, modifying that string vector, calling Delete on the old entry, then using insert
+				  //to put the new one in.
 
 
 /* --------------------------------------- */
