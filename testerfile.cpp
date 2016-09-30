@@ -128,22 +128,20 @@ TEST_CASE("Test Table Delete and Update Record From Table", "[Table]")
 		testTable3.insertRecord(v4);
 		testTable3.insertRecord(v5);
 		
-		testTable2.insertRecord(v3);
+		testTable2.insertRecord(v1);
 		testTable2.insertRecord(v4);
+		testTable2.insertRecord(v5);
 
 		
 		cout << "Section: Check Table deleteRecord(Table)" << endl;
 		cout << "testTable3 before\n" << testTable3.show() << endl;
 		
-		// testTable3.deleteRecord({"kind == dog"});
-		// testTable3.deleteRecord({"name == Spot"});
-		// testerfile.cpp:101: FAILED:
-		// due to unexpected exception with message:
-		// std::bad_alloc		
+		testTable3.deleteRecord({"kind == dog"});
+		// testTable3.deleteRecord({"name == Spot"});	
 		
 		cout << "testTable3 after\n" << testTable3.show() << endl;
 		
-		// REQUIRE(testTable3 == testTable2);
+		REQUIRE(testTable3 == testTable2);
 		
 	}
 	
@@ -164,7 +162,7 @@ TEST_CASE("Test Table Delete and Update Record From Table", "[Table]")
 		
 		cout << "Section: Check Table deleteRecord(size_t key)" << endl;
 		cout << "testTable3 before\n" << testTable3.show() << endl;
-		
+		// testTable3.deleteRecord({"kind == cat"});
 		cout << "testTable3 after\n" << testTable3.show() << endl;
 		
 		// REQUIRE(testTable3 == testTable2);
@@ -378,6 +376,8 @@ TEST_CASE("Test DataBase Initialize, Insert, and Delete", "[DataBase]")
 		db.insertIntoTable("animals", v4);
 		db.insertIntoTable("animals", v5);
 
+		
+		
 		//not going to work until deleteRecord is fixed
 	}
 
@@ -489,28 +489,28 @@ TEST_CASE("Test Union Difference and Cross Product", "[DataBase]")
 
 	SECTION("Test Table setDifference(string tableName1, string tableName2)")
 	{
-		//not going to work until deleteRecord works
+		// not going to work until deleteRecord works
 
-		// db.createTable("testTable", attributes1, primaryKeys1);
-		// db.createTable("testTable2", attributes1, primaryKeys1);
+		db.createTable("testTable", attributes1, primaryKeys1);
+		db.createTable("testTable2", attributes1, primaryKeys1);
 
-		// db.insertIntoTable("testTable", v1);
-		// db.insertIntoTable("testTable", v2);
-		// db.insertIntoTable("testTable", v3);
-		// db.insertIntoTable("testTable", v4);
-		// db.insertIntoTable("testTable", v5);
+		db.insertIntoTable("testTable", v1);
+		db.insertIntoTable("testTable", v2);
+		db.insertIntoTable("testTable", v3);
+		db.insertIntoTable("testTable", v4);
+		db.insertIntoTable("testTable", v5);
 
-		// db.insertIntoTable("testTable2", v4);
-		// db.insertIntoTable("testTable2", v5);
+		db.insertIntoTable("testTable2", v4);
+		db.insertIntoTable("testTable2", v5);
 
-		// Table testTable3("testTable3", attributes1, primaryKeys1);
-		// testTable3.insertRecord(v1);
-		// testTable3.insertRecord(v2);
-		// testTable3.insertRecord(v3);
+		Table testTable3("testTable3", attributes1, primaryKeys1);
+		testTable3.insertRecord(v1);
+		testTable3.insertRecord(v2);
+		testTable3.insertRecord(v3);
 
-		// Table testTable4 = db.setDifference("testTable", "testTable2");
+		Table testTable4 = db.setDifference("testTable", "testTable2");
 
-		// REQUIRE(testTable3 == testTable4);
+		REQUIRE(testTable3 == testTable4);
 	}
 
 	SECTION("Test Table crossProduct(string tableName1, string tableName2)")
@@ -582,91 +582,3 @@ TEST_CASE("Test Read and Write to Disk", "[DataBase]")
 		REQUIRE(testTable == db.getTable("testTable"));
 	}
 }
-
-// SCENARIO("RDBMS online", "main"){	//can be thought of as somewhat similar to how an int main() function is. it's less of a function 
-	// GIVEN("Some data to work with"){	//and more of a way to keep track of (and, if desired, format the output of)
-		// pair<string, int> p1 {"name", 20}; //error handling
-		// pair<string, int> p2 {"kind", 8};
-		// pair<string, int> p3 {"years", -1};
-		// vector<pair<string, int>> attributes1 = {p1, p2, p3};
-		// vector<string> primaryKeys1 = {"name", "kind"};
-	
-		// DataBase db;
-		// db.createTable("animals", attributes1, primaryKeys1);
-		
-		// WHEN("Creating a database"){
-			// DataBase dc;
-			// REQUIRE(!attributes1.empty());  //these two things can be commented out if needed,
-			// REQUIRE(!primaryKeys1.empty()); //but ultimately a table doensn't necessarily require elements to exist
-			// dc.createTable("animalia", attributes1, primaryKeys1);
-		// }
-
-		// vector<string> v1 = {"Joe", "cat", "4"};
-		// vector<string> v2 = {"Spot", "dog", "10"};
-		// vector<string> v3 = {"Snoopy", "dog", "3"};
-		// vector<string> v4 = {"Tweety", "bird", "1"};
-		// vector<string> v5 = {"Joe", "bird", "2"};
-		
-		// WHEN("Inserting into the database"){
-			// vector<string> testvec;
-			// REQUIRE(typechecker(v1,testvec)); //the REQUIRE blocks, similar to their name, require the result of what is
-			// REQUIRE(typechecker(v2,testvec)); //contained within its parenthesis to be true
-			// REQUIRE(typechecker(v3,testvec));
-			// REQUIRE(typechecker(v4,testvec));
-			// REQUIRE(typechecker(v5,testvec));
-			
-			// db.insertIntoTable("animals", v1);
-			// db.insertIntoTable("animals", v2);	
-			// db.insertIntoTable("animals", v3);
-			// db.insertIntoTable("animals", v4);
-			// db.insertIntoTable("animals", v5);
-		// }
-
-		// WHEN("Printing out table")
-		// {
-			// cout << db.showTable("animals") << endl;
-		// }
-
-		
-		// WHEN("Selecting elements from a table"){
-			// Table old_animals = db.selectTable("animals", "old_animals", {"years>9"});
-			// Table dogs = db.selectTable("animals", "dogs", {"kind == dog"});
-			// Table cats = db.selectTable("animals","cats", {"type == cat"});
-			// Table birds = db.selectTable("animals", "birds", {"type == bird"});
-		// }
-		
-		// WHEN("Insert table object to database")
-		// {
-			// Table birds = db.selectTable("animals", "birds", {"type == bird"});
-			// db.createTable(birds);
-		// }
-		
-		// Table dogs = db.selectTable("animals", "dogs", {"kind == dog"});
-		// Table cats = db.selectTable("animals","cats", {"type == cat"});
-				
-		// db.createTable(dogs);
-		// db.createTable(cats);
-
-		// pair<string, int> p4 {"kind", 10};		
-		// Table species("species", {p4}, {"kind"});
-		// db.createTable(species);
-		// db.insertIntoTable("species", db.projectTable("animals","temp", {"kind"}));
-		
-		// WHEN("Taking set difference of two tables")
-		// {
-			// Table differ = db.setDifference("animals", "cats");
-		// }
-		
-		// WHEN("Taking set union of two tables")
-		// {
-			// Table dogsandcats = db.setUnion("dogs", "cats");
-		// }
-		
-		// WHEN("Taking cross product of two tables")
-		// {
-			// Table cross = db.crossProduct("animals", "species");
-		// }
-
-	// } 
-// }
-
