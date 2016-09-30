@@ -27,6 +27,7 @@ private:
 	//This is used to store all of the tables that are created
 	//The key used will be unique and based on the table name
 	unordered_map<string, Table> dataBaseHashTable;
+	unordered_map<string, Table> viewHashTable;
 	
 public:
 	
@@ -41,6 +42,8 @@ public:
 	//Table newTable table object to be inserted into databse
 	void createTable(Table newTable);
 	
+	void createView(Table newView);
+	
 	//Delete the table from the hash table of tables 
 	//Table name (string)
 	void dropTable(string tableName);
@@ -48,7 +51,7 @@ public:
 	//Wrapper function for Table insertRecord(vector<string> entry)
 	//Calls insertRecord on Table tableName
 	void insertIntoTable(string tableName, vector<string> entry);
-	
+		
 	//Wrapper function for Table insertRecord(Table relationships)
 	//Calls insertRecord on Table tableName
 	void insertIntoTable(string tableName, Table relationships);
@@ -80,6 +83,8 @@ public:
 	
 	//This is used to access and return a table based on the given name
 	Table getTable(string tableName);
+	
+	Table getView(string viewName);
 	
 	//This reads a database file from the disk and loads it into memory, 
 	//recreating the Table object and inserting it into the hash table of tables

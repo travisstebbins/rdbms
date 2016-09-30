@@ -41,6 +41,19 @@ void DataBase::createTable(Table newTable)
 		throw "Table already exists";
 }
 
+void DataBase::createView(Table newView)
+{
+	string tableName = newView.getTableName();
+	auto checkNameUniq = viewHashTable.find(tableName);
+	
+	if(checkNameUniq == viewHashTable.end())
+	{
+		viewHashTable[tableName] = newView;
+	}
+	else 
+		throw "Table already exists";
+}
+
 Table DataBase::projectTable(string tableName, string _name, vector<string> desiredAttributes)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
@@ -82,6 +95,18 @@ Table DataBase::getTable(string tableName)
 	auto getTable = dataBaseHashTable.find(tableName);
 	
 	if(getTable != dataBaseHashTable.end())
+	{
+		return getTable->second;
+	}
+	else
+		throw "Table does not exist.";
+}
+
+Table DataBase::getView(string viewName)
+{
+	auto getTable = viewHashTable.find(viewName);
+	
+	if(getTable != viewHashTable.end())
 	{
 		return getTable->second;
 	}
