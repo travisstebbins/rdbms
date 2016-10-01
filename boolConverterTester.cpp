@@ -137,6 +137,22 @@ int main ()
 	cout << print(tokens2) << endl;
 	cout << "Postfix:" << endl;
 	cout << print(postfix2) << endl;
+
+	string boolExpression3 = "aname == name && akind != kind";
+	vector<string> tokens3 = stringToTokens(boolExpression3);
+	vector<string> postfix3 = convertBoolExpression(boolExpression3);
+	cout << "Tokens:" << endl;
+	cout << print(tokens3) << endl;
+	cout << "Postfix:" << endl;
+	cout << print(postfix3) << endl;
+
+	string boolExpression4 = "kind == \"dog\"";
+	vector<string> tokens4 = stringToTokens(boolExpression4);
+	vector<string> postfix4 = convertBoolExpression(boolExpression4);
+	cout << "Tokens:" << endl;
+	cout << print(tokens4) << endl;
+	cout << "Postfix:" << endl;
+	cout << print(postfix4) << endl;
 }
 
 // result1

@@ -3,7 +3,8 @@
 
 using namespace std;
 
-vector<string> Parser::stringToTokens (string boolExpression) {
+vector<string> Parser::stringToTokens (string boolExpression) 
+{
 	// result
 	vector<string> tokens;
 	// remove new lines, tabs, and spaces
@@ -101,23 +102,6 @@ vector<string> Parser::convertBoolExpression (string boolExpression)
 	return postfix;
 }
 
-string print (vector<string> vec)
-{
-	string result = "{ ";
-	for (int i = 0; i < vec.size(); ++i)
-	{
-		if (i != vec.size() - 1)
-		{
-			result += vec[i] + " , "; 
-		}
-		else
-		{
-			result += vec[i] + " }";
-		}
-	}
-	return result;
-}
-
 void Parser::commandOrQuery(string instruction)
 {
 	if(instruction.find("<-") == 0)// <- found 
@@ -191,44 +175,4 @@ void Parser::commandDrop(string tablename)
 void Parser::commandCreate(string tablename)
 {
 	
-}
-
-vector<string> convertBoolExpression (string boolExpression) {
-	// data structures
-	vector<string> tokens;
-	vector<string> postfix;
-	stack<string> opStack;
-	// remove new lines, tabs, and spaces
-	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\r'), boolExpression.end());
-	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\n'), boolExpression.end());
-	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\t'), boolExpression.end());
-	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), ' '), boolExpression.end());
-	// convert string to tokens
-	int current = 0;
-	string token = "";
-	while (current != boolExpression.length()) {
-		 if (boolExpression[current] != '&' && boolExpression[current] != '|'
-		 	&& boolExpression[current] != '(' && boolExpression[current] != ')')
-		 {
-		 	token += boolExpression[current++];
-		 }
-		 else
-		 {
-		 	tokens.push_back(token);
-		 	token = "";
-		 	if (boolExpression[current] == '(' || boolExpression[current] == ')')
-		 	{
-		 		token += boolExpression[current++];
-		 		tokens.push_back(token);
-		 		token = "";
-		 	}
-		 	else 
-		 	{
-		 		token += boolExpression[current++];
-		 		token += boolExpression[current++];
-		 		tokens.push_back(token);
-		 		token = "";
-		 	}
-		 }
-	}
 }
