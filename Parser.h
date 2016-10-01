@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <stack>
 #include "DataBase.h"
 #include "Table.h"
 //we still need to include a LOT more stuff
@@ -13,6 +14,8 @@
 class Parser{
 private:
 	DataBase db;
+	vector<string> stringToTokens (string boolExpression);
+	vector<string> convertBoolExpression (string boolExpression);
 public:
 	//string<vector> commandHistory; //TODO: implement this and send it to a file maybe
 	void commandOrQuery(string instruction);  //this is a relatively simple function. query instructions will always have an arrow "<-" somewhere in them (unless
@@ -60,7 +63,7 @@ public:
 	//      the name of the query will be something like "cmd_query"  
 	//
 
-	void commandInsert(string instr); //this one is gonna be a bear to implement. see above string block for one example as to why.
+	//void commandInsert(string instr); //this one is gonna be a bear to implement. see above string block for one example as to why.
 	
 	void commandDelete(string instr); //this one pretty much does the opposite of Insert, with the fortunate exception (hopefully) of
 					  //not having to worry about getting information from a query
