@@ -63,7 +63,6 @@ public:
 	//      the name of the query will be something like "cmd_query"  
 	//
 
-	//void commandInsert(string instr); //this one is gonna be a bear to implement. see above string block for one example as to why.
 	
 	void commandDelete(string instr); //this one pretty much does the opposite of Insert, with the fortunate exception (hopefully) of
 					  //not having to worry about getting information from a query

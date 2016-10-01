@@ -160,15 +160,35 @@ void Parser::commandParse(string instruction)//parses a command
 		instruction = instruction.erase(0,5);
 		commandShow(instruction);// may change if the "SHOW " part of the string needs to be removed
 	}
+	else if(instruction.find("EXIT") == 0)
+	{
+		instruction = instruction.erase(0,5);
+		commandExit();// may change if the "EXIT " part of the string needs to be removed
+	}
+	else if(instruction.find("CREATE") == 0)
+	{
+		instruction = instruction.erase(0,6);
+		commandCreate(instruction);
+	}
+	else if(instruction.find("UPDATE") == 0)
+	{
+		instruction = instruction.erase(0,6);
+		commandUpdate(instruction);
+	}
+	else if(instruction.find("INSERTINTO") == 0)//since whitespace will be eliminated
+	{
+		instruction = instruction.erase(0,10);//removes INSERT INTO
+		commandInsert(instruction);
+	}
 	else if(instruction.find("DROP") == 0)
 	{
 		instruction = instruction.erase(0,5);
 		commandDrop(instruction);// may change if the "DROP " part of the string needs to be removed
 	}
-	else if(instruction.find("EXIT") == 0)
+	else if(instruction.find("DELETE") == 0)
 	{
-		instruction = instruction.erase(0,5);
-		commandExit();// may change if the "EXIT " part of the string needs to be removed
+		instruction = instruction.erase(0,6);
+		commandDelete(instruction);
 	}
 	else
 	{
