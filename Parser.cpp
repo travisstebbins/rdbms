@@ -196,19 +196,59 @@ void Parser::commandParse(string instruction)//parses a command
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////COMMAND FUNCTIONS////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////
+void Parser::commandOpen(string filename)
+{
+	filename = filename.substr(0, filename.size()-1);//eliminates semicolon at end of command
+	db.readTableFromDisk(filename);//under the impression that the filename string has no ""
+}
+
+void Parser::commandClose(string tablename)
+{
+	tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
+	db.dropTable(tablename);//works the exact same way as commandDrop()
+}
+
+void  Parser::commandWrite(string filename)
+{
+	// We may need to create a writeTable function within DataBase
+}
+
+void Parser::commandExit()//For Travis
+{
+	
+}
+
 void Parser::commandShow(string tablename)
 {
-	tablename = tablename.substr(0, tablename.size()-1);
+	tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
 	db.showTable(tablename);
+}
+
+void Parser::commandCreate(string instr)// We'll need 
+{
+	
+}
+
+void Parser::commandUpdate(string instr)
+{
+	
+}
+
+void Parser::commandInsert(string instr)
+{
+	
 }
 
 void Parser::commandDrop(string tablename)
 {
-	tablename = tablename.substr(0, tablename.size()-1);
+	tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
 	db.dropTable(tablename);
 }
 
-void Parser::commandCreate(string tablename)
+void Parser::commandDelete(string instr)
 {
 	
 }
