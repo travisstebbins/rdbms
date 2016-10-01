@@ -1,20 +1,5 @@
 #include "Container.h"
 
-// constructor (probably not necessary)
-template<class T>
-Container::Container(Type type, T value)
-{
-	_type = type;
-	if (type == VARCHAR)
-	{
-		data._varchar = value;
-	}
-	else
-	{
-		data._int = value;
-	}
-}
-
 // constructor for varchars
 Container::Container(Type type, varchar value)
 {
@@ -83,8 +68,4 @@ void Container::operator=(const Container &c)
 	{
 		this->data._int = c.getInt();
 	}
-	
-	//return *this;
-	// Container newContainer(c.getType(), (c.getType() == VARCHAR) ? c.getVarchar() : c.getInt());
-	// return newContainer;
 }
