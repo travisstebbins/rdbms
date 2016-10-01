@@ -46,6 +46,10 @@ public:
 	void commandShow(string tablename);
 	
 	void commandDrop(string tablename);
+	
+	void commandInsert(string tablename);
+	
+	void commandCreate(string tablename);
 
 	//the following comment block concerns the insert function, and possibly the delete and update functions. but definitely the insert function.
 	//

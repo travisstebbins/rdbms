@@ -62,11 +62,16 @@ void Parser::commandParse(string instr)//parses a command
 void Parser::commandShow(string tablename)
 {
 	tablename = tablename.substr(0, tablename.size()-1);
-	db.showTable(string tableName);
+	db.showTable(tablename);
 }
 
+void Parser::commandDrop(string tablename)
+{
+	tablename = tablename.substr(0, tablename.size()-1);
+	db.dropTable(tablename);
+}
 
-void Parser::commandWrite(string filename)
+void Parser::void commandCreate(string tablename)
 {
 	
 }
