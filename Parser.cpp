@@ -202,7 +202,17 @@ void  Parser::commandWrite(string filename)
 
 void Parser::commandExit()//For Travis
 {
-	
+	int success = db.exit();
+	if (success != -1)
+	{
+		cout << "Saved " << success << " database tables" << endl;
+		exit(EXIT_SUCCESS);
+	}
+	else
+	{
+		cout << "Failed to save database tables" << endl;
+		exit(EXIT_FAILURE);
+	}
 }
 
 void Parser::commandShow(string tablename)

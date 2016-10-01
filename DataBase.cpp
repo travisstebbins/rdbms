@@ -352,3 +352,21 @@ http://stackoverflow.com/questions/19912751/how-to-initialize-a-vector-of-vector
 http://www.cplusplus.com/forum/beginner/85227/
 http://www.cplusplus.com/forum/beginner/85227/
 */
+
+int DataBase::exit()
+{
+	try
+	{
+		int count = 0;
+		for (auto it = dataBaseHashTable.begin(); it != dataBaseHashTable.end(); ++it)
+		{
+			it->second.writeToDisk();
+			count++;
+		}
+		return count;
+	}
+	catch (...)
+	{
+		return -1;
+	}
+}
