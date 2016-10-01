@@ -1,4 +1,4 @@
-all: Table.o DataBase.o Container.o Varchar.o testerfile.o
+all: Table.o DataBase.o Container.o Varchar.o Parser.o testerfile.o
 	g++ -std=c++11 -g -o dataBaseTests Table.o DataBase.o Container.o Varchar.o testerfile.o
 #main
 

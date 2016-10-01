@@ -90,4 +90,8 @@ public:
 	//This reads a database file from the disk and loads it into memory, 
 	//recreating the Table object and inserting it into the hash table of tables
 	void readTableFromDisk(string fileName);
+
+	// This saves all tables to disk; returns number of tables that
+	// were written to disk and -1 in case of error
+	int exit();
 };
