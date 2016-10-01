@@ -12,7 +12,7 @@
 
 class Parser{
 private:
-	DataBase.db;
+	DataBase db;
 public:
 	//string<vector> commandHistory; //TODO: implement this and send it to a file maybe
 	void commandOrQuery(string instruction);  //this is a relatively simple function. query instructions will always have an arrow "<-" somewhere in them (unless
