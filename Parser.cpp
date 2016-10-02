@@ -270,22 +270,26 @@ void Parser::commandInsert(string instr)
 	if (attributesIndex != string::npos)
 	{
 		name = instr.substr(nameIndex, (attributesIndex - nameIndex));
-		string expression = instr.substr(attributesIndex + 18);
+		attributesIndex += 18;
+		string expression = instr.substr(attributesIndex);
 		Table result = queryParse("tmp", expression);
 		db.getTable(name).insertRecord(result);
-	}			
-	attributesIndex = instr.find("VALUESFROM");
-	if (attributesIndex == string::npos)
-	{
-		throw "VALUESFROM not found";
 	}
 	else
 	{
-		name = instr.substr(nameIndex, (attributesIndex - nameIndex));
-		attributesIndex += 10;
-		attributes = extractAttributes(instr.substr(attributesIndex));
-		db.getTable(name).insertRecord(attributes);
-	}	
+		attributesIndex = instr.find("VALUESFROM");
+		if (attributesIndex == string::npos)
+		{
+			throw "VALUESFROM not found";
+		}
+		else
+		{
+			name = instr.substr(nameIndex, (attributesIndex - nameIndex));
+			attributesIndex += 10;
+			attributes = extractAttributes(instr.substr(attributesIndex));
+			db.getTable(name).insertRecord(attributes);
+		}
+	}
 }
 
 void Parser::commandDrop(string tablename)
