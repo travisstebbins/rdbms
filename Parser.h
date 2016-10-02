@@ -1,4 +1,5 @@
 #include <vector>
+#include <cstring>
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -16,6 +17,7 @@ private:
 	DataBase db;
 	vector<string> stringToTokens (string boolExpression);
 	vector<string> convertBoolExpression (string boolExpression);
+	vector<string> extractAttributes (string attributeList);
 public:
 	//string<vector> commandHistory; //TODO: implement this and send it to a file maybe
 	void commandOrQuery(string instruction);  
