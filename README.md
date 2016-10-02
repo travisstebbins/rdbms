@@ -10,9 +10,13 @@ To view run the following command:
 `git checkout Deliverable-2`  
 
 ## Running Unit Test
-To run the unit tests run the following commands:  
-`make`  
-`./testerfile`  
+To run the parser unit tests run the following commands:  
+`make parserTest`  
+`./parserTests`  
+  
+To run the engine unit tests run the following commands:  
+`make engineTest`  
+`./engineTests`  
 
 ##View Test Output:  
 To view a test output of the data base run the following commands:  
