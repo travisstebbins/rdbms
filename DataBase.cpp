@@ -259,6 +259,18 @@ Table DataBase::crossProduct(string tableName1, string tableName2)
 		throw "One of the tables could not be found";
 }
 
+void DataBase::writeTableToDisk(string tableName)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	
+	if(getTable != dataBaseHashTable.end())
+	{
+		getTable->second.writeToDisk();
+	}
+	else
+		throw "Table could not be found";
+}
+
 void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creates a table from it
 {
 	ifstream ifs (fileName, ifstream::in);//inputfile creator
