@@ -231,9 +231,61 @@ void Parser::commandUpdate(string instr)
 	
 }
 
+// split function from here: http://code.runnable.com/VHb0hWMZp-ws1gAr/splitting-a-string-into-a-vector-for-c%2B%2B
+vector<string> split(string str, char delimiter) {
+  vector<string> internal;
+  stringstream ss(str); // Turn the string into a stream.
+  string tok;
+  
+  while(getline(ss, tok, delimiter)) {
+    internal.push_back(tok);
+  }
+  
+  return internal;
+}
+
+vector<string> Parser::extractAttributes (string attributeList)
+{
+	attributeList.erase(remove(attributeList.begin(), attributeList.end(), '\r'), attributeList.end());
+	attributeList.erase(remove(attributeList.begin(), attributeList.end(), '\n'), attributeList.end()); 
+	attributeList.erase(remove(attributeList.begin(), attributeList.end(), '\t'), attributeList.end()); 
+	attributeList.erase(remove(attributeList.begin(), attributeList.end(), ' '), attributeList.end()); 
+	attributeList.erase(remove(attributeList.begin(), attributeList.end(), '('), attributeList.end()); 
+	attributeList.erase(remove(attributeList.begin(), attributeList.end(), ')'), attributeList.end());
+	vector<string> attributes = split(attributeList, ',');
+	return attributes;
+}
+
 void Parser::commandInsert(string instr)
 {
-	
+	string name;
+	vector<string> attributes;
+	int nameIndex = instr.find("INSERTINTO");
+	if (nameIndex == string::npos)
+	{
+		throw "INSERTINTO not found";
+	}
+	nameIndex += 10;
+	int attributesIndex = instr.find("VALUESFROMRELATION");
+	if (attributesIndex != string::npos)
+	{
+		name = instr.substr(nameIndex, (attributesIndex - nameIndex));
+		string expression = instr.substr(attributesIndex + 18);
+		Table result = queryParse("tmp", expression);
+		db.getTable(name).insertRecord(result);
+	}			
+	attributesIndex = instr.find("VALUESFROM");
+	if (attributesIndex == string::npos)
+	{
+		throw "VALUESFROM not found";
+	}
+	else
+	{
+		name = instr.substr(nameIndex, (attributesIndex - nameIndex));
+		attributesIndex += 10;
+		attributes = extractAttributes(instr.substr(attributesIndex));
+		db.getTable(name).insertRecord(attributes);
+	}	
 }
 
 void Parser::commandDrop(string tablename)
@@ -244,5 +296,6 @@ void Parser::commandDrop(string tablename)
 
 void Parser::commandDelete(string instr)
 {
-	
+
 }
+
