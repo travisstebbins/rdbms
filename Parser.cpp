@@ -195,9 +195,9 @@ void Parser::commandClose(string tablename)
 	db.dropTable(tablename);//works the exact same way as commandDrop()
 }
 
-void  Parser::commandWrite(string filename)
+void  Parser::commandWrite(string tableName)
 {
-	// We may need to create a writeTable function within DataBase
+	db.writeTableToDisk(tableName);
 }
 
 void Parser::commandExit()//For Travis

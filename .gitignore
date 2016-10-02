@@ -4,4 +4,5 @@ main
 *.table
 *.bak
 dataBaseTests
-
+engineTests
+parserTests

@@ -5,37 +5,6 @@
 #include <vector>
 #include <typeinfo>
 
-
-//This file contains some of the implemented test cases.
-//to run it, replace the makefile with makefile_modified, rename makefile_modified to makefile, and use "make" normally.
-
-/*
-SCENARIO("A database table is created", "createTable") {
-	pair<string, int> xcoord = {"x", 5};
-        pair<string, int> ycoord = {"y", 10};
-        pair<string, int> zcoord = {"z", 2};
-        string name = "points";
-        vector<pair<string, int>> attributespoints = {xcoord, ycoord, zcoord};
-        vector<string> primarykeyspoints = {"x", "y"};
-        
-	DataBase cp; //coordinate plane. not actually important because these are just tests
-        cp.createTable(name, attributespoints, primarykeyspoints);
-	//REQUIRE(dataBaseHashTable.find(name) == dataBaseHashTable.end());
-	//cp.createTable(name, attributespoints, primarykeyspoints);
-	//GIVEN("A table name, a vector of attributes, and a vector of primary keys"){
-
-	//}
-}
-*/
-//int main()
-//{
-
-
-template <typename T, typename V>
-bool typechecker(T t, V v){	//capable of recieving inputs of any type. this function is used to ensure that the proper variable
-	return (typeid(t).name()) == (typeid(v).name()); // types are being stored.
-}
-
 TEST_CASE("Initialize and Insert Into Table", "[Table]")
 {
 	pair<string, int> p1 {"name", 20};

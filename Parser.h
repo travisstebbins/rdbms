@@ -47,12 +47,11 @@ public:
 	//TODO: ask about a close function
 	//maybe just use drop table without saving first?
 	
-	void commandWrite(string filename); //TODO: ask Ryan how the Table::writeToDisk() function works
+	void commandWrite(string tableName);
 
 	void commandShow(string tablename);
 	
 	void commandExit();
-	//TODO: find a way to save all non-view tables before closing
 	
 	void commandCreate(string instr);
 	
