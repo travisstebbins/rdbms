@@ -504,8 +504,8 @@ Table& Table::operator=(const Table& other)
 
 void Table::writeToDisk()//writes a table to a .table file
 {
-	string fName = name + ".table";
-	ofstream ofs(fName, ofstream::out);// creates the output file object, that outputs to a .table file
+	string path = "tableFiles/" + name + ".table";
+	ofstream ofs(path, ofstream::out);// creates the output file object, that outputs to a .table file
 
 	ofs <<  "name: " + name + "\n";//first line of table chunk, stores table name
 	ofs << "attributes: " ;//second line of table chunk, stores table attributes
