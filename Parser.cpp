@@ -283,24 +283,18 @@ void Parser::commandCreate(string instr)// We'll need
 	instr = instr.erase(0,instr.find("("));//erases section of the line containing the name
 	
 	//function here for getting attributes
+	aInstr = instr.substr(0, pIndex-1);//sub string of attribute list
+	instr = erase(0,pIndex);//erase everything up until PRIMARYKEY
+	attributes = commandAttributes(aInstr);//get attributes
 	
 	int pIndex = instr.find("PRIMARYKEY");
 	if (nameIndex == string::npos)
 	{
 		throw "PRIMARYKEY not found";
 	}
-	aInstr = instr.substr(0, pIndex-1);//sub string of attribute list
-	instr = erase(0,pIndex);//erase everything up until PRIMARYKEY
-	//attributes = commandAttributes(aInstr);//get attributes
+	primKeys = commandPrimKeys(instr);//get the primary keys
 	
-	
-	//command here for removing everything until primary keys
-	
-	//add some exceptions cases for not finding everything we want
-	
-	primKeys = commandPrimKeys(instr);
-	
-	//db.createTable(name, attributes, prinKeys);
+	db.createTable(name, attributes, prinKeys);
 	
 }
 
