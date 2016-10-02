@@ -273,7 +273,8 @@ void DataBase::writeTableToDisk(string tableName)
 
 void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creates a table from it
 {
-	ifstream ifs (fileName, ifstream::in);//inputfile creator
+	string path = "tableFiles/" + fileName;
+	ifstream ifs (path, ifstream::in);//inputfile creator
 	
 	string tName;//name to be used as arg
 	vector<pair<string, int> > tAttributes;//atribute vector to be used as arg
