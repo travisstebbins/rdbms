@@ -28,11 +28,6 @@ To run the engine unit tests run the following commands:
 `make engineTest`  
 `./engineTests`  
 
-##View Test Output:  
-To view a test output of the data base run the following commands:  
-`make main`  
-`./main`  
-
 ## Submodules
 Here are the sources for the submodules we are using.
 
