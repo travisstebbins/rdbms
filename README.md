@@ -23,6 +23,11 @@ To run the parser on the command line run the following commands:
 To run the parser unit tests run the following commands:  
 `make parserTest`  
 `./parserTests`  
+
+There is currently a Seg Fault in the Unit Tests for the Parser but it runs with standard input  
+To test from standard input you can run:  
+`make main`  
+`./main < parserCLITest`  
   
 To run the engine unit tests run the following commands:  
 `make engineTest`  
