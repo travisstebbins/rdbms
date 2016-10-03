@@ -9,6 +9,16 @@ Deliverable 2 was marked as an official release and is under the tag Deliverable
 To view run the following command:  
 `git checkout Deliverable-2`  
 
+## View Deliverable 3  
+Deliverable 3 was marked as an official release and is under the tag Deliverable-3.  
+To view run the following command:  
+`git checkout Deliverable-3`
+
+## Run Parser  
+To run the parser on the command line run the following commands:  
+`make main`  
+`./main`
+
 ## Running Unit Test
 To run the parser unit tests run the following commands:  
 `make parserTest`  

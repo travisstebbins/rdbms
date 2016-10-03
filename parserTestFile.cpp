@@ -1,12 +1,102 @@
 #define CATCH_CONFIG_MAIN
 #include "Catch/include/catch.hpp"
 #include "DataBase.h"
+#include "Parser.h"
 #include <iostream>
 #include <vector>
 
-TEST_CASE("Initialize Parser", "[Parser]")
+TEST_CASE("Parser", "[Parser]")
 {
-	cout << "Some Tests" << endl;
-	REQUIRE(true == true);
+	SECTION("Initialize Parser", "[Parser]")
+	{
+		Parser argParser;
+	}
+	
+	Parser argParser;
+	string instruction;
+	
+	SECTION("Create Table")
+	{
+		instruction = "CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);";
+		commandOrQuery(instruction);
+	}
+	
+	SECTION("Insert Table")
+	{
+		instruction = "CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);";
+		commandOrQuery(instruction);
+		instruction = "INSERT INTO animals VALUES FROM (\"Joe\", \"cat\", 4);";
+		commandOrQuery(instruction);
+		instruction = "INSERT INTO animals VALUES FROM (\"Spot\", \"dog\", 10);";
+		commandOrQuery(instruction);
+		instruction = "INSERT INTO animals VALUES FROM (\"Snoopy\", \"dog\", 3);";
+		commandOrQuery(instruction);
+		instruction = "INSERT INTO animals VALUES FROM (\"Tweety\", \"bird\", 1);";
+		commandOrQuery(instruction);
+		instruction = "INSERT INTO animals VALUES FROM (\"Joe\", \"bird\", 2);";
+		commandOrQuery(instruction);
+	}
+	
+	instruction = "CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);";
+	commandOrQuery(instruction);
+	instruction = "INSERT INTO animals VALUES FROM (\"Joe\", \"cat\", 4);";
+	commandOrQuery(instruction);
+	instruction = "INSERT INTO animals VALUES FROM (\"Spot\", \"dog\", 10);";
+	commandOrQuery(instruction);
+	instruction = "INSERT INTO animals VALUES FROM (\"Snoopy\", \"dog\", 3);";
+	commandOrQuery(instruction);
+	instruction = "INSERT INTO animals VALUES FROM (\"Tweety\", \"bird\", 1);";
+	commandOrQuery(instruction);
+	instruction = "INSERT INTO animals VALUES FROM (\"Joe\", \"bird\", 2);";
+	commandOrQuery(instruction);
+	
+	SECTION("Show")
+	{
+		instruction = "SHOW animals;";
+		commandOrQuery(instruction);
+	}
+	
+	SECTION("Select")
+	{
+		instruction = "dogs <- select (kind == \"dog\") animals;";
+		commandOrQuery(instruction);
+		instruction = "old_dogs <- select (years > 10) dogs;";
+		commandOrQuery(instruction);
+		instruction = "cats_or_dogs <- dogs + (select (kind == \"cat\") animals);";
+		commandOrQuery(instruction);
+	}
+	
+	SECTION("Project")
+	{
+		instruction = "CREATE TABLE species (kind VARCHAR(10)) PRIMARY KEY (kind);";
+		commandOrQuery(instruction);
+		instruction = "INSERT INTO species VALUES FROM RELATION project (kind) animals;";
+		commandOrQuery(instruction);
+	}
+	
+	SECTION("Rename")
+	{
+		instruction = "a <- rename (aname, akind) (project (name, kind) animals);";
+		commandOrQuery(instruction);
+		instruction = "common_names <- project (name) (select (aname == name && akind != kind) (a * animals));"
+		commandOrQuery(instruction);
+		instruction = "answer <- common_names;";
+		commandOrQuery(instruction);
+		instruction = "SHOW answer;";
+		commandOrQuery(instruction);
+	}
+	
+	SECTION("Write")
+	{
+		instruction = "WRITE animals;";
+		commandOrQuery(instruction);
+	}
+	
+	SECTION("Close")
+	{
+		instruction = "CLOSE animals;";
+		commandOrQuery(instruction);
+	}
+	
 	
 }
