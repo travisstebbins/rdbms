@@ -1,11 +1,18 @@
+#pragma once
+
 #include <vector>
 #include <cstring>
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <stack>
+#include <utility>
+#include <unordered_map>
+#include <cctype>
 #include "DataBase.h"
 #include "Table.h"
+
+using namespace std;
 //we still need to include a LOT more stuff
 //should we include DataBase.h here or in Parser.cpp?
 
@@ -18,7 +25,14 @@ private:
 	vector<string> stringToTokens (string boolExpression);
 	vector<string> convertBoolExpression (string boolExpression);
 	vector<string> extractAttributes (string attributeList);
+	vector<pair<string, int>> commandAttributes(string instr);
+	vector<string> commandPrimKeys(string instr);
+	
 public:
+	void runOnCommandLine();
+	
+	void runOnSocket();
+	
 	//string<vector> commandHistory; //TODO: implement this and send it to a file maybe
 	void commandOrQuery(string instruction);  
 	//this is a relatively simple function. query instructions will always have an arrow "<-" somewhere in them (unless

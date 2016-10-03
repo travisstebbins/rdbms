@@ -244,12 +244,13 @@ Table DataBase::crossProduct(string tableName1, string tableName2)
 		
 		for(auto iter1 = tableData1.begin(); iter1 != tableData1.end(); iter1++)
 		{
+			vector<Container> data = iter1->second;
 			for(auto iter2 = tableData2.begin(); iter2 != tableData2.end(); iter2++)
 			{
-				vector<Container> data = iter1->second;
+				vector<Container> newData = data;
 				vector<Container> data2 = iter2->second;
-				data.insert(data.end(), data2.begin(), data2.end());	//Combine into one vector of attributes
-				tableCross.insertRecord(data);							//Insert combined record into table
+				newData.insert(newData.end(), data2.begin(), data2.end());	//Combine into one vector of attributes
+				tableCross.insertRecord(newData);							//Insert combined record into table
 			}
 		}	
 		

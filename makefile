@@ -1,8 +1,8 @@
 all: Table.o DataBase.o Container.o Varchar.o Parser.o parserTestFile.o
 	g++ -std=c++11 -g -o parserTests Table.o DataBase.o Container.o Varchar.o parserTestFile.o
 
-main: Table.o DataBase.o Parser.o main.cpp
-	g++ -std=c++11 -o main main.cpp Table.o DataBase.o Container.o Varchar.o
+main: Table.o DataBase.o Parser.o Container.o Varchar.o Parser.o main.cpp
+	g++ -std=c++11 -o main main.cpp Table.o DataBase.o Container.o Varchar.o Parser.o
 
 parserTest: Table.o DataBase.o Container.o Varchar.o Parser.o parserTestFile.o
 	g++ -std=c++11 -g -o parserTests Table.o DataBase.o Container.o Varchar.o parserTestFile.o
