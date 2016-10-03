@@ -253,10 +253,26 @@ void Parser::commandExit()//For Travis
 	}
 }
 
-void Parser::commandShow(string tablename)
+void Parser::commandShow(string tableName)
 {
 	//tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
-	cout << db->showTable(tablename) << endl;
+	try 
+	{
+		Table *table = db->getTable(tableName);
+		Table *view = db->getView(tableName);
+		if(table != NULL)
+			cout << db->showTable(tableName) << endl;
+		else if(view != NULL)
+			cout << db->showView(tableName) << endl;
+		else
+			throw "Not a table or view";
+	}
+	catch(...)
+	{
+		
+	}
+		
+	
 }
 
 vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
