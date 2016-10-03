@@ -1,11 +1,11 @@
-all: Table.o DataBase.o Container.o Varchar.o Parser.o parserTestFile.o
-	g++ -std=c++11 -g -o parserTests Table.o DataBase.o Container.o Varchar.o parserTestFile.o
+all: Table.o DataBase.o Container.o Varchar.o Parser.o parserTestFile.o Parser.o
+	g++ -std=c++11 -g -o parserTests Table.o DataBase.o Container.o Varchar.o parserTestFile.o Parser.o
 
 main: Table.o DataBase.o Parser.o Container.o Varchar.o Parser.o main.cpp
 	g++ -std=c++11 -o main main.cpp Table.o DataBase.o Container.o Varchar.o Parser.o
 
-parserTest: Table.o DataBase.o Container.o Varchar.o Parser.o parserTestFile.o
-	g++ -std=c++11 -g -o parserTests Table.o DataBase.o Container.o Varchar.o parserTestFile.o
+parserTest: Table.o DataBase.o Container.o Varchar.o Parser.o parserTestFile.o Parser.o
+	g++ -std=c++11 -g -o parserTests Table.o DataBase.o Container.o Varchar.o parserTestFile.o Parser.o
 	
 engineTest: Table.o DataBase.o Container.o Varchar.o Parser.o engineTestFile.o
 	g++ -std=c++11 -g -o engineTests Table.o DataBase.o Container.o Varchar.o engineTestFile.o
@@ -13,7 +13,7 @@ engineTest: Table.o DataBase.o Container.o Varchar.o Parser.o engineTestFile.o
 boolConverterTester: Table.o DataBase.o Parser.o boolConverterTester.cpp
 	g++ -std=c++11 -g -o boolConverterTester boolConverterTester.cpp Table.o DataBase.o Container.o Varchar.o
 	
-parserTestFile.o: DataBase.h parserTestFile.cpp
+parserTestFile.o: DataBase.h Parser.h parserTestFile.cpp
 	g++ -std=c++11 -c -g parserTestFile.cpp
 
 engineTestFile.o: Table.h DataBase.h Container.h Varchar.h engineTestFile.cpp
