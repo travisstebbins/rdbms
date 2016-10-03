@@ -158,7 +158,6 @@ string DataBase::showTable(string tableName)
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		cout << "made it into show\n";
 		return dataBaseHashTable[tableName]->show();
 	}
 	else

@@ -267,7 +267,6 @@ void Parser::commandShow(string tablename)
 
 vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
 {
-	cout << "commandPrimKeys getting passed string: " << instr << endl;
 	instr.erase(0,1);//eliminates left parenthese
 	instr = instr.substr(0,instr.size()-1);//eliminate right parenthese
 	
@@ -340,11 +339,6 @@ void Parser::commandCreate(string instr)// We'll need
 	}
 	//primKeys = commandPrimKeys(instruction);//get the primary keys
 	primKeys = extractAttributes(instruction);
-	cout << "Table name: " << name << endl;
-	cout << "Attributes: " << endl;
-	printVector(attributes);
-	cout << "Primary Keys: " << endl;
-	printVector(primKeys);
 	db->createTable(name, attributes, primKeys);
 	
 }
@@ -401,11 +395,8 @@ void Parser::commandInsert(string instr)
 		else
 		{
 			name = instr.substr(0, attributesIndex);
-			cout << "name to insert into: " << name << endl;
 			attributesIndex += 10;
 			attributes = extractAttributes(instr.substr(attributesIndex));
-			cout << "attributes: " << endl;
-			printVector(attributes);
 			db->getTable(name)->insertRecord(attributes);
 		}
 	}
