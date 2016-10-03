@@ -158,7 +158,7 @@ void DataBase::updateTableRecord(string tableName, vector<string> desiredAttribu
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		getTable->second.updateRecord(desiredAttributes, values, boolExpressions);
+		getTable->second->updateRecord(desiredAttributes, values, boolExpressions);
 	}
 	else
 		throw "Table could not found";
