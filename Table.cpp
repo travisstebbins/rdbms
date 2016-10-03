@@ -149,6 +149,7 @@ bool Table::evaluate(vector<Container>& entry, vector<string> boolExpressions)
 // inserts a record into the table from a vector of Container objects
 void Table::insertRecord(vector<Container> entry)
 {
+	cout << "entered Table::insertRecord(vector<Container> entry)" << endl;
 	// compute the entry's hash key based on its primary keys
 	string hashString = "";
 	for (int i = 0; i < primaryKeyIndices.size(); ++i)
@@ -164,13 +165,25 @@ void Table::insertRecord(vector<Container> entry)
 	}
 	hash<string> str_hash;
 	size_t hash = str_hash(hashString);
+	cout << "hash value: " << hash << endl;
 
 	// check if the entry is already in the table
 	unordered_map<size_t, vector<Container>>::const_iterator checkEntryUniq = data.find(hash);
 	// if not, add to the table
 	if(checkEntryUniq == data.end())
 	{
+		cout << "entry is unique, add to table" << endl;
+		if (entry[0].getType() == Container::VARCHAR) {
+			cout << "entry type is VARCHAR" << endl;
+			cout << "entry data is " << entry[0].getVarchar().getString() << endl;
+		}
+		else {
+			cout << "entry type is INTEGER" << endl;
+			cout << "entry data is " << entry[0].getInt() << endl;
+		}
 		data[hash] = entry;
+		cout << "successfully inserted data to hash table" << endl;
+		cout << "table has " << data.size() << " entries" << endl;
 		writeToDisk();
 	}
 	else
@@ -196,6 +209,7 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 			}
 		}
 	}
+	data = {};
 	writeToDisk();
 }
 
@@ -321,6 +335,7 @@ Table Table::rename(string _name, vector<string> newNames)
 // return the table in human-readable format as a string
 string Table::show()
 {
+	cout << "Table has " << data.size() << " entries" << endl;
 	string s = "Table: " + name + "\n";
 	// loop and print attributes
 	for (int i = 0; i < attributes.size(); ++i)
@@ -329,8 +344,10 @@ string Table::show()
 	}
 	s += "\n";
 	// loop and print data
+	cout << "about to loop through table in show function" << endl;
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
+		cout << "iterating through table" << endl;
 		for (int i = 0; i < it->second.size(); ++i)
 		{
 			if ((it->second)[i].getType() == Container::VARCHAR)
@@ -371,6 +388,7 @@ vector<string> Table::getPrimaryKeys()
 
 void Table::insertRecord(vector<string> entry)
 {	
+	cout << "entered Table::insertRecord(vector<string> entry)" << endl;
 	vector<Container> newEntry;
 	// loop through entry
 	for (int i = 0; i < entry.size(); ++i)
@@ -378,14 +396,17 @@ void Table::insertRecord(vector<string> entry)
 		// if the value data type is a VARCHAR
 		if (attributes[i].second > -1)
 		{
+			cout << "inserting VARCHAR" << endl;
 			varchar vc(attributes[i].second);
 			vc.setString(entry[i]);
+			cout << "set vc string to " << entry[i] << endl;
 			Container c(Container::VARCHAR, vc);
 			newEntry.push_back(c);
 		}
 		// else if the value data type is an INTEGER
 		else
 		{
+			cout << "inserting INTEGER" << endl;
 			int value = strtol(entry[i].c_str(), NULL, 10);
 			Container c(Container::INTEGER, value);
 			newEntry.push_back(c);

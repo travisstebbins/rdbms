@@ -26,8 +26,8 @@ class DataBase
 private:
 	//This is used to store all of the tables that are created
 	//The key used will be unique and based on the table name
-	unordered_map<string, Table> dataBaseHashTable;
-	unordered_map<string, Table> viewHashTable;
+	unordered_map<string, Table*> dataBaseHashTable;
+	unordered_map<string, Table*> viewHashTable;
 	
 public:
 	

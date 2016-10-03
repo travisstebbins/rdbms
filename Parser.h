@@ -21,7 +21,7 @@ using namespace std;
 
 class Parser{
 private:
-	DataBase db;
+	DataBase *db;
 	vector<string> stringToTokens (string boolExpression);
 	vector<string> convertBoolExpression (string boolExpression);
 	vector<string> extractAttributes (string attributeList);
