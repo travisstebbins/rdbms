@@ -61,6 +61,8 @@ public:
 	//Calls deleteRecord on Table tableName
 	void deleteFromTable(string name, vector<string> boolExpressions);
 	
+	void updateTableRecord(string tableName, vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions);
+	
 	//Wrapper function for Table show()
 	//Calls show on Table tableName
 	string showTable(string tableName);

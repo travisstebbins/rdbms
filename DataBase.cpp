@@ -152,6 +152,18 @@ void DataBase::deleteFromTable(string tableName, vector<string> boolExpressions)
 		throw "Table could not found";
 }
 
+void DataBase::updateTableRecord(string tableName, vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	
+	if(getTable != dataBaseHashTable.end())
+	{
+		getTable->second.updateRecord(desiredAttributes, values, boolExpressions);
+	}
+	else
+		throw "Table could not found";
+}
+
 string DataBase::showTable(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
