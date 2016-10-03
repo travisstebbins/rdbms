@@ -382,4 +382,6 @@ int DataBase::exit()
 	}
 	catch (...)
 	{
-		return -
+		return -1;
+	}
+}
