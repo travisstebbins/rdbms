@@ -234,8 +234,9 @@ Table* DataBase::crossProduct(string tableName1, string tableName2)
 		vector<pair<string, int> > table2Attr = getTable2->second->getAttributes();
 		vector<pair<string, int> > tableAttr = table1Attr;
 		tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());	//vector holding the combined attributes
-		
-		vector<string> primaryKeys = getTable1->second->getPrimaryKeys();			//just use keys from the first table
+		vector<string> primaryKeys = getTable1->second->getPrimaryKeys();
+		vector<string> primaryKeys2 = getTable2->second->getPrimaryKeys();
+		primaryKeys.insert(primaryKeys.end(), primaryKeys2.begin(), primaryKeys2.end());			//Use combined keys so everything is unique
 		
 		Table *tableCross = new Table(tableName, tableAttr, primaryKeys);
 		
@@ -381,6 +382,4 @@ int DataBase::exit()
 	}
 	catch (...)
 	{
-		return -1;
-	}
-}
+		return -

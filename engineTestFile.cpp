@@ -485,15 +485,14 @@ TEST_CASE("Test Union Difference and Cross Product", "[DataBase]")
 	SECTION("Test Table crossProduct(string tableName1, string tableName2)")
 	{
 		pair<string, int> p4 {"test", 20};
-		pair<string, int> p5 {"birthday", -1};
 
-		vector<pair<string, int>> attributes2 = {p4, p5};
+		vector<pair<string, int>> attributes2 = {p4};
 		vector<string> primaryKeys2 = {"test"};
 
-		vector<string> v6 = {"One", "1027"};
-		vector<string> v7 = {"Two", "228"};
+		vector<string> v6 = {"One"};
+		vector<string> v7 = {"Two"};
 
-		vector<pair<string, int>> attributes3 = {p1, p2, p3, p4, p5};
+		vector<pair<string, int>> attributes3 = {p1, p2, p3, p4};
 		
 		db.createTable("testTable", attributes2, primaryKeys2);
 		db.insertIntoTable("testTable", v6);
@@ -502,17 +501,23 @@ TEST_CASE("Test Union Difference and Cross Product", "[DataBase]")
 		db.insertIntoTable("animals", v1);
 		db.insertIntoTable("animals", v2);
 
-		Table testTable2("testTable2", attributes3, primaryKeys1);
+		Table testTable2("testTable2", attributes3, {"name", "kind", "test"});
 
-		vector<string> v8 = {"Joe", "cat", "4", "One", "1027"};
-		vector<string> v9 = {"Spot", "dog", "10", "Two", "228"};
+		vector<string> v8 = {"Joe", "cat", "4", "One"};
+		vector<string> v9 = {"Spot", "dog", "10", "One"};
+		vector<string> v10 = {"Joe", "cat", "4", "Two"};
+		vector<string> v11 = {"Spot", "dog", "10", "Two"};
 
 		testTable2.insertRecord(v8);
 		testTable2.insertRecord(v9);
+		testTable2.insertRecord(v10);
+		testTable2.insertRecord(v11);
 
 
 		Table testTable3 = db.crossProduct("animals", "testTable");
-
+		
+		cout << testTable3.show() << endl;
+		
 		REQUIRE(testTable2 == testTable3);
 
 	}

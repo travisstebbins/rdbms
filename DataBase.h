@@ -41,8 +41,8 @@ public:
 	//Creates a new Table object and inserts it into the hash table of tables
 	//Table newTable table object to be inserted into databse
 	void createTable(Table *newTable);
-
-	
+	//Creates a new view Table object and inserts it into the hash table of views
+	//Table newView table object to be inserted into databse
 	void createView(Table *newView);
 	
 	//Delete the table from the hash table of tables 

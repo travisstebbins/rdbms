@@ -29,6 +29,9 @@ private:
 	vector<string> commandPrimKeys(string instr);
 	
 public:
+
+	Parser() {};
+	
 	void runOnCommandLine();
 	
 	void runOnSocket();
