@@ -115,6 +115,33 @@ Table* DataBase::getView(string viewName)
 		throw "Table does not exist.";
 }
 
+bool DataBase::containsTable(string tableName)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+
+	if(getTable != dataBaseHashTable.end())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+bool DataBase::containsView(string viewName)
+{
+	auto getTable = viewHashTable.find(viewName);
+
+	if(getTable != viewHashTable.end())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void DataBase::insertIntoTable(string tableName, vector<string> entry)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
@@ -167,10 +194,15 @@ void DataBase::updateTableRecord(string tableName, vector<string> desiredAttribu
 string DataBase::showTable(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
+	auto getView = viewHashTable.find(tableName);
 	
 	if(getTable != dataBaseHashTable.end())
 	{
 		return dataBaseHashTable[tableName]->show();
+	}
+	else if(getView != viewHashTable.end())
+	{
+		return viewHashTable[tableName]->show();
 	}
 	else
 		throw "Table could not be found";

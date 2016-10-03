@@ -102,7 +102,8 @@ public:
 	/* --------------------------------------- */
 	
 	/* ---------- query functions ------------ */
-	Table* queryParse(string qname, string instr);	//first thing this does is check for nested queries
+	void queryParse(string instr);
+	Table* queryParseHelper(string instr);	//first thing this does is check for nested queries
 	
 		
 	/* --------------------------------------- */

@@ -88,6 +88,9 @@ public:
 	Table* getTable(string tableName);
 	
 	Table* getView(string viewName);
+
+	bool containsTable(string tableName);
+	bool containsView(string viewName);
 	
 	//This reads a database file from the disk and loads it into memory, 
 	//recreating the Table object and inserting it into the hash table of tables
