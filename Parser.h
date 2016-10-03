@@ -27,6 +27,7 @@ private:
 	vector<string> extractAttributes (string attributeList);
 	vector<pair<string, int>> commandAttributes(string instr);
 	vector<string> commandPrimKeys(string instr);
+	enum QueryType { ERROR, RELATION, SELECT, PROJECT, RENAME, UNION, DIFFERENCE, PRODUCT, JOIN };
 	
 public:
 
@@ -102,8 +103,9 @@ public:
 	/* --------------------------------------- */
 	
 	/* ---------- query functions ------------ */
+	QueryType firstQuery (string instr);
 	void queryParse(string instr);
-	Table* queryParseHelper(string instr);	//first thing this does is check for nested queries
+	Table* queryParseHelper(string instr, int depth, int pair);	//first thing this does is check for nested queries
 	
 		
 	/* --------------------------------------- */

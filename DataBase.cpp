@@ -232,6 +232,21 @@ Table* DataBase::setUnion(string tableName1, string tableName2)
 		throw "One of the tables could not be found";
 }
 
+Table* DataBase::setUnion(Table *t1, Table *t2)
+{
+		vector<pair<string, int> > table1Attr = t1->getAttributes();
+		vector<pair<string, int> > table2Attr = t2->getAttributes();
+
+		if(table1Attr == table2Attr)	//Vector of attributes have to be the same in order to be union compatible
+		{
+			Table *tableUnion = t1;
+			tableUnion->insertRecord(t2);
+			return tableUnion;
+		}
+		else
+			throw "Tables are not union compatible";
+}
+
 Table* DataBase::setDifference(string tableName1, string tableName2)
 {
 	auto getTable1 = dataBaseHashTable.find(tableName1);
