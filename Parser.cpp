@@ -343,10 +343,7 @@ void Parser::commandCreate(string instr)// We'll need
 	
 }
 
-void Parser::commandUpdate(string instr)
-{
-	
-}
+
 
 // split function from here: http://code.runnable.com/VHb0hWMZp-ws1gAr/splitting-a-string-into-a-vector-for-c%2B%2B
 vector<string> split(string str, char delimiter) {
@@ -359,6 +356,33 @@ vector<string> split(string str, char delimiter) {
   }
   
   return internal;
+}
+
+void Parser::commandUpdate(string instr)
+{
+	string name;
+	
+	name = instr.substr(0, instr.find("SET"));//get name of table
+	instr.erase(0, instr.find("SET")+3);//erase previous part of string
+	
+	string sInstr = instr.substr(0, instr.find("WHERE"));//get set commands
+	instr.erase(0, instr.find("WHERE")+5);//erase previous part of string
+	
+	sInstr.erase(remove(sInstr.begin(), sInstr.end(), '('), sInstr.end()); 
+	sInstr.erase(remove(sInstr.begin(), sInstr.end(), ')'), sInstr.end());
+	
+	vector<string> sets = split(sInstr, ',');
+	vector<string> desired;
+	vector<string> values;
+	for(int i = 0; i < sets.size(); i++)
+	{
+		desired.push_back(sets[i].substr(0, sets[i].find("=")));
+		values.push_back(sets[i].substr(sets[i].find("=")+1, sets[i].length()-1));
+	}
+	
+	vector<string> cond = convertBoolExpression(instr);//condition
+	
+	db->updateTableRecord(name, desired, values, cond);
 }
 
 vector<string> Parser::extractAttributes (string attributeList)
