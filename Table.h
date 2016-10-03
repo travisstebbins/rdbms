@@ -37,16 +37,16 @@ class Table
 		Table() {}
 		Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys);
 		// data manipulation functions
-		Table select(string _name, vector<string> boolExpressions);
-		Table project(string _name, vector<string> desiredAttributes);
-		Table rename(string _name, vector<string> newNames);
+		Table* select(string _name, vector<string> boolExpressions);
+		Table* project(string _name, vector<string> desiredAttributes);
+		Table* rename(string _name, vector<string> newNames);
 		string show();
 		string getTableName();
 		vector<pair<string, int> > getAttributes();
 		vector<string> getPrimaryKeys();
 		const unordered_map<size_t, vector<Container>>& getData();
 		void insertRecord(vector<string> entry);
-		void insertRecord(Table relationship);
+		void insertRecord(Table *relationship);
 		void insertRecord(vector<Container> entry);
 		void deleteRecord(vector<string> boolExpressions);
 		void deleteRecord(size_t key);

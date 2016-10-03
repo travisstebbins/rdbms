@@ -99,7 +99,7 @@ public:
 	/* --------------------------------------- */
 	
 	/* ---------- query functions ------------ */
-	Table queryParse(string qname, string instr);	//first thing this does is check for nested queries
+	Table* queryParse(string qname, string instr);	//first thing this does is check for nested queries
 	
 		
 	/* --------------------------------------- */

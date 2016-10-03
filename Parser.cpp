@@ -301,7 +301,7 @@ vector< pair<string, int> > Parser::commandAttributes(string instr)
 		{
 			
 			eOne = pair.substr(0,pair.find("INTEGER")); //get the name of attribute
-			eTwo = 0;//signifies that the attribute is an integer
+			eTwo = -1;//signifies that the attribute is an integer
 			std::pair<string, int> attr = make_pair(eOne,eTwo);
 			atList.push_back(attr);
 			
@@ -388,8 +388,8 @@ void Parser::commandInsert(string instr)
 		name = instr.substr(0, attributesIndex);
 		attributesIndex += 18;
 		string expression = instr.substr(attributesIndex);
-		Table result = queryParse("tmp", expression);
-		db->getTable(name).insertRecord(result);
+		Table *result = queryParse("tmp", expression);
+		db->getTable(name)->insertRecord(result);
 	}
 	else
 	{
@@ -406,12 +406,12 @@ void Parser::commandInsert(string instr)
 			attributes = extractAttributes(instr.substr(attributesIndex));
 			cout << "attributes: " << endl;
 			printVector(attributes);
-			db->getTable(name).insertRecord(attributes);
+			db->getTable(name)->insertRecord(attributes);
 		}
 	}
 }
 
-Table Parser::queryParse(string qname, string instr)
+Table* Parser::queryParse(string qname, string instr)
 {
 	
 }
