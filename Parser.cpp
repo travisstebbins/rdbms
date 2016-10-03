@@ -415,6 +415,10 @@ void Parser::commandDrop(string tablename)
 
 void Parser::commandDelete(string instr)
 {
-
+	string name;
+	name = instr.substr(0, instr.find("WHERE"));//get name of table
+	instr.erase(0, instr.find("("));
+	vector<string> delVect = convertBoolExpression(instr);
+	db.deleteFromTable(name, delVect);
 }
 
