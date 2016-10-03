@@ -196,20 +196,21 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 			}
 		}
 	}
+	data = {};
 	writeToDisk();
 }
 
 // select entries from the table and return as a new Table object
-Table Table::select(string _name, vector<string> boolExpressions)
+Table* Table::select(string _name, vector<string> boolExpressions)
 {
-	Table view(_name, attributes, primaryKeys);
+	Table* view = new Table(_name, attributes, primaryKeys);
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
 		// if the entry satisfies the boolean expression,
 		//  add it to the table
 		if (evaluate(it->second, boolExpressions))
 		{
-			view.insertRecord(it->second);
+			view->insertRecord(it->second);
 		}
 	}
 	return view;
@@ -217,7 +218,7 @@ Table Table::select(string _name, vector<string> boolExpressions)
 
 // select a subset of the table's attributes and return as a new
 //  Table object, with associated entry values included
-Table Table::project(string _name, vector<string> desiredAttributes)
+Table* Table::project(string _name, vector<string> desiredAttributes)
 {
 	// check to ensure at least one primary key is included
 	//  in the prjection
@@ -251,7 +252,7 @@ Table Table::project(string _name, vector<string> desiredAttributes)
 			}
 		}
 	}
-	Table view(_name, newAttributes, primaryKeyMatches);
+	Table* view = new Table(_name, newAttributes, primaryKeyMatches);
 	// loop through table, inserting desired attributes of
 	//  all entries into new table
 	for (auto it = data.begin(); it != data.end(); ++it)
@@ -263,7 +264,7 @@ Table Table::project(string _name, vector<string> desiredAttributes)
 		}
 		try
 		{
-			view.insertRecord(newEntry);
+			view->insertRecord(newEntry);
 		}
 		catch(char const* c)
 		{
@@ -280,7 +281,7 @@ Table Table::project(string _name, vector<string> desiredAttributes)
 // written assuming attributes and newNames have same size
 // rename all of the table's attributes with new names and
 //  return as a new table
-Table Table::rename(string _name, vector<string> newNames)
+Table* Table::rename(string _name, vector<string> newNames)
 {
 	vector<pair<string, int>> newAttributes = attributes;
 	vector<string> newPrimaryKeys = primaryKeys;
@@ -297,13 +298,13 @@ Table Table::rename(string _name, vector<string> newNames)
 		}
 		newAttributes[i].first = newNames[i];
 	}
-	Table view(_name, newAttributes, newPrimaryKeys);
+	Table* view = new Table(_name, newAttributes, newPrimaryKeys);
 	// copy over all of the entries
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
 		try
 		{
-			view.insertRecord(it->second);
+			view->insertRecord(it->second);
 		}		
 		catch(char const* c)
 		{
@@ -370,7 +371,7 @@ vector<string> Table::getPrimaryKeys()
 }
 
 void Table::insertRecord(vector<string> entry)
-{	
+{
 	vector<Container> newEntry;
 	// loop through entry
 	for (int i = 0; i < entry.size(); ++i)
@@ -396,9 +397,9 @@ void Table::insertRecord(vector<string> entry)
 }
 
 // insert an entire existing table's entries into this table
-void Table::insertRecord(Table relationship)
+void Table::insertRecord(Table* relationship)
 {
-	unordered_map<size_t, vector<Container>> newData = relationship.data;
+	unordered_map<size_t, vector<Container>> newData = relationship->data;
 	// loop through table, inserting records
 	for (auto it = newData.begin(); it != newData.end(); ++it)
 	{

@@ -21,7 +21,7 @@ using namespace std;
 
 class Parser{
 private:
-	DataBase db;
+	DataBase *db;
 	vector<string> stringToTokens (string boolExpression);
 	vector<string> convertBoolExpression (string boolExpression);
 	vector<string> extractAttributes (string attributeList);
@@ -99,7 +99,7 @@ public:
 	/* --------------------------------------- */
 	
 	/* ---------- query functions ------------ */
-	Table queryParse(string qname, string instr);	//first thing this does is check for nested queries
+	Table* queryParse(string qname, string instr);	//first thing this does is check for nested queries
 	
 		
 	/* --------------------------------------- */

@@ -12,6 +12,7 @@
 DataBase::DataBase()
 {
 	dataBaseHashTable = {};
+	viewHashTable = {};
 }
 
 void DataBase::createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys)
@@ -20,17 +21,17 @@ void DataBase::createTable(string tableName, vector<pair<string, int>> attribute
 	
 	if(checkNameUniq == dataBaseHashTable.end())
 	{
-		Table newTable = Table(tableName, attributes, primaryKeys);
+		Table *newTable = new Table(tableName, attributes, primaryKeys);
 		dataBaseHashTable[tableName] = newTable;
-		newTable.writeToDisk();
+		newTable->writeToDisk();
 	}
 	else
 		throw "Table name already in use.";
 }
 
-void DataBase::createTable(Table newTable)
+void DataBase::createTable(Table *newTable)
 {
-	string tableName = newTable.getTableName();
+	string tableName = newTable->getTableName();
 	auto checkNameUniq = dataBaseHashTable.find(tableName);
 	
 	if(checkNameUniq == dataBaseHashTable.end())
@@ -41,9 +42,9 @@ void DataBase::createTable(Table newTable)
 		throw "Table already exists";
 }
 
-void DataBase::createView(Table newView)
+void DataBase::createView(Table *newView)
 {
-	string tableName = newView.getTableName();
+	string tableName = newView->getTableName();
 	auto checkNameUniq = viewHashTable.find(tableName);
 	
 	if(checkNameUniq == viewHashTable.end())
@@ -54,25 +55,25 @@ void DataBase::createView(Table newView)
 		throw "Table already exists";
 }
 
-Table DataBase::projectTable(string tableName, string _name, vector<string> desiredAttributes)
+Table* DataBase::projectTable(string tableName, string _name, vector<string> desiredAttributes)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
 	
 	if (getTable != dataBaseHashTable.end())
 	{
-		return getTable->second.project(_name, desiredAttributes);
+		return getTable->second->project(_name, desiredAttributes);
 	}
 	else
 		throw "Table does not exist";
 }
 
-Table DataBase::selectTable(string tableName, string _name, vector<string> boolExpressions)
+Table* DataBase::selectTable(string tableName, string _name, vector<string> boolExpressions)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		return getTable->second.select(_name, boolExpressions);
+		return getTable->second->select(_name, boolExpressions);
 	}
 	else
 		throw "Table does not exist";
@@ -90,19 +91,19 @@ void DataBase::dropTable(string tableName)
 		throw "Table does not exist.";
 }
 
-Table DataBase::getTable(string tableName)
+Table* DataBase::getTable(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		return getTable->second;
+		return dataBaseHashTable[tableName];
 	}
 	else
 		throw "Table does not exist.";
 }
 
-Table DataBase::getView(string viewName)
+Table* DataBase::getView(string viewName)
 {
 	auto getTable = viewHashTable.find(viewName);
 	
@@ -120,20 +121,20 @@ void DataBase::insertIntoTable(string tableName, vector<string> entry)
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		getTable->second.insertRecord(entry);
+		getTable->second->insertRecord(entry);
 	}
 	else
 		throw "Table could not be found";
 	
 }
 
-void DataBase::insertIntoTable(string tableName, Table relationships)
+void DataBase::insertIntoTable(string tableName, Table *relationships)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		getTable->second.insertRecord(relationships);
+		getTable->second->insertRecord(relationships);
 	}
 	else
 		throw "Table could not be found";
@@ -145,7 +146,7 @@ void DataBase::deleteFromTable(string tableName, vector<string> boolExpressions)
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		getTable->second.deleteRecord(boolExpressions);
+		getTable->second->deleteRecord(boolExpressions);
 	}
 	else
 		throw "Table could not found";
@@ -157,14 +158,13 @@ string DataBase::showTable(string tableName)
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		return getTable->second.show();
-		cout << "made it into show\n";
+		return dataBaseHashTable[tableName]->show();
 	}
 	else
 		throw "Table could not be found";
 }
 
-Table DataBase::setUnion(string tableName1, string tableName2)
+Table* DataBase::setUnion(string tableName1, string tableName2)
 {
 	
 	auto getTable1 = dataBaseHashTable.find(tableName1);
@@ -172,13 +172,13 @@ Table DataBase::setUnion(string tableName1, string tableName2)
 	
 	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
 	{
-		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
-		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+		vector<pair<string, int> > table1Attr = getTable1->second->getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second->getAttributes();
 
 		if(table1Attr == table2Attr)	//Vector of attributes have to be the same in order to be union compatible
 		{
-			Table tableUnion = Table(getTable1->second);
-			tableUnion.insertRecord(getTable2->second);
+			Table *tableUnion = getTable1->second;
+			tableUnion->insertRecord(getTable2->second);
 			return tableUnion;
 		}
 		else
@@ -188,7 +188,7 @@ Table DataBase::setUnion(string tableName1, string tableName2)
 		throw "One of the tables could not be found";
 }
 
-Table DataBase::setDifference(string tableName1, string tableName2)
+Table* DataBase::setDifference(string tableName1, string tableName2)
 {
 	auto getTable1 = dataBaseHashTable.find(tableName1);
 	auto getTable2 = dataBaseHashTable.find(tableName2);
@@ -196,21 +196,21 @@ Table DataBase::setDifference(string tableName1, string tableName2)
 	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
 	{
 		
-		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
-		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+		vector<pair<string, int> > table1Attr = getTable1->second->getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second->getAttributes();
 
 		if(table1Attr == table2Attr)		//Vector of attributes have to be the same in order to be difference compatible
 		{
-			Table tableDiff;
+			Table *tableDiff;
 			tableDiff = getTable1->second;	//Left hand side of set difference
 			
-			const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second.getData();
-			const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second.getData();
+			const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second->getData();
+			const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second->getData();
 			
 			for(auto iter = tableData1.begin(); iter != tableData1.end(); iter++)
 			{
 				if(tableData2.find(iter->first) != tableData2.end())	//remove from left hand table those that match in right hand table
-					tableDiff.deleteRecord(iter->first);					
+					tableDiff->deleteRecord(iter->first);					
 			}
 			return tableDiff;
 		}
@@ -221,7 +221,7 @@ Table DataBase::setDifference(string tableName1, string tableName2)
 		throw "One of the tables could not be found";
 }
 
-Table DataBase::crossProduct(string tableName1, string tableName2)
+Table* DataBase::crossProduct(string tableName1, string tableName2)
 {
 	auto getTable1 = dataBaseHashTable.find(tableName1);
 	auto getTable2 = dataBaseHashTable.find(tableName2);
@@ -230,17 +230,17 @@ Table DataBase::crossProduct(string tableName1, string tableName2)
 	{
 		string tableName = tableName1 + "x" + tableName2;
 		
-		vector<pair<string, int> > table1Attr = getTable1->second.getAttributes();
-		vector<pair<string, int> > table2Attr = getTable2->second.getAttributes();
+		vector<pair<string, int> > table1Attr = getTable1->second->getAttributes();
+		vector<pair<string, int> > table2Attr = getTable2->second->getAttributes();
 		vector<pair<string, int> > tableAttr = table1Attr;
 		tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());	//vector holding the combined attributes
 		
-		vector<string> primaryKeys = getTable1->second.getPrimaryKeys();			//just use keys from the first table
+		vector<string> primaryKeys = getTable1->second->getPrimaryKeys();			//just use keys from the first table
 		
-		Table tableCross(tableName, tableAttr, primaryKeys);
+		Table *tableCross = new Table(tableName, tableAttr, primaryKeys);
 		
-		const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second.getData();
-		const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second.getData();
+		const unordered_map<size_t, vector<Container>> tableData1 = getTable1->second->getData();
+		const unordered_map<size_t, vector<Container>> tableData2 = getTable2->second->getData();
 		
 		for(auto iter1 = tableData1.begin(); iter1 != tableData1.end(); iter1++)
 		{
@@ -250,7 +250,7 @@ Table DataBase::crossProduct(string tableName1, string tableName2)
 				vector<Container> newData = data;
 				vector<Container> data2 = iter2->second;
 				newData.insert(newData.end(), data2.begin(), data2.end());	//Combine into one vector of attributes
-				tableCross.insertRecord(newData);							//Insert combined record into table
+				tableCross->insertRecord(newData);							//Insert combined record into table
 			}
 		}	
 		
@@ -266,7 +266,7 @@ void DataBase::writeTableToDisk(string tableName)
 	
 	if(getTable != dataBaseHashTable.end())
 	{
-		getTable->second.writeToDisk();
+		getTable->second->writeToDisk();
 	}
 	else
 		throw "Table could not be found";
@@ -349,14 +349,14 @@ void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creat
 					
 		}
 		ifs.close();//closes filestream
-		Table t = Table(tName, tAttributes, tPrimKeys);//creates table
+		Table *t = new Table(tName, tAttributes, tPrimKeys);//creates table
 		
 		for(int i = 0; i < tData.size(); i++)
 		{
-			t.insertRecord(tData[i]);//adds entries to table
+			t->insertRecord(tData[i]);//adds entries to table
 		}
 		createTable(t);
-		t.writeToDisk();//saves again for consistency
+		t->writeToDisk();//saves again for consistency
 	}
 }
 
@@ -374,7 +374,7 @@ int DataBase::exit()
 		int count = 0;
 		for (auto it = dataBaseHashTable.begin(); it != dataBaseHashTable.end(); ++it)
 		{
-			it->second.writeToDisk();
+			it->second->writeToDisk();
 			count++;
 		}
 		return count;
