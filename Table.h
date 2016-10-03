@@ -36,6 +36,7 @@ class Table
 		// constructors
 		Table() {}
 		Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys);
+		~Table();
 		// data manipulation functions
 		Table* select(string _name, vector<string> boolExpressions);
 		Table* project(string _name, vector<string> desiredAttributes);
@@ -63,5 +64,5 @@ class Table
 				return false;
 			return true;
 		}
+		vector<pair<string, int>> operator=(const vector<pair<string, int>> vec);
 };
-

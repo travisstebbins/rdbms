@@ -182,7 +182,8 @@ void Table::insertRecord(vector<Container> entry)
 Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys)
 {
 	name = _name;
-	attributes = _attributes;
+	vector<pair<string, int>> copyAttributes = _attributes;
+	attributes = copyAttributes;
 	primaryKeys = _primaryKeys;
 	// store primary key indices
 	for (int i = 0; i < primaryKeys.size(); ++i)
@@ -200,10 +201,16 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 	writeToDisk();
 }
 
+Table::~Table()
+{
+
+}
+
 // select entries from the table and return as a new Table object
 Table* Table::select(string _name, vector<string> boolExpressions)
 {
-	Table* view = new Table(_name, attributes, primaryKeys);
+	vector<pair<string, int>> copyAttributes = attributes;
+	Table* view = new Table(_name, copyAttributes, primaryKeys);
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
 		// if the entry satisfies the boolean expression,
@@ -553,4 +560,16 @@ void Table::writeToDisk()//writes a table to a .table file
 	ofs << s;//
 	
 	ofs.close();//close file
+}
+
+vector<pair<string, int>> Table::operator=(const vector<pair<string, int>> vec)
+{
+	cout << "vector<pair<string, int>> assignment operator called" << endl;
+	vector<pair<string, int>> newVec;
+	for (int i = 0; i < vec.size(); ++i)
+	{
+		pair<string, int> p (vec[i].first, vec[i].second);
+		newVec.push_back(p);
+	}
+	return newVec;
 }

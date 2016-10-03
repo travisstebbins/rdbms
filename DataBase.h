@@ -75,6 +75,7 @@ public:
 	
 	//Return a view that contains the set union of two tables
 	Table* setUnion(string tableName1, string tableName2);
+	Table* setUnion(Table *t1, Table *t2);
 	
 	//Return a view that contains the set difference product of two tables
 	Table* setDifference(string tableName1, string tableName2);
