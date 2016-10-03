@@ -360,7 +360,7 @@ vector<string> split(string str, char delimiter) {
 
 void Parser::commandUpdate(string instr)
 {
-	string name;
+	string name;//name of relation
 	
 	name = instr.substr(0, instr.find("SET"));//get name of table
 	instr.erase(0, instr.find("SET")+3);//erase previous part of string
@@ -371,15 +371,17 @@ void Parser::commandUpdate(string instr)
 	sInstr.erase(remove(sInstr.begin(), sInstr.end(), '('), sInstr.end()); 
 	sInstr.erase(remove(sInstr.begin(), sInstr.end(), ')'), sInstr.end());
 	
-	vector<string> sets = split(sInstr, ',');
-	vector<string> desired;
-	vector<string> values;
+	vector<string> sets = split(sInstr, ',');//splits line into sets for parsing below
+	vector<string> desired;//desired attributes
+	vector<string> values;//values to be changed
 	for(int i = 0; i < sets.size(); i++)
 	{
-		desired.push_back(sets[i].substr(0, sets[i].find("=")));
-		values.push_back(sets[i].substr(sets[i].find("=")+1, sets[i].length()-1));
+		desired.push_back(sets[i].substr(0, sets[i].find("=")));//gets our desired attributes
+		values.push_back(sets[i].substr(sets[i].find("=")+1, sets[i].length()-1));//gets our values
 	}
-	
+	instr.erase(remove(instr.begin(), instr.end(), '('), instr.end()); //both lines eliminate parentheses 
+	instr.erase(remove(instr.begin(), instr.end(), ')'), instr.end());
+	instr.erase(remove(instr.begin(), instr.end(), '"'), instr.end());//eliminates quotes
 	vector<string> cond = convertBoolExpression(instr);//condition
 	
 	db->updateTableRecord(name, desired, values, cond);
