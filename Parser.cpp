@@ -233,10 +233,10 @@ void Parser::commandShow(string tablename)
 	db.showTable(tablename);
 }
 
-vector<string> commandPrimKeys(string instr)//example input (name,kind)
+vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
 {
 	instr = instr.erase(0,1);//eliminates left parenthese
-	instr = instr.pop_back();//eliminate right parenthese
+	instr = instr.substr(0,instr.size()-1);//eliminate right parenthese
 	
 	stringstream inss(instr);
 	string key;
@@ -251,33 +251,33 @@ vector<string> commandPrimKeys(string instr)//example input (name,kind)
 	
 }
 
-vector<pair<string, int>> commandAttributes(string instr)
+vector< pair<string, int> > Parser::commandAttributes(string instr)
 {
 	instr = instr.erase(0,1);//eliminates left parenthese
-	instr = instr.pop_back();//eliminate right parenthese
+	instr = instr.substr(0,instr.size()-1);//eliminate right parenthese
 	
 	stringstream inss(instr);
 	string pair;
 	string eOne;//element 1 of pair
 	int eTwo;//element 2 of pair
-	vector<pair<string, int>> atList;
+	vector< std::pair<string, int> > atList;
 	
 	while(getline(inss, pair, ','))
 	{
 		if(pair.find("INTEGER") != string::npos)
 		{
 			
-			eOne = substr(0,pair.find("INTEGER")); //get the name of attribute
+			eOne = pair.substr(0,pair.find("INTEGER")); //get the name of attribute
 			eTwo = 0;//signifies that the attribute is an integer
-			pair<string, int> attr = make_pair(eOne,eTwo);
+			std::pair<string, int> attr = make_pair(eOne,eTwo);
 			atList.push_back(attr);
 			
 		}
 		else if(pair.find("VARCHAR") != string::npos)
 		{
-			eOne = substr(0,pair.find("VARCHAR")); //get the name of attribute
-			eTwo = stoi(substr(pair.find("(")+1,pair.find(")")-1));
-			pair<string, int> attr = make_pair(eOne,eTwo);
+			eOne = pair.substr(0,pair.find("VARCHAR")); //get the name of attribute
+			eTwo = stoi(pair.substr(pair.find("(")+1,pair.find(")")-1));
+			std::pair<string, int> attr = make_pair(eOne,eTwo);
 			atList.push_back(attr);
 			
 		}
@@ -288,25 +288,27 @@ vector<pair<string, int>> commandAttributes(string instr)
 
 void Parser::commandCreate(string instr)// We'll need 
 {
+	string instruction = instr;
 	string name;
-	vector<pair<string, int>> attributes;
+	vector<std::pair<string, int> > attributes;
 	vector<string> primKeys;
-	name = instr.substr(0, instr.find("(")-1);//get name of table
-	instr = instr.erase(0,instr.find("("));//erases section of the line containing the name
+	name = instruction.substr(0, instruction.find("(")-1);//get name of table
+	instruction = instruction.erase(0,instruction.find("("));//erases section of the line containing the name
 	
 	//function here for getting attributes
-	aInstr = instr.substr(0, pIndex-1);//sub string of attribute list
-	instr = erase(0,pIndex);//erase everything up until PRIMARYKEY
+	int pIndex = instruction.find("PRIMARYKEY");
+	string aInstr = instr.substr(0, pIndex-1);//sub string of attribute list
+	instruction = instruction.erase(0,pIndex);//erase everything up until PRIMARYKEY
 	attributes = commandAttributes(aInstr);//get attributes
 	
-	int pIndex = instr.find("PRIMARYKEY");
-	if (nameIndex == string::npos)
+	
+	if (pIndex == string::npos)
 	{
 		throw "PRIMARYKEY not found";
 	}
-	primKeys = commandPrimKeys(instr);//get the primary keys
+	primKeys = commandPrimKeys(instruction);//get the primary keys
 	
-	db.createTable(name, attributes, prinKeys);
+	db.createTable(name, attributes, primKeys);
 	
 }
 
