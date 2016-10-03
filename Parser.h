@@ -19,6 +19,10 @@ private:
 	vector<string> convertBoolExpression (string boolExpression);
 	vector<string> extractAttributes (string attributeList);
 public:
+	void runOnCommandLine();
+	
+	void runOnSocket();
+	
 	//string<vector> commandHistory; //TODO: implement this and send it to a file maybe
 	void commandOrQuery(string instruction);  
 	//this is a relatively simple function. query instructions will always have an arrow "<-" somewhere in them (unless

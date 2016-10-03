@@ -3,6 +3,17 @@
 
 using namespace std;
 
+void Parser::runOnCommandLine()
+{
+	string command;
+	while(1)
+	{
+		cout << ">";
+		cin >> command;
+		commandOrQuery(command);
+	}
+}
+
 vector<string> Parser::stringToTokens (string boolExpression) 
 {
 	// result
@@ -197,6 +208,7 @@ void Parser::commandClose(string tablename)
 
 void  Parser::commandWrite(string tableName)
 {
+	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
 	db.writeTableToDisk(tableName);
 }
 
@@ -362,6 +374,11 @@ void Parser::commandInsert(string instr)
 			db.getTable(name).insertRecord(attributes);
 		}
 	}
+}
+
+Table Parser::queryParse(string qname, string instr)
+{
+	
 }
 
 void Parser::commandDrop(string tablename)
