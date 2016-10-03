@@ -419,6 +419,6 @@ void Parser::commandDelete(string instr)
 	name = instr.substr(0, instr.find("WHERE"));//get name of table
 	instr.erase(0, instr.find("("));
 	vector<string> delVect = convertBoolExpression(instr);
-	db.deleteFromTable(name, delVect);
+	db->deleteFromTable(name, delVect);
 }
 
