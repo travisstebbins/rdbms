@@ -99,5 +99,10 @@ TEST_CASE("Parser", "[Parser]")
 		argParser.commandOrQuery(instruction);
 	}
 	
+	SECTION("Delete")
+	{
+		instruction = "DELETE FROM animals VALUES FROM years;";
+		argParser.commandOrQuery(instruction);
+	}	
 	
 }
