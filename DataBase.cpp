@@ -268,6 +268,30 @@ Table* DataBase::setDifference(string tableName1, string tableName2)
 		throw "One of the tables could not be found";
 }
 
+Table* DataBase::setDifference(Table *t1, Table *t2)
+{	
+	vector<pair<string, int> > table1Attr = t1->getAttributes();
+	vector<pair<string, int> > table2Attr = t2->getAttributes();
+
+	if(table1Attr == table2Attr)		//Vector of attributes have to be the same in order to be difference compatible
+	{
+		Table *tableDiff;
+		tableDiff = t1;	//Left hand side of set difference
+		
+		const unordered_map<size_t, vector<Container>> tableData1 = t1->getData();
+		const unordered_map<size_t, vector<Container>> tableData2 = t2->getData();
+		
+		for(auto iter = tableData1.begin(); iter != tableData1.end(); iter++)
+		{
+			if(tableData2.find(iter->first) != tableData2.end())	//remove from left hand table those that match in right hand table
+				tableDiff->deleteRecord(iter->first);					
+		}
+		return tableDiff;
+	}
+	else
+		"Tables are not difference compatible";
+}
+
 Table* DataBase::crossProduct(string tableName1, string tableName2)
 {
 	auto getTable1 = dataBaseHashTable.find(tableName1);
@@ -306,6 +330,38 @@ Table* DataBase::crossProduct(string tableName1, string tableName2)
 	}
 	else
 		throw "One of the tables could not be found";
+}
+
+Table* DataBase::crossProduct(Table *t1, Table *t2)
+{
+	string tableName = t1->getTableName() + "x" + t2->getTableName();
+	
+	vector<pair<string, int> > table1Attr = t1->getAttributes();
+	vector<pair<string, int> > table2Attr = t2->getAttributes();
+	vector<pair<string, int> > tableAttr = table1Attr;
+	tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());	//vector holding the combined attributes
+	vector<string> primaryKeys = t1->getPrimaryKeys();
+	vector<string> primaryKeys2 = t2->getPrimaryKeys();
+	primaryKeys.insert(primaryKeys.end(), primaryKeys2.begin(), primaryKeys2.end());			//Use combined keys so everything is unique
+	
+	Table *tableCross = new Table(tableName, tableAttr, primaryKeys);
+	
+	const unordered_map<size_t, vector<Container>> tableData1 = t1->getData();
+	const unordered_map<size_t, vector<Container>> tableData2 = t2->getData();
+	
+	for(auto iter1 = tableData1.begin(); iter1 != tableData1.end(); iter1++)
+	{
+		vector<Container> data = iter1->second;
+		for(auto iter2 = tableData2.begin(); iter2 != tableData2.end(); iter2++)
+		{
+			vector<Container> newData = data;
+			vector<Container> data2 = iter2->second;
+			newData.insert(newData.end(), data2.begin(), data2.end());	//Combine into one vector of attributes
+			tableCross->insertRecord(newData);							//Insert combined record into table
+		}
+	}	
+	
+	return tableCross;
 }
 
 void DataBase::writeTableToDisk(string tableName)

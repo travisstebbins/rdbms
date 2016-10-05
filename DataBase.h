@@ -79,9 +79,11 @@ public:
 	
 	//Return a view that contains the set difference product of two tables
 	Table* setDifference(string tableName1, string tableName2);
+	Table* setDifference(Table *t1, Table *t2);
 	
 	//Return a view that contains the cross product of two tables
 	Table* crossProduct(string tableName1, string tableName2);
+	Table* crossProduct(Table *t1, Table *t2);
 	
 	//This is used to access and return a table based on the given name
 	Table* getTable(string tableName);

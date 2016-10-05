@@ -36,6 +36,7 @@ class Table
 		// constructors
 		Table() {}
 		Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys);
+		Table(const Table& other);
 		~Table();
 		// data manipulation functions
 		Table* select(string _name, vector<string> boolExpressions);
@@ -43,6 +44,7 @@ class Table
 		Table* rename(string _name, vector<string> newNames);
 		string show();
 		string getTableName();
+		void setTableName (string tableName) { name = tableName; }
 		vector<pair<string, int> > getAttributes();
 		vector<string> getPrimaryKeys();
 		const unordered_map<size_t, vector<Container>>& getData();
@@ -64,5 +66,5 @@ class Table
 				return false;
 			return true;
 		}
-		vector<pair<string, int>> operator=(const vector<pair<string, int>> vec);
+		vector<pair<string, int>> operator=(const vector<pair<string, int>> &vec);
 };
