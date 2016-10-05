@@ -1,5 +1,4 @@
 #include "Parser.h"
-//should we include DataBase.h here or in Parser.h?
 
 using namespace std;
 
@@ -38,6 +37,70 @@ void Parser::runOnCommandLine()
 		cout << ">";
 		getline(cin, command);
 		commandOrQuery(command);
+	}
+}
+
+void Parser::runOnSocket()
+{
+	cout << "Starting Server" << endl;
+	int c;
+	int socketFD;
+	int clientSocketFD;
+   	struct sockaddr_in server;
+	struct sockaddr_in client;
+	char buffer[BUFFSIZE];
+	string returnString = "";
+	
+	socketFD = socket(AF_INET, SOCK_STREAM, 0); //establish a socket in domain, configure communication for default
+	memset(&server, 0, sizeof(server));
+	server.sin_family      = AF_INET;
+	server.sin_port        = htons(PORT);
+	server.sin_addr.s_addr = htonl(INADDR_ANY);
+	
+	if(bind(socketFD, (struct sockaddr *)&server, sizeof(server)) < 0 ) { //bind master socket to port
+		close(socketFD);
+		throw "Error in bind, exiting program";
+	}
+	
+	cout << "Server Running" << endl;
+	while(1)
+	{
+		listen(socketFD, 5);
+		cout << "Listening on port: " << PORT << endl;
+		
+		c = sizeof(struct sockaddr_in);
+		clientSocketFD = accept(socketFD, (struct sockaddr *)&client, (socklen_t*)&c);	
+		
+		cout << "Accepted a client" << endl;
+		
+		if(clientSocketFD < 0){							//chech that accept worked
+			throw "Accept Failed!";
+			close(clientSocketFD);
+		}
+		
+		recv(clientSocketFD, buffer, BUFFSIZE, 0);			//recieve command
+		
+		cout << "Message from client:" <<  buffer << endl;
+		
+		cout << "Passing to Parser" << endl;
+		try
+		{
+			string command(buffer);
+			returnString = commandOrQuery(command);
+		}
+		catch (char const* c)
+		{
+			returnString = c;
+		}
+		catch (...)
+		{
+			returnString = "Failure";
+		}
+		
+		send(clientSocketFD, returnString.c_str(), sizeof(returnString.c_str()), 0);	
+		
+		close(clientSocketFD);
+		cout << "Closed connection to client" << endl;
 	}
 }
 
@@ -141,25 +204,32 @@ vector<string> Parser::convertBoolExpression (string boolExpression)
 	return postfix;
 }
 
-void Parser::commandOrQuery(string instruction)
+string Parser::commandOrQuery(string instruction)
 {
 	instruction.erase(remove(instruction.begin(), instruction.end(), '\r'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), '\n'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), '\t'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), ';'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), ' '), instruction.end());
-	if(instruction.find("<-") != string::npos)// <- found 
-	{
-		queryParse(instruction);
+	
+	try{
+		if(instruction.find("<-") != string::npos)// <- found 
+		{
+			return queryParse(instruction);
+		}
+		else
+		{
+			return commandParse(instruction);
+		}
 	}
-	else
+	catch(char const* c)
 	{
-		commandParse(instruction);
+		return c;
 	}
 }	
 
 
-void Parser::commandParse(string instruction)//parses a command
+string Parser::commandParse(string instruction)//parses a command
 {
 	if(instruction.find("OPEN") != string::npos)// <- found 
 	{
@@ -179,7 +249,7 @@ void Parser::commandParse(string instruction)//parses a command
 	else if(instruction.find("SHOW") != string::npos)
 	{
 		instruction.erase(0,4);
-		commandShow(instruction);// may change if the "SHOW " part of the string needs to be removed
+		return commandShow(instruction);// may change if the "SHOW " part of the string needs to be removed
 	}
 	else if(instruction.find("EXIT") != string::npos)
 	{
@@ -213,8 +283,11 @@ void Parser::commandParse(string instruction)//parses a command
 	}
 	else
 	{
+		return "Failure";
 		cout << "Not a valid command\n";
 	}
+	
+	return "Success";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,7 +326,7 @@ void Parser::commandExit()//For Travis
 	}
 }
 
-void Parser::commandShow(string tableName)
+string Parser::commandShow(string tableName)
 {
 	//tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
 	try 
@@ -261,15 +334,22 @@ void Parser::commandShow(string tableName)
 		Table *table = db->getTable(tableName);
 		Table *view = db->getView(tableName);
 		if(table != NULL)
+		{
 			cout << db->showTable(tableName) << endl;
+			return db->showTable(tableName);
+		}
 		else if(view != NULL)
+		{
 			cout << db->showView(tableName) << endl;
+			return db->showView(tableName);
+		}
 		else
 			throw "Not a table or view";
+			
 	}
 	catch(...)
 	{
-		
+		return "Failure";	
 	}
 		
 	
@@ -537,7 +617,7 @@ Parser::QueryType Parser::firstQuery (string instr) {
 	return q;
 }
 
-void Parser::queryParse(string instr)
+string Parser::queryParse(string instr)
 {
 	string name;
 	if (instr.find("<-") != string::npos)
@@ -633,7 +713,10 @@ void Parser::queryParse(string instr)
 	else
 	{
 		cout << "Query Parse failed" << endl;
+		return "Failure";
 	}
+	
+	return "Success";
 }
 
 Table* Parser::queryParseHelper(string instr, int depth, int pair)
