@@ -49,6 +49,7 @@ void Parser::runOnSocket()
    	struct sockaddr_in server;
 	struct sockaddr_in client;
 	char buffer[BUFFSIZE];
+	memset(buffer, '\0',BUFFSIZE);
 	string returnString = "";
 	
 	socketFD = socket(AF_INET, SOCK_STREAM, 0); //establish a socket in domain, configure communication for default
@@ -62,7 +63,16 @@ void Parser::runOnSocket()
 		throw "Error in bind, exiting program";
 	}
 	
+	int optval = 1;
+	if (setsockopt(socketFD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+	{
+		close(socketFD);
+		throw "Error in setsockopt, exiting program";
+	}
+		
+	
 	cout << "Server Running" << endl;
+	int msgSize = 0;
 	while(1)
 	{
 		listen(socketFD, 5);
@@ -78,9 +88,9 @@ void Parser::runOnSocket()
 			close(clientSocketFD);
 		}
 		
-		recv(clientSocketFD, buffer, BUFFSIZE, 0);			//recieve command
+		msgSize = recv(clientSocketFD, buffer, BUFFSIZE, 0);			//recieve command
 		
-		cout << "Message from client:" <<  buffer << endl;
+		cout << "Message from client:" <<  buffer << " Size: " << msgSize << endl;
 		
 		cout << "Passing to Parser" << endl;
 		try
@@ -101,6 +111,8 @@ void Parser::runOnSocket()
 		
 		close(clientSocketFD);
 		cout << "Closed connection to client" << endl;
+		
+		memset(buffer, '\0', BUFFSIZE);
 	}
 }
 

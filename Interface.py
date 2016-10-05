@@ -1,7 +1,12 @@
 import socket
 import sys
+import socket
 #TODO: figure out how to "include" the c++ parser, if we even need to do that at all
 exit = 0
+
+SERVERADDRESS = 'localhost'
+PORT = 1337
+
 print "      _                      _            ____                    _      " 
 print "     / \      __ _    __ _  (_)   ___    | __ )    __ _   _ __   | | __  "
 print "    / _ \    / _` |  / _` | | |  / _ \   |  _ \   / _` | | '_ \  | |/ /  " 
@@ -77,6 +82,21 @@ def read_in():
 	else:
 		print error_message
 
+
 initialInstruction = "CREATE TABLE Users (accountNumber INTEGER, accountName VARCHAR(30), savings INTEGER, checking INTEGER) PRIMARY KEY (accountName);"
 #TODO: send this initial instruction
 read_in()
+
+#read_in()
+
+def sendToSocket(msg):
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	serverAddress = (SERVERADDRESS, PORT);
+	print "Connecting to %s port %s" % serverAddress
+	sock.connect(serverAddress)
+	sock.send(msg)
+	retMsg = sock.recv(1024)
+	print "Recieved: " + retMsg
+	sock.close()
+	return retMsg
+	
