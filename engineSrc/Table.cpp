@@ -201,6 +201,16 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 	writeToDisk();
 }
 
+Table::Table(const Table& other)
+{
+	cout << "Table copy constructor called" << endl;
+	name = other.name;
+	data = other.data;
+	attributes = other.attributes;
+	primaryKeys = other.primaryKeys;
+	primaryKeyIndices = other.primaryKeyIndices;
+}
+
 Table::~Table()
 {
 
@@ -563,7 +573,7 @@ void Table::writeToDisk()//writes a table to a .table file
 	ofs.close();//close file
 }
 
-vector<pair<string, int>> Table::operator=(const vector<pair<string, int>> vec)
+vector<pair<string, int>> Table::operator=(const vector<pair<string, int>> &vec)
 {
 	cout << "vector<pair<string, int>> assignment operator called" << endl;
 	vector<pair<string, int>> newVec;

@@ -704,15 +704,32 @@ string Parser::queryParse(string instr)
 		Table *tmp1 = queryParseHelper(expr1, 0, 0);
 		Table *tmp2 = queryParseHelper(expr2, 0, 1);
 		Table *result = db->setUnion(tmp1, tmp2);
+		result->setTableName(name);
 		db->createView(result);
 	}
 	else if (q == Parser::DIFFERENCE)
 	{
-
+		string expr1 = instr.substr(0, instr.find("-"));
+		string expr2 = instr.substr(instr.find("-") + 1);
+		Table *tmp1 = queryParseHelper(expr1, 0, 0);
+		Table *tmp2 = queryParseHelper(expr2, 0, 1);
+		Table *result = db->setDifference(tmp1, tmp2);
+		result->setTableName(name);
+		db->createView(result);
+		delete tmp1;
+		delete tmp2;
 	}
 	else if (q == Parser::PRODUCT)
 	{
-
+		string expr1 = instr.substr(0, instr.find("*"));
+		string expr2 = instr.substr(instr.find("*") + 1);
+		Table *tmp1 = queryParseHelper(expr1, 0, 0);
+		Table *tmp2 = queryParseHelper(expr2, 0, 1);
+		Table *result = db->crossProduct(tmp1, tmp2);
+		result->setTableName(name);
+		db->createView(result);
+		delete tmp1;
+		delete tmp2;
 	}
 	else if (q == Parser::JOIN)
 	{
@@ -809,7 +826,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	}
 	else if (q == Parser::UNION)
 	{
-		string expr1 = instr.substr(0, instr.find("+") - 1);
+		string expr1 = instr.substr(0, instr.find("+"));
 		string expr2 = instr.substr(instr.find("+") + 1);
 		Table *tmp1 = queryParseHelper(expr1, depth + 1, pair);
 		Table *tmp2 = queryParseHelper(expr2, depth + 1, pair);
@@ -818,11 +835,25 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	}
 	else if (q == Parser::DIFFERENCE)
 	{
-
+		string expr1 = instr.substr(0, instr.find("-"));
+		string expr2 = instr.substr(instr.find("-") + 1);
+		Table *tmp1 = queryParseHelper(expr1, depth + 1, pair);
+		Table *tmp2 = queryParseHelper(expr2, depth + 1, pair);
+		Table *result = db->setDifference(tmp1, tmp2);
+		delete tmp1;
+		delete tmp2;
+		return result;
 	}
 	else if (q == Parser::PRODUCT)
 	{
-
+		string expr1 = instr.substr(0, instr.find("*"));
+		string expr2 = instr.substr(instr.find("*") + 1);
+		Table *tmp1 = queryParseHelper(expr1, 0, 0);
+		Table *tmp2 = queryParseHelper(expr2, 0, 1);
+		Table *result = db->crossProduct(tmp1, tmp2);
+		delete tmp1;
+		delete tmp2;
+		return result;
 	}
 	else if (q == Parser::JOIN)
 	{
