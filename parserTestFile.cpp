@@ -36,6 +36,8 @@ TEST_CASE("Parser", "[Parser]")
 		argParser.commandOrQuery(instruction);
 		instruction = "INSERT INTO animals VALUES FROM (\"Joe\", \"bird\", 2);";
 		argParser.commandOrQuery(instruction);
+		instruction = "SHOW animals;";
+		argParser.commandOrQuery(instruction);
 	}
 	
 	instruction = "CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);";
