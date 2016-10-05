@@ -9,6 +9,11 @@
 #include <utility>
 #include <unordered_map>
 #include <cctype>
+#include <sys/types.h>
+#include <arpa/inet.h>  
+#include <sys/socket.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "DataBase.h"
 #include "Table.h"
 
@@ -21,6 +26,9 @@ using namespace std;
 
 class Parser{
 private:
+	int PORT = 1337;
+	int BUFFSIZE = 1024;
+	
 	DataBase *db;
 	vector<string> stringToTokens (string boolExpression);
 	vector<string> convertBoolExpression (string boolExpression);
@@ -36,9 +44,9 @@ public:
 	void runOnCommandLine();
 	
 	void runOnSocket();
-	
+		
 	//string<vector> commandHistory; //TODO: implement this and send it to a file maybe
-	void commandOrQuery(string instruction);  
+	string commandOrQuery(string instruction);  
 	//this is a relatively simple function. query instructions will always have an arrow "<-" somewhere in them (unless
 	//the query is part of (or rather, a source of input for) a command instruction) commandOrQuery will check either 
 	//for the existence of "<-", or the existence of "<" followed by "-", whichever is easier to implement.
@@ -47,7 +55,7 @@ public:
 	/* ---------- command functions ---------- */
 	//TODO: implement a method (unless one has been implemented already) to keep track of all non-view tables currently open
 
-	void commandParse(string instr); 
+	string commandParse(string instr); 
 	//gets the name of the table on which we are performing the command on
 	//parses through and looks for command instruction keywords: 
 		//OPEN, CLOSE, WRITE, EXIT, SHOW, CREATE, UPDATE, INSERT, DELETE, and DROP
@@ -67,7 +75,7 @@ public:
 	
 	void commandWrite(string tableName);
 
-	void commandShow(string tablename);
+	string commandShow(string tablename);
 	
 	void commandExit();
 	
@@ -104,7 +112,7 @@ public:
 	
 	/* ---------- query functions ------------ */
 	QueryType firstQuery (string instr);
-	void queryParse(string instr);
+	string queryParse(string instr);
 	Table* queryParseHelper(string instr, int depth, int pair);	//first thing this does is check for nested queries
 	
 		

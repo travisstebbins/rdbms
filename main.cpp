@@ -11,7 +11,7 @@ int main()
 	try
 	{
 		Parser test;
-		test.runOnCommandLine();
+		test.runOnSocket();
 	}
 	catch (char const* c)
 	{
