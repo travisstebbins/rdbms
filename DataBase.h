@@ -67,6 +67,8 @@ public:
 	//Calls show on Table tableName
 	string showTable(string tableName);
 	
+	string showView(string viewName);
+	
 	//Wrapper function for Table project(string _name, vector<string> desiredAttributes)
 	//Calls project on Table tableName
 	Table* projectTable(string tableName, string _name, vector<string> desiredAttributes);

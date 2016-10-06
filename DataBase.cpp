@@ -208,6 +208,18 @@ string DataBase::showTable(string tableName)
 		throw "Table could not be found";
 }
 
+string DataBase::showView(string viewName)
+{
+	auto getTable = viewHashTable.find(viewName);
+	
+	if(getTable != viewHashTable.end())
+	{
+		return viewHashTable[viewName]->show();
+	}
+	else
+		throw "View could not be found";
+}
+
 Table* DataBase::setUnion(string tableName1, string tableName2)
 {
 	
