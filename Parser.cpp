@@ -42,6 +42,7 @@ void Parser::runOnCommandLine()
 
 void Parser::runOnSocket()
 {
+	db = new DataBase();
 	cout << "Starting Server" << endl;
 	int c;
 	int socketFD;
