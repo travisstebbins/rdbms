@@ -1,0 +1,120 @@
+#pragma once
+
+#include <vector>
+#include <cstring>
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <stack>
+#include <utility>
+#include <unordered_map>
+#include <cctype>
+#include <sys/types.h>
+#include <arpa/inet.h>  
+#include <sys/socket.h>
+#include <stdio.h>
+#include <unistd.h>
+#include "DataBase.h"
+#include "Table.h"
+
+using namespace std;
+//we still need to include a LOT more stuff
+//should we include DataBase.h here or in Parser.cpp?
+
+//THINGS TO CONSIDER WHEN IMPLEMENTING: the inputs of each function, their types, and where in certain instructions those inputs can be found
+//					more often than not, this information can be found in DataBase.cpp or wherever the function in question is stored
+
+class Parser{
+private:
+	int PORT = 1337;
+	int BUFFSIZE = 1024;
+	
+	DataBase *db;
+	vector<string> stringToTokens (string boolExpression);
+	vector<string> convertBoolExpression (string boolExpression);
+	vector<string> extractAttributes (string attributeList);
+	vector<pair<string, int>> commandAttributes(string instr);
+	vector<string> commandPrimKeys(string instr);
+	enum QueryType { ERROR, RELATION, SELECT, PROJECT, RENAME, UNION, DIFFERENCE, PRODUCT, JOIN };
+	
+public:
+
+	Parser() {db = new DataBase();};
+	
+	void runOnCommandLine();
+	
+	void runOnSocket();
+		
+	//string<vector> commandHistory; //TODO: implement this and send it to a file maybe
+	string commandOrQuery(string instruction);  
+	//this is a relatively simple function. query instructions will always have an arrow "<-" somewhere in them (unless
+	//the query is part of (or rather, a source of input for) a command instruction) commandOrQuery will check either 
+	//for the existence of "<-", or the existence of "<" followed by "-", whichever is easier to implement.
+
+
+	/* ---------- command functions ---------- */
+	//TODO: implement a method (unless one has been implemented already) to keep track of all non-view tables currently open
+
+	string commandParse(string instr); 
+	//gets the name of the table on which we are performing the command on
+	//parses through and looks for command instruction keywords: 
+		//OPEN, CLOSE, WRITE, EXIT, SHOW, CREATE, UPDATE, INSERT, DELETE, and DROP
+	//each of these keywords correspond to a command function. most of those functions take a table name, if any input at all.
+	//the create, update, insert, and delete functions will take a bit more work, as they all require more parsing to determine
+
+	void commandOpen(string filename); 
+	//TODO: make a test case with the catch framework that REQUIRE()s the last six characters to be ".table"
+	//TODO: do this for all commands involving file I/O
+	//I'm assuming what this function does is read table info stored on a disk, then bring that table into scope by writing it into a table object that the program
+	//can access
+	//if this is not the case, I'll change the return type to Table so that I can write tables into scope as needed.
+
+	void commandClose(string tablename); 
+	//TODO: ask about a close function
+	//maybe just use drop table without saving first?
+	
+	void commandWrite(string tableName);
+
+	string commandShow(string tablename);
+	
+	void commandExit();
+	
+	void commandCreate(string instr);
+	
+	void commandUpdate(string instr); 
+	//to implement this one, I'm thinking I just get the entry I'm trying to update, storing that in a
+	//string vector, modifying that string vector, calling Delete on the old entry, then using insert
+	//to put the new one in.
+					  
+	void commandInsert(string instr);
+	//the following comment block concerns the insert function, and possibly the delete and update functions. but definitely the insert function.
+	//
+	//      the function will need to look for query syntax (if the command involves the result of the query, it will first need to find where
+	//      in the instruction string that the query begins and ends. the  will then need to send that string containing that query to the
+	//      queryParse, which will get a view table which will be used as an input for whichever command function called for the
+	//      query (which is to say, whichever command function preceded the query call in the instruction string)
+	//      the name of the query will be something like "cmd_query"  
+	//
+
+	
+	void commandDrop(string tablename);
+	
+	void commandDelete(string instr); 
+	//this one pretty much does the opposite of Insert, with the fortunate exception (hopefully) of
+	//not having to worry about getting information from a query
+	
+	
+
+	
+
+
+	/* --------------------------------------- */
+	
+	/* ---------- query functions ------------ */
+	QueryType firstQuery (string instr);
+	string queryParse(string instr);
+	Table* queryParseHelper(string instr, int depth, int pair);	//first thing this does is check for nested queries
+	
+		
+	/* --------------------------------------- */
+};
