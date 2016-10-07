@@ -22,7 +22,7 @@ class Table
 		// key -> entry
 		unordered_map<size_t, vector<Container>> data;
 		// n = VARCHAR, -1 = INTEGER
-		vector<pair<string, int> > attributes;
+		vector<pair<string, int>> attributes;
 		// stores the table's primary keys
 		vector<string> primaryKeys;
 		// used to easily access the table's primary keys
@@ -36,6 +36,7 @@ class Table
 		// constructors
 		Table() {}
 		Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys);
+		Table(const Table& other);
 		~Table();
 		// data manipulation functions
 		Table* select(string _name, vector<string> boolExpressions);
@@ -43,7 +44,8 @@ class Table
 		Table* rename(string _name, vector<string> newNames);
 		string show();
 		string getTableName();
-		vector<pair<string, int> > getAttributes();
+		void setTableName (string tableName) { name = tableName; }
+		vector<pair<string, int>> getAttributes();
 		vector<string> getPrimaryKeys();
 		const unordered_map<size_t, vector<Container>>& getData();
 		void insertRecord(vector<string> entry);
@@ -64,5 +66,6 @@ class Table
 				return false;
 			return true;
 		}
-		vector<pair<string, int>> operator=(const vector<pair<string, int>> vec);
+		inline vector<pair<string, int>> operator=(const vector<pair<string, int>> &vec);
 };
+

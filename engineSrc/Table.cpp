@@ -34,10 +34,10 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 	for (int i = 0; i < attributes.size(); ++i)
 	{
 		// if the current attribute is the one being compared
-		if (attributes[i].first == operand1)
+		if (attributes[i]->first == operand1)
 		{
 			// if the data type is a VARCHAR
-			if(attributes[i].second > -1)
+			if(attributes[i]->second > -1)
 			{
 				// get the value in the entry
 				string value = entry[i].getVarchar().getString();
@@ -179,10 +179,10 @@ void Table::insertRecord(vector<Container> entry)
 }
 
 // constructor
-Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys)
+Table::Table(string _name, vector<pair<string, int> *> _attributes, vector<string> _primaryKeys)
 {
 	name = _name;
-	vector<pair<string, int>> copyAttributes = _attributes;
+	vector<pair<string, int> *> copyAttributes = _attributes;
 	attributes = copyAttributes;
 	primaryKeys = _primaryKeys;
 	// store primary key indices
@@ -190,7 +190,7 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 	{
 		for (int j = 0; j < attributes.size(); ++j)
 		{
-			if (primaryKeys[i] == attributes[j].first)
+			if (primaryKeys[i] == attributes[j]->first)
 			{
 				// cout << "logged primary key index" << endl;
 				primaryKeyIndices.push_back(j);
@@ -201,6 +201,16 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 	writeToDisk();
 }
 
+Table::Table(const Table& other)
+{
+	cout << "Table copy constructor called" << endl;
+	name = other.name;
+	data = other.data;
+	attributes = other.attributes;
+	primaryKeys = other.primaryKeys;
+	primaryKeyIndices = other.primaryKeyIndices;
+}
+
 Table::~Table()
 {
 
@@ -209,6 +219,7 @@ Table::~Table()
 // select entries from the table and return as a new Table object
 Table* Table::select(string _name, vector<string> boolExpressions)
 {
+<<<<<<< HEAD:engineSrc/Table.cpp
 	vector<pair<string, int>> copyAttributes;
 	copy(attributes.begin(), attributes.end(), back_inserter(copyAttributes));
 	Table* view = new Table(_name, copyAttributes, primaryKeys);
@@ -245,7 +256,7 @@ Table* Table::project(string _name, vector<string> desiredAttributes)
 	{
 		throw "At least one primary key must be projected";
 	}
-	vector<pair<string, int>> newAttributes;
+	vector<pair<string, int> *> newAttributes;
 	vector<int> newAttributeIndices;
 	// loop through attributes and desired attributes to
 	//  find matches
@@ -253,7 +264,7 @@ Table* Table::project(string _name, vector<string> desiredAttributes)
 	{
 		for (int j = 0; j < desiredAttributes.size(); ++j)
 		{
-			if (attributes[i].first == desiredAttributes[j])
+			if (attributes[i]->first == desiredAttributes[j])
 			{
 				newAttributes.push_back(attributes[i]);
 				newAttributeIndices.push_back(i);
@@ -291,7 +302,7 @@ Table* Table::project(string _name, vector<string> desiredAttributes)
 //  return as a new table
 Table* Table::rename(string _name, vector<string> newNames)
 {
-	vector<pair<string, int>> newAttributes = attributes;
+	vector<pair<string, int> *> newAttributes = attributes;
 	vector<string> newPrimaryKeys = primaryKeys;
 	// loop through attributes to set new primary key names
 	//  and new attribute names
@@ -299,12 +310,12 @@ Table* Table::rename(string _name, vector<string> newNames)
 	{
 		for (int j = 0; j < newPrimaryKeys.size(); ++j)
 		{
-			if (newAttributes[i].first == newPrimaryKeys[j])
+			if (newAttributes[i]->first == newPrimaryKeys[j])
 			{
 				newPrimaryKeys[j] = newNames[i];
 			}
 		}
-		newAttributes[i].first = newNames[i];
+		newAttributes[i]->first = newNames[i];
 	}
 	Table* view = new Table(_name, newAttributes, newPrimaryKeys);
 	// copy over all of the entries
@@ -334,7 +345,7 @@ string Table::show()
 	// loop and print attributes
 	for (int i = 0; i < attributes.size(); ++i)
 	{
-		s += attributes[i].first + "\t\t";
+		s += attributes[i]->first + "\t\t";
 	}
 	s += "\n";
 	// loop and print data
@@ -357,7 +368,7 @@ string Table::show()
 	return s;
 }
 
-vector<pair<string, int> > Table::getAttributes()
+vector<pair<string, int>> Table::getAttributes()
 {
 	return attributes;
 }
@@ -385,9 +396,9 @@ void Table::insertRecord(vector<string> entry)
 	for (int i = 0; i < entry.size(); ++i)
 	{
 		// if the value data type is a VARCHAR
-		if (attributes[i].second > -1)
+		if (attributes[i]->second > -1)
 		{
-			varchar vc(attributes[i].second);
+			varchar vc(attributes[i]->second);
 			vc.setString(entry[i]);
 			Container c(Container::VARCHAR, vc);
 			newEntry.push_back(c);
@@ -474,12 +485,12 @@ void Table::updateRecord(vector<string> desiredAttributes, vector<string> values
 				for (int j = 0; j < desiredAttributes.size(); ++j)
 				{
 					// if they match
-					if (attributes[i].first == desiredAttributes[j])
+					if (attributes[i]->first == desiredAttributes[j])
 					{
 						// if the value data type is a VARCHAR
-						if (attributes[i].second > -1)
+						if (attributes[i]->second > -1)
 						{
-							varchar vc(attributes[i].second);
+							varchar vc(attributes[i]->second);
 							vc.setString(values[j]);
 							(it->second)[i].setVarchar(vc);
 						}
@@ -520,10 +531,10 @@ void Table::writeToDisk()//writes a table to a .table file
 	ofs << "attributes: " ;//second line of table chunk, stores table attributes
 	for (int i = 0; i < attributes.size(); ++i)
 	{
-		int atb_num = attributes[i].second;
+		int atb_num = attributes[i]->second;
 		
 		
-		ofs << attributes[i].first + " " + to_string(atb_num) + ",";//logs attr. pairs below name in file
+		ofs << attributes[i]->first + " " + to_string(atb_num) + ",";//logs attr. pairs below name in file
 	}
 	ofs << "\n";//end of attributes
     
@@ -563,13 +574,15 @@ void Table::writeToDisk()//writes a table to a .table file
 	ofs.close();//close file
 }
 
-vector<pair<string, int>> Table::operator=(const vector<pair<string, int>> vec)
+inline vector<pair<string, int>> Table::operator=(const vector<pair<string, int>> &vec)
 {
 	cout << "vector<pair<string, int>> assignment operator called" << endl;
-	vector<pair<string, int>> newVec;
+	vector<pair<string, int> *> newVec;
 	for (int i = 0; i < vec.size(); ++i)
 	{
-		pair<string, int> p (vec[i].first, vec[i].second);
+		pair<string, int> p;
+		p.first = vec[i].first;
+		p.second = vec[i].second;
 		newVec.push_back(p);
 	}
 	return newVec;

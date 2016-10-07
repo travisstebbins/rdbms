@@ -28,7 +28,7 @@ private:
 	//The key used will be unique and based on the table name
 	unordered_map<string, Table*> dataBaseHashTable;
 	unordered_map<string, Table*> viewHashTable;
-	
+
 public:
 	
 	//Initialize empty unordered_map
@@ -36,7 +36,7 @@ public:
 	
 	//Creates a new Table object and inserts it into the hash table of tables.
 	//Table name (string), list of attribute names and types (vector<pair<string, int>>), and list of primary key(s) (vector<string>)
-	void createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys);
+	void createTable(string tableName, vector<pair<string, int> *> attributes, vector<string> primaryKeys);
 	
 	//Creates a new Table object and inserts it into the hash table of tables
 	//Table newTable table object to be inserted into databse
@@ -83,9 +83,11 @@ public:
 	
 	//Return a view that contains the set difference product of two tables
 	Table* setDifference(string tableName1, string tableName2);
+	Table* setDifference(Table *t1, Table *t2);
 	
 	//Return a view that contains the cross product of two tables
 	Table* crossProduct(string tableName1, string tableName2);
+	Table* crossProduct(Table *t1, Table *t2);
 	
 	//This is used to access and return a table based on the given name
 	Table* getTable(string tableName);
