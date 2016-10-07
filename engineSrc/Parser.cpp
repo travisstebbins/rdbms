@@ -30,7 +30,7 @@ void printVector (vector<pair<string, int>> vec)
 
 void Parser::runOnCommandLine()
 {
-	db = new DataBase();
+	//db = new DataBase();
 	string command;
 	while(1)
 	{
@@ -42,6 +42,7 @@ void Parser::runOnCommandLine()
 
 void Parser::runOnSocket()
 {
+	//db = new DataBase();
 	cout << "Starting Server" << endl;
 	int c;
 	int socketFD;
@@ -49,6 +50,7 @@ void Parser::runOnSocket()
    	struct sockaddr_in server;
 	struct sockaddr_in client;
 	char buffer[BUFFSIZE];
+	memset(buffer, '\0',BUFFSIZE);
 	string returnString = "";
 	
 	socketFD = socket(AF_INET, SOCK_STREAM, 0); //establish a socket in domain, configure communication for default
@@ -61,8 +63,17 @@ void Parser::runOnSocket()
 		close(socketFD);
 		throw "Error in bind, exiting program";
 	}
+	cout << "Server Running" << endl;
+	int optval = 1;
+	if (setsockopt(socketFD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
+	{
+		close(socketFD);
+		throw "Error in setsockopt, exiting program";
+	}
+		
 	
 	cout << "Server Running" << endl;
+	int msgSize = 0;
 	while(1)
 	{
 		listen(socketFD, 5);
@@ -77,10 +88,9 @@ void Parser::runOnSocket()
 			throw "Accept Failed!";
 			close(clientSocketFD);
 		}
+		msgSize = recv(clientSocketFD, buffer, BUFFSIZE, 0);			//recieve command
 		
-		recv(clientSocketFD, buffer, BUFFSIZE, 0);			//recieve command
-		
-		cout << "Message from client:" <<  buffer << endl;
+		cout << "Message from client:" <<  buffer << " Size: " << msgSize << endl;
 		
 		cout << "Passing to Parser" << endl;
 		try
@@ -96,11 +106,13 @@ void Parser::runOnSocket()
 		{
 			returnString = "Failure";
 		}
-		
-		send(clientSocketFD, returnString.c_str(), sizeof(returnString.c_str()), 0);	
+		cout << "Sending: " << returnString.c_str() << endl;
+		send(clientSocketFD, returnString.c_str(), returnString.length(), 0);	
 		
 		close(clientSocketFD);
 		cout << "Closed connection to client" << endl;
+		
+		memset(buffer, '\0', BUFFSIZE);
 	}
 }
 
@@ -328,31 +340,32 @@ void Parser::commandExit()//For Travis
 
 string Parser::commandShow(string tableName)
 {
-	//tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
 	try 
-	{
-		Table *table = db->getTable(tableName);
-		Table *view = db->getView(tableName);
-		if(table != NULL)
+	{		
+		bool table = db->containsTable(tableName);
+		bool view = db->containsView(tableName);
+		if(table)
 		{
 			cout << db->showTable(tableName) << endl;
 			return db->showTable(tableName);
 		}
-		else if(view != NULL)
+		else if(view)
 		{
 			cout << db->showView(tableName) << endl;
 			return db->showView(tableName);
 		}
 		else
-			throw "Not a table or view";
-			
+			throw "Not a table or view";			
+	}
+	catch (char const* c)
+	{
+		cout << c << endl;
+		return "Failure";
 	}
 	catch(...)
 	{
 		return "Failure";	
-	}
-		
-	
+	}	
 }
 
 vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
@@ -645,7 +658,6 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->select(name, conditions);
 		db->createView(result);
-		delete tmp;
 	}
 	else if (q == Parser::PROJECT)
 	{
@@ -667,7 +679,6 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->project(name, attributes);
 		db->createView(result);
-		delete tmp;
 	}
 	else if (q == Parser::RENAME)
 	{
@@ -685,7 +696,6 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->rename(name, newNames);
 		db->createView(result);
-		delete tmp;
 	}
 	else if (q == Parser::UNION)
 	{
@@ -695,8 +705,6 @@ string Parser::queryParse(string instr)
 		Table *tmp2 = queryParseHelper(expr2, 0, 1);
 		Table *result = db->setUnion(tmp1, tmp2);
 		db->createView(result);
-		delete tmp1;
-		delete tmp2;
 	}
 	else if (q == Parser::DIFFERENCE)
 	{
@@ -755,7 +763,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair;
 		Table *result = tmp->select(tmpName, conditions);
-		delete tmp;
 		return result;
 	}
 	else if (q == Parser::PROJECT)
@@ -777,7 +784,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair;
 		Table *result = tmp->project(tmpName, attributes);
-		delete tmp;
 		return result;
 	}
 	else if (q == Parser::RENAME)
@@ -799,7 +805,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair; 
 		Table *result = tmp->rename(tmpName, newNames);
-		delete tmp;
 		return result;
 	}
 	else if (q == Parser::UNION)
@@ -809,8 +814,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		Table *tmp1 = queryParseHelper(expr1, depth + 1, pair);
 		Table *tmp2 = queryParseHelper(expr2, depth + 1, pair);
 		Table *result = db->setUnion(tmp1, tmp2);
-		delete tmp1;
-		delete tmp2;
 		return result;
 	}
 	else if (q == Parser::DIFFERENCE)

@@ -6,3 +6,4 @@ main
 dataBaseTests
 engineTests
 parserTests
+*.pyc
