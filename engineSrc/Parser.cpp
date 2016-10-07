@@ -15,15 +15,15 @@ void printVector (vector<string> vec)
 	cout << endl;
 }
 
-void printVector (vector<pair<string, int>> vec)
+void printVector (vector<pair<string, int> *> vec)
 {	
 	cout << "{ ";
 	for (int i = 0; i < vec.size(); ++i)
 	{
 		if (i != vec.size() - 1)
-			cout << vec[i].first << " , " << vec[i].second << " | ";
+			cout << vec[i]->first << " , " << vec[i]->second << " | ";
 		else
-			cout << vec[i].first << " , " << vec[i].second << " }";
+			cout << vec[i]->first << " , " << vec[i]->second << " }";
 	}
 	cout << endl;
 }
@@ -386,7 +386,7 @@ vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
 	
 }
 
-vector< pair<string, int> > Parser::commandAttributes(string instr)
+vector< pair<string, int> *> Parser::commandAttributes(string instr)
 {
 	instr = instr.erase(0,1);//eliminates left parenthese
 	instr = instr.substr(0,instr.size()-1);//eliminate right parenthese
@@ -395,7 +395,7 @@ vector< pair<string, int> > Parser::commandAttributes(string instr)
 	string pair;
 	string eOne;//element 1 of pair
 	int eTwo;//element 2 of pair
-	vector< std::pair<string, int> > atList;
+	vector< std::pair<string, int> *> atList;
 	
 	while(getline(inss, pair, ','))
 	{
@@ -404,7 +404,9 @@ vector< pair<string, int> > Parser::commandAttributes(string instr)
 			
 			eOne = pair.substr(0,pair.find("INTEGER")); //get the name of attribute
 			eTwo = -1;//signifies that the attribute is an integer
-			std::pair<string, int> attr = make_pair(eOne,eTwo);
+			std::pair<string, int> *attr;
+			attr->first = eOne;
+			attr->second = eTwo;
 			atList.push_back(attr);
 			
 		}
@@ -412,7 +414,9 @@ vector< pair<string, int> > Parser::commandAttributes(string instr)
 		{
 			eOne = pair.substr(0,pair.find("VARCHAR")); //get the name of attribute
 			eTwo = stoi(pair.substr(pair.find("(")+1,pair.find(")")-1));
-			std::pair<string, int> attr = make_pair(eOne,eTwo);
+			std::pair<string, int> *attr;
+			attr->first = eOne;
+			attr->second = eTwo;
 			atList.push_back(attr);
 			
 		}
@@ -425,7 +429,7 @@ void Parser::commandCreate(string instr)// We'll need
 {
 	string instruction = instr;
 	string name;
-	vector<std::pair<string, int> > attributes;
+	vector<std::pair<string, int> *> attributes;
 	vector<string> primKeys;
 	name = instruction.substr(0, instruction.find("("));//get name of table
 	instruction.erase(0,instruction.find("("));//erases section of the line containing the name
@@ -442,8 +446,7 @@ void Parser::commandCreate(string instr)// We'll need
 	}
 	//primKeys = commandPrimKeys(instruction);//get the primary keys
 	primKeys = extractAttributes(instruction);
-	db->createTable(name, attributes, primKeys);
-	
+	db->createTable(name, attributes, primKeys);	
 }
 
 
@@ -552,7 +555,6 @@ int getConditionEnd (string instr)
 }
 
 Parser::QueryType Parser::firstQuery (string instr) {
-	cout << "firstQuery passed string: " << instr << endl;
 	int firstIndex = instr.length();
 	QueryType q = Parser::ERROR;	
 	if(db->containsTable(instr))
@@ -566,7 +568,6 @@ Parser::QueryType Parser::firstQuery (string instr) {
 	if (instr.find("select") != string::npos)
 	{
 		int index = instr.find("select");
-		cout << "index: " << index << endl;
 		if (index <= firstIndex)
 		{
 			firstIndex = index;
@@ -643,18 +644,13 @@ string Parser::queryParse(string instr)
 	}
 	instr.erase(0, instr.find("<-") + 2);
 	QueryType q = firstQuery(instr);
-	cout << "QueryType: " << q << endl;
 	if (q == Parser::SELECT)
 	{
 		instr.erase(0, instr.find("select") + 6);
 		int conditionEnd = getConditionEnd(instr);
-		cout << instr << endl;
-		cout << conditionEnd << endl;
 		string conditionString = instr.substr(1, conditionEnd - 2);
-		cout << "conditions: " << conditionString << endl;
 		vector<string> conditions = convertBoolExpression(conditionString);
 		instr.erase(0, conditionEnd);
-		cout << instr << endl;
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->select(name, conditions);
 		db->createView(result);
@@ -662,20 +658,16 @@ string Parser::queryParse(string instr)
 	else if (q == Parser::PROJECT)
 	{
 		instr.erase(0, instr.find("project") + 7);
-		cout << instr << endl;
 		int openParen = instr.find("(");
 		int closeParen = instr.find(")");
 		string attributeListString = instr.substr(openParen + 1, closeParen - openParen - 1);
-		cout << "attributeListString: " << attributeListString << endl;
 		vector<string> attributes = split(attributeListString, ',');
-		cout << "attributes: " << endl;
 		printVector(attributes);
 		instr.erase(0, closeParen + 1);
 		if (instr[instr.length() - 1] == ')')
 		{
 			instr = instr.substr(0, instr.length() - 1);
 		}
-		cout << instr << endl;
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->project(name, attributes);
 		db->createView(result);
@@ -683,16 +675,12 @@ string Parser::queryParse(string instr)
 	else if (q == Parser::RENAME)
 	{
 		instr.erase(0, instr.find("rename") + 6);
-		cout << instr << endl;
 		int openParen = instr.find("(");
 		int closeParen = instr.find(")");
 		string newNameListString = instr.substr(openParen + 1, closeParen - openParen - 1);
-		cout << "newNameListString: " << newNameListString << endl;
 		vector<string> newNames = split(newNameListString, ',');
-		cout << "newNames: " << endl;
 		printVector(newNames);
 		instr.erase(0, closeParen + 1);
-		cout << instr << endl;
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->rename(name, newNames);
 		db->createView(result);
@@ -733,7 +721,16 @@ string Parser::queryParse(string instr)
 	}
 	else if (q == Parser::JOIN)
 	{
-
+		cout << "no join right now" << endl;
+		// string expr1 = instr.substr(0, instr.find("JOIN"));
+		// string expr2 = instr.substr(instr.find("JOIN") + 4);
+		// Table *tmp1 = queryParseHelper(expr1, 0, 0);
+		// Table *tmp2 = queryParseHelper(expr2, 0, 1);
+		// Table *result = db->crossProduct(tmp1, tmp2);
+		// result->setTableName(name);
+		// db->createView(result);
+		// delete tmp1;
+		// delete tmp2;
 	}
 	else
 	{
@@ -746,7 +743,6 @@ string Parser::queryParse(string instr)
 
 Table* Parser::queryParseHelper(string instr, int depth, int pair)
 {
-	cout << "queryParseHelper passed string " << instr << endl;
 	string name;
 	if (instr.find("<-") != string::npos)
 	{
@@ -757,23 +753,18 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		name = "tmp";
 	}
 	QueryType q = firstQuery(instr);
-	cout << "QueryType: " << q << endl;
 	if (q == Parser::SELECT)
 	{
 
 		instr.erase(0, instr.find("select") + 6);
 		int conditionEnd = getConditionEnd(instr);
-		cout << instr << endl;
-		cout << conditionEnd << endl;
 		string conditionString = instr.substr(1, conditionEnd - 2);
-		cout << "conditions: " << conditionString << endl;
 		vector<string> conditions = convertBoolExpression(conditionString);
 		instr.erase(0, conditionEnd);
 		if (instr[instr.length() - 1] == ')')
 		{
 			instr = instr.substr(0, instr.length() - 1);
 		}
-		cout << instr << endl;
 		Table *tmp = queryParseHelper(instr, depth + 1, pair);
 		string tmpName = "tmp_";
 		tmpName += depth;
@@ -785,16 +776,12 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	else if (q == Parser::PROJECT)
 	{
 		instr.erase(0, instr.find("project") + 7);
-		cout << instr << endl;
 		int openParen = instr.find("(");
 		int closeParen = instr.find(")");
 		string attributeListString = instr.substr(openParen + 1, closeParen - openParen - 1);
-		cout << "attributeListString: " << attributeListString << endl;
 		vector<string> attributes = split(attributeListString, ',');
-		cout << "attributes: " << endl;
 		printVector(attributes);
 		instr.erase(0, closeParen + 1);
-		cout << instr << endl;
 		Table *tmp = queryParseHelper(instr, depth + 1, pair);
 		string tmpName = "tmp_";
 		tmpName += depth;
@@ -806,16 +793,12 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	else if (q == Parser::RENAME)
 	{
 		instr.erase(0, instr.find("rename") + 6);
-		cout << instr << endl;
 		int openParen = instr.find("(");
 		int closeParen = instr.find(")");
 		string newNameListString = instr.substr(openParen + 1, closeParen - openParen - 1);
-		cout << "newNameListString: " << newNameListString << endl;
 		vector<string> newNames = split(newNameListString, ',');
-		cout << "newNames: " << endl;
 		printVector(newNames);
 		instr.erase(0, closeParen + 1);
-		cout << instr << endl;
 		Table *tmp = queryParseHelper(instr, depth + 1, pair);
 		string tmpName = "tmp_";
 		tmpName += depth;
@@ -857,7 +840,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	}
 	else if (q == Parser::JOIN)
 	{
-
+		cout << "no join right now" << endl;
 	}
 	else if (q == Parser::RELATION)
 	{

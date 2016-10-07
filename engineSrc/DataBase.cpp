@@ -9,13 +9,27 @@
 
 #include "DataBase.h"
 
+inline vector<pair<string, int> *> DataBase::operator=(const vector<pair<string, int> *> &vec)
+{
+	cout << "vector<pair<string, int>> assignment operator called" << endl;
+	vector<pair<string, int> *> newVec;
+	for (int i = 0; i < vec.size(); ++i)
+	{
+		pair<string, int> *p;
+		p->first = vec[i]->first;
+		p->second = vec[i]->second;
+		newVec.push_back(p);
+	}
+	return newVec;
+}
+
 DataBase::DataBase()
 {
 	dataBaseHashTable = {};
 	viewHashTable = {};
 }
 
-void DataBase::createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys)
+void DataBase::createTable(string tableName, vector<pair<string, int> *> attributes, vector<string> primaryKeys)
 {
 	auto checkNameUniq = dataBaseHashTable.find(tableName);
 	
@@ -228,8 +242,8 @@ Table* DataBase::setUnion(string tableName1, string tableName2)
 	
 	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
 	{
-		vector<pair<string, int> > table1Attr = getTable1->second->getAttributes();
-		vector<pair<string, int> > table2Attr = getTable2->second->getAttributes();
+		vector<pair<string, int> *> table1Attr = getTable1->second->getAttributes();
+		vector<pair<string, int> *> table2Attr = getTable2->second->getAttributes();
 
 		if(table1Attr == table2Attr)	//Vector of attributes have to be the same in order to be union compatible
 		{
@@ -246,8 +260,8 @@ Table* DataBase::setUnion(string tableName1, string tableName2)
 
 Table* DataBase::setUnion(Table *t1, Table *t2)
 {
-		vector<pair<string, int> > table1Attr = t1->getAttributes();
-		vector<pair<string, int> > table2Attr = t2->getAttributes();
+		vector<pair<string, int> *> table1Attr = t1->getAttributes();
+		vector<pair<string, int> *> table2Attr = t2->getAttributes();
 
 		if(table1Attr == table2Attr)	//Vector of attributes have to be the same in order to be union compatible
 		{
@@ -267,8 +281,8 @@ Table* DataBase::setDifference(string tableName1, string tableName2)
 	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
 	{
 		
-		vector<pair<string, int> > table1Attr = getTable1->second->getAttributes();
-		vector<pair<string, int> > table2Attr = getTable2->second->getAttributes();
+		vector<pair<string, int> *> table1Attr = getTable1->second->getAttributes();
+		vector<pair<string, int> *> table2Attr = getTable2->second->getAttributes();
 
 		if(table1Attr == table2Attr)		//Vector of attributes have to be the same in order to be difference compatible
 		{
@@ -294,8 +308,8 @@ Table* DataBase::setDifference(string tableName1, string tableName2)
 
 Table* DataBase::setDifference(Table *t1, Table *t2)
 {	
-	vector<pair<string, int> > table1Attr = t1->getAttributes();
-	vector<pair<string, int> > table2Attr = t2->getAttributes();
+	vector<pair<string, int> *> table1Attr = t1->getAttributes();
+	vector<pair<string, int> *> table2Attr = t2->getAttributes();
 
 	if(table1Attr == table2Attr)		//Vector of attributes have to be the same in order to be difference compatible
 	{
@@ -325,9 +339,9 @@ Table* DataBase::crossProduct(string tableName1, string tableName2)
 	{
 		string tableName = tableName1 + "x" + tableName2;
 		
-		vector<pair<string, int> > table1Attr = getTable1->second->getAttributes();
-		vector<pair<string, int> > table2Attr = getTable2->second->getAttributes();
-		vector<pair<string, int> > tableAttr = table1Attr;
+		vector<pair<string, int> *> table1Attr = getTable1->second->getAttributes();
+		vector<pair<string, int> *> table2Attr = getTable2->second->getAttributes();
+		vector<pair<string, int> *> tableAttr = table1Attr;
 		tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());	//vector holding the combined attributes
 		vector<string> primaryKeys = getTable1->second->getPrimaryKeys();
 		vector<string> primaryKeys2 = getTable2->second->getPrimaryKeys();
@@ -360,9 +374,9 @@ Table* DataBase::crossProduct(Table *t1, Table *t2)
 {
 	string tableName = t1->getTableName() + "x" + t2->getTableName();
 	
-	vector<pair<string, int> > table1Attr = t1->getAttributes();
-	vector<pair<string, int> > table2Attr = t2->getAttributes();
-	vector<pair<string, int> > tableAttr = table1Attr;
+	vector<pair<string, int> *> table1Attr = t1->getAttributes();
+	vector<pair<string, int> *> table2Attr = t2->getAttributes();
+	vector<pair<string, int> *> tableAttr = table1Attr;
 	tableAttr.insert(tableAttr.end(), table2Attr.begin(), table2Attr.end());	//vector holding the combined attributes
 	vector<string> primaryKeys = t1->getPrimaryKeys();
 	vector<string> primaryKeys2 = t2->getPrimaryKeys();
@@ -406,7 +420,7 @@ void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creat
 	ifstream ifs (path, ifstream::in);//inputfile creator
 	
 	string tName;//name to be used as arg
-	vector<pair<string, int> > tAttributes;//atribute vector to be used as arg
+	vector<pair<string, int> *> tAttributes;//atribute vector to be used as arg
 	vector<string> tPrimKeys;//Primary keys of table
 	vector<vector<string>> tData;//The data that will be logged into the table
 	
@@ -445,7 +459,9 @@ void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creat
 						}
 					
 					}
-					pair<string, int> tempPair = make_pair(a,b);
+					pair<string, int> *tempPair;
+					tempPair->first = a;
+					tempPair->second = b;
 					tAttributes.push_back(tempPair);
 				}
 			}
