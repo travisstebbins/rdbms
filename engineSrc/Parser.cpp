@@ -570,6 +570,7 @@ Parser::QueryType Parser::firstQuery (string instr) {
 		{
 			firstIndex = index;
 			q = Parser::SELECT;
+			
 		}
 	}
 	if (instr.find("project") != string::npos)
@@ -632,6 +633,9 @@ Parser::QueryType Parser::firstQuery (string instr) {
 string Parser::queryParse(string instr)
 {
 	string name;
+	string fileName = "tableFiles/";
+	string returnString;
+	
 	if (instr.find("<-") != string::npos)
 	{
 		name = instr.substr(0, instr.find("<-"));
@@ -652,6 +656,11 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->select(name, conditions);
 		db->createView(result);
+		fileName += result->getTableName();
+		fileName += ".table";
+		ifstream ifs(fileName);
+		string temp(static_cast<stringstream const&>(stringstream() << ifs.rdbuf()).str());
+		returnString = temp;
 	}
 	else if (q == Parser::PROJECT)
 	{
@@ -669,6 +678,11 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->project(name, attributes);
 		db->createView(result);
+		fileName += result->getTableName();
+		fileName += ".table";
+		ifstream ifs(fileName);
+		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		returnString = temp;
 	}
 	else if (q == Parser::RENAME)
 	{
@@ -682,6 +696,11 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->rename(name, newNames);
 		db->createView(result);
+		fileName += result->getTableName();
+		fileName += ".table";
+		ifstream ifs(fileName);
+		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		returnString = temp;
 	}
 	else if (q == Parser::UNION)
 	{
@@ -692,6 +711,12 @@ string Parser::queryParse(string instr)
 		Table *result = db->setUnion(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
+		fileName += result->getTableName();
+		fileName += ".table";
+		ifstream ifs(fileName);
+		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		cout << temp << endl;
+		returnString = temp;
 	}
 	else if (q == Parser::DIFFERENCE)
 	{
@@ -732,7 +757,7 @@ string Parser::queryParse(string instr)
 		return "Failure";
 	}
 	
-	return "Success";
+	return returnString;
 }
 
 Table* Parser::queryParseHelper(string instr, int depth, int pair)
