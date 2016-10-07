@@ -209,7 +209,8 @@ Table::~Table()
 // select entries from the table and return as a new Table object
 Table* Table::select(string _name, vector<string> boolExpressions)
 {
-	vector<pair<string, int>> copyAttributes = attributes;
+	vector<pair<string, int>> copyAttributes;
+	copy(attributes.begin(), attributes.end(), back_inserter(copyAttributes));
 	Table* view = new Table(_name, copyAttributes, primaryKeys);
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
