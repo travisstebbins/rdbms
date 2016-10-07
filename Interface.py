@@ -43,8 +43,8 @@ def read_in():
 		pass
 	elif(inputsplit[0] == "Display"):
 		#modify and send instructions socket to parser
-		instr1 = 'thisUser <- select(accountNumber == ' + inputsplit[2] + ') Users;'	#INSERT is the only command that can handle query inputs
-		instr2 = 'SHOW thisUser;'							#splitting Display into these three instructions gets around this issue
+		instr1 = 'thisUser <- select(accountNumber == ' + inputsplit[2] + ') Users;'
+		instr2 = 'SHOW thisUser;' #splitting Display into these three instructions gets around this issue
 		instr3 = 'DROP TABLE thisUser;' #allows us to reuse thisUser without us having to restructure a significant amount of our code
 		
 		instrList = [instr1, instr2, instr3]
@@ -57,8 +57,7 @@ def read_in():
 		pass
 	elif(inputsplit[0] == "Exit"):
 		instr = 'EXIT;'
-		exit = 1
-		pass
+		exit = 1 #signifies Bank system is finished
 	else:
 		print error_message
 	sendToSocket(instr)
@@ -91,7 +90,6 @@ def startup():
 def main():
 	startup()
 	
-	
 	while exit == 0:
 		print "Enter a command from the following list of commands."
 		print "Be sure to enter the right parameters!"
@@ -103,5 +101,7 @@ def main():
 		print "Transfer Money <Account Number> <Account(Savings or Checking)> <Money Amount>" #what about the target account?
 		print "Exit"
 		read_in()
+	
+	print "Thank you for using Aggie Bank.\nGoodbye!"
 
 main()
