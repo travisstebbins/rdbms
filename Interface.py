@@ -49,12 +49,9 @@ def read_in():
 		
 		instrList = [instr1, instr2, instr3]
 		
-		for instr in instrList
+		for instr in instrList:
 			sendToSocket(instr)
-		
-		
 
-		pass
 	elif(inputsplit[0] == "Transfer"):
 		#modify and send instruction socket to parser
 		pass
