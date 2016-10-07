@@ -15,7 +15,7 @@ DataBase::DataBase()
 	viewHashTable = {};
 }
 
-void DataBase::createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys)
+void DataBase::createTable(string tableName, vector<pair<string, int> *> attributes, vector<string> primaryKeys)
 {
 	auto checkNameUniq = dataBaseHashTable.find(tableName);
 	
@@ -266,7 +266,6 @@ Table* DataBase::setDifference(string tableName1, string tableName2)
 	
 	if(getTable1 != dataBaseHashTable.end() && getTable2 != dataBaseHashTable.end())
 	{
-		
 		vector<pair<string, int>> table1Attr = getTable1->second->getAttributes();
 		vector<pair<string, int>> table2Attr = getTable2->second->getAttributes();
 
@@ -359,7 +358,7 @@ Table* DataBase::crossProduct(string tableName1, string tableName2)
 Table* DataBase::crossProduct(Table *t1, Table *t2)
 {
 	string tableName = t1->getTableName() + "x" + t2->getTableName();
-	
+
 	vector<pair<string, int>> table1Attr = t1->getAttributes();
 	vector<pair<string, int>> table2Attr = t2->getAttributes();
 	vector<pair<string, int>> tableAttr = table1Attr;

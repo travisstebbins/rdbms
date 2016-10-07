@@ -15,15 +15,15 @@ void printVector (vector<string> vec)
 	cout << endl;
 }
 
-void printVector (vector<pair<string, int>> vec)
+void printVector (vector<pair<string, int> *> vec)
 {	
 	cout << "{ ";
 	for (int i = 0; i < vec.size(); ++i)
 	{
 		if (i != vec.size() - 1)
-			cout << vec[i].first << " , " << vec[i].second << " | ";
+			cout << vec[i]->first << " , " << vec[i]->second << " | ";
 		else
-			cout << vec[i].first << " , " << vec[i].second << " }";
+			cout << vec[i]->first << " , " << vec[i]->second << " }";
 	}
 	cout << endl;
 }
@@ -873,4 +873,3 @@ void Parser::commandDelete(string instr)
 	vector<string> delVect = convertBoolExpression(instr);
 	db->deleteFromTable(name, delVect);
 }
-
