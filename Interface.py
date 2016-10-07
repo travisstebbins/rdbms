@@ -14,15 +14,17 @@ def read_in():
 	instruction = raw_input(">")
 	inputsplit = instruction.split(' ') #splits the input string by whitespace
 	if(inputsplit[0] == "Add"):
-		#modify and send instruction socket to parser
-		instr = 'INSERT INTO Users VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);' 
-		#(account number, account name,savings, checking)
+		instr = 'INSERT INTO Users VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);'
+		#creates insert instruction for new user, with balances set to 0
+		
+		sendToSocket(instr)
+	
+	elif(inputsplit[0] == "Delete"):
+		instr = 'DELETE FROM Users WHERE (accountNumber == ' + inputsplit[2] + ');'
+		#creates delete instruction for user, where the account number == desired account number
+		
 		sendToSocket(instr)
 		
-	elif(inputsplit[0] == "Delete"):
-		#modify and send instruction socket to parser
-		instr = 'DELETE FROM Users WHERE (accountNumber == ' + inputsplit[2] + ');'
-		sendToSocket(instr)
 	elif(inputsplit[0] == "Update"):
 		#modify and send instructions socket to parser
 		#inst1 = 'currentbal <- project (' + inputsplit[3] ') (select (accountNumber == ' + inputsplit[2] + ') Users);' #TODO: how to access this number?
@@ -44,6 +46,13 @@ def read_in():
 		instr1 = 'thisUser <- select(accountNumber == ' + inputsplit[2] + ') Users;'	#INSERT is the only command that can handle query inputs
 		instr2 = 'SHOW thisUser;'							#splitting Display into these three instructions gets around this issue
 		instr3 = 'DROP TABLE thisUser;' #allows us to reuse thisUser without us having to restructure a significant amount of our code
+		
+		instrList = [instr1, instr2, instr3]
+		
+		for instr in instrList
+			sendToSocket(instr)
+		
+		
 
 		pass
 	elif(inputsplit[0] == "Transfer"):
