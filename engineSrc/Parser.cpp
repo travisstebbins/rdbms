@@ -15,15 +15,15 @@ void printVector (vector<string> vec)
 	cout << endl;
 }
 
-void printVector (vector<pair<string, int> *> vec)
+void printVector (vector<pair<string, int>> vec)
 {	
 	cout << "{ ";
 	for (int i = 0; i < vec.size(); ++i)
 	{
 		if (i != vec.size() - 1)
-			cout << vec[i]->first << " , " << vec[i]->second << " | ";
+			cout << vec[i].first << " , " << vec[i].second << " | ";
 		else
-			cout << vec[i]->first << " , " << vec[i]->second << " }";
+			cout << vec[i].first << " , " << vec[i].second << " }";
 	}
 	cout << endl;
 }
@@ -386,7 +386,7 @@ vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
 	
 }
 
-vector< pair<string, int> *> Parser::commandAttributes(string instr)
+vector<pair<string, int>> Parser::commandAttributes(string instr)
 {
 	instr = instr.erase(0,1);//eliminates left parenthese
 	instr = instr.substr(0,instr.size()-1);//eliminate right parenthese
@@ -395,7 +395,7 @@ vector< pair<string, int> *> Parser::commandAttributes(string instr)
 	string pair;
 	string eOne;//element 1 of pair
 	int eTwo;//element 2 of pair
-	vector< std::pair<string, int> *> atList;
+	vector<std::pair<string, int>> atList;
 	
 	while(getline(inss, pair, ','))
 	{
@@ -404,9 +404,9 @@ vector< pair<string, int> *> Parser::commandAttributes(string instr)
 			
 			eOne = pair.substr(0,pair.find("INTEGER")); //get the name of attribute
 			eTwo = -1;//signifies that the attribute is an integer
-			std::pair<string, int> *attr;
-			attr->first = eOne;
-			attr->second = eTwo;
+			std::pair<string, int> attr;
+			attr.first = eOne;
+			attr.second = eTwo;
 			atList.push_back(attr);
 			
 		}
@@ -414,9 +414,9 @@ vector< pair<string, int> *> Parser::commandAttributes(string instr)
 		{
 			eOne = pair.substr(0,pair.find("VARCHAR")); //get the name of attribute
 			eTwo = stoi(pair.substr(pair.find("(")+1,pair.find(")")-1));
-			std::pair<string, int> *attr;
-			attr->first = eOne;
-			attr->second = eTwo;
+			std::pair<string, int> attr;
+			attr.first = eOne;
+			attr.second = eTwo;
 			atList.push_back(attr);
 			
 		}
@@ -429,7 +429,7 @@ void Parser::commandCreate(string instr)// We'll need
 {
 	string instruction = instr;
 	string name;
-	vector<std::pair<string, int> *> attributes;
+	vector<std::pair<string, int>> attributes;
 	vector<string> primKeys;
 	name = instruction.substr(0, instruction.find("("));//get name of table
 	instruction.erase(0,instruction.find("("));//erases section of the line containing the name
