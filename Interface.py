@@ -23,7 +23,7 @@ print "Add User  <Account Number> <Account Name>"
 print "Delete User <Account Number>"
 print "Update Balance <Account Number> <Account(Savings or Checking)> <Money Amount>" 
 print "Display User <Account Number>"
-print "Tansfer Money <Account Number> <Account(Savings or Checking)> <Money Amount>" #what about the target account?
+print "Transfer Money <Account Number> <Account(Savings or Checking)> <Money Amount>" #what about the target account?
 print "Exit"
 
 error_message = "We didn't quite understand that. Please check your inputs and try again."
