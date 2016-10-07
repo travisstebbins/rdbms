@@ -36,7 +36,7 @@ public:
 	
 	//Creates a new Table object and inserts it into the hash table of tables.
 	//Table name (string), list of attribute names and types (vector<pair<string, int>>), and list of primary key(s) (vector<string>)
-	void createTable(string tableName, vector<pair<string, int> *> attributes, vector<string> primaryKeys);
+	void createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys);
 	
 	//Creates a new Table object and inserts it into the hash table of tables
 	//Table newTable table object to be inserted into databse

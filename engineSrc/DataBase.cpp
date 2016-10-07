@@ -15,7 +15,7 @@ DataBase::DataBase()
 	viewHashTable = {};
 }
 
-void DataBase::createTable(string tableName, vector<pair<string, int> *> attributes, vector<string> primaryKeys)
+void DataBase::createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys)
 {
 	auto checkNameUniq = dataBaseHashTable.find(tableName);
 	

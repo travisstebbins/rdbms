@@ -34,7 +34,7 @@ private:
 	vector<string> stringToTokens (string boolExpression);
 	vector<string> convertBoolExpression (string boolExpression);
 	vector<string> extractAttributes (string attributeList);
-	vector<pair<string, int> *> commandAttributes(string instr);
+	vector<pair<string, int>> commandAttributes(string instr);
 	vector<string> commandPrimKeys(string instr);
 	enum QueryType { ERROR, RELATION, SELECT, PROJECT, RENAME, UNION, DIFFERENCE, PRODUCT, JOIN };
 	
