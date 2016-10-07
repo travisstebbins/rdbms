@@ -76,7 +76,7 @@ def read_in():
 	elif(inputsplit[0] == "Transfer"):
 		#modify and send instruction socket to parser
 		pass
-	elif(inputsplit[0] == "Exit"
+	elif(inputsplit[0] == "Exit"):
 		instr = 'EXIT;'
 		pass
 	else:
