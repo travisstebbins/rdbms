@@ -30,7 +30,7 @@ void printVector (vector<pair<string, int>> vec)
 
 void Parser::runOnCommandLine()
 {
-	db = new DataBase();
+	//db = new DataBase();
 	string command;
 	while(1)
 	{
@@ -42,7 +42,7 @@ void Parser::runOnCommandLine()
 
 void Parser::runOnSocket()
 {
-	db = new DataBase();
+	//db = new DataBase();
 	cout << "Starting Server" << endl;
 	int c;
 	int socketFD;
@@ -108,7 +108,8 @@ void Parser::runOnSocket()
 			returnString = "Failure";
 		}
 		
-		send(clientSocketFD, returnString.c_str(), sizeof(returnString.c_str()), 0);	
+		cout << "Sending: " << returnString.c_str() << endl;
+		send(clientSocketFD, returnString.c_str(), returnString.length(), 0);	
 		
 		close(clientSocketFD);
 		cout << "Closed connection to client" << endl;
@@ -341,17 +342,20 @@ void Parser::commandExit()//For Travis
 
 string Parser::commandShow(string tableName)
 {
-	//tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
+	// tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
+	// cout << "Searching for: " << tableName << endl;
+
 	try 
 	{
-		Table *table = db->getTable(tableName);
-		Table *view = db->getView(tableName);
-		if(table != NULL)
+		
+		bool table = db->containsTable(tableName);
+		bool view = db->containsView(tableName);
+		if(table)
 		{
 			cout << db->showTable(tableName) << endl;
 			return db->showTable(tableName);
 		}
-		else if(view != NULL)
+		else if(view)
 		{
 			cout << db->showView(tableName) << endl;
 			return db->showView(tableName);
@@ -359,6 +363,11 @@ string Parser::commandShow(string tableName)
 		else
 			throw "Not a table or view";
 			
+	}
+	catch (char const* c)
+	{
+		cout << c << endl;
+		return "Failure";
 	}
 	catch(...)
 	{

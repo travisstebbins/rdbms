@@ -39,7 +39,7 @@ private:
 	
 public:
 
-	Parser() {};
+	Parser() {db = new DataBase();};
 	
 	void runOnCommandLine();
 	
