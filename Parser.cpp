@@ -342,9 +342,6 @@ void Parser::commandExit()//For Travis
 
 string Parser::commandShow(string tableName)
 {
-	// tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
-	// cout << "Searching for: " << tableName << endl;
-
 	try 
 	{
 		
@@ -667,7 +664,6 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->select(name, conditions);
 		db->createView(result);
-		delete tmp;
 	}
 	else if (q == Parser::PROJECT)
 	{
@@ -689,7 +685,6 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->project(name, attributes);
 		db->createView(result);
-		delete tmp;
 	}
 	else if (q == Parser::RENAME)
 	{
@@ -707,7 +702,6 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->rename(name, newNames);
 		db->createView(result);
-		delete tmp;
 	}
 	else if (q == Parser::UNION)
 	{
@@ -717,8 +711,6 @@ string Parser::queryParse(string instr)
 		Table *tmp2 = queryParseHelper(expr2, 0, 1);
 		Table *result = db->setUnion(tmp1, tmp2);
 		db->createView(result);
-		delete tmp1;
-		delete tmp2;
 	}
 	else if (q == Parser::DIFFERENCE)
 	{
@@ -777,7 +769,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair;
 		Table *result = tmp->select(tmpName, conditions);
-		delete tmp;
 		return result;
 	}
 	else if (q == Parser::PROJECT)
@@ -799,7 +790,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair;
 		Table *result = tmp->project(tmpName, attributes);
-		delete tmp;
 		return result;
 	}
 	else if (q == Parser::RENAME)
@@ -821,7 +811,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair; 
 		Table *result = tmp->rename(tmpName, newNames);
-		delete tmp;
 		return result;
 	}
 	else if (q == Parser::UNION)
@@ -831,8 +820,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		Table *tmp1 = queryParseHelper(expr1, depth + 1, pair);
 		Table *tmp2 = queryParseHelper(expr2, depth + 1, pair);
 		Table *result = db->setUnion(tmp1, tmp2);
-		delete tmp1;
-		delete tmp2;
 		return result;
 	}
 	else if (q == Parser::DIFFERENCE)
