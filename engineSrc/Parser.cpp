@@ -449,8 +449,6 @@ void Parser::commandCreate(string instr)// We'll need
 	db->createTable(name, attributes, primKeys);	
 }
 
-
-
 // split function from here: http://code.runnable.com/VHb0hWMZp-ws1gAr/splitting-a-string-into-a-vector-for-c%2B%2B
 vector<string> split(string str, char delimiter)
 {
@@ -704,8 +702,6 @@ string Parser::queryParse(string instr)
 		Table *result = db->setDifference(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
-		delete tmp1;
-		delete tmp2;
 	}
 	else if (q == Parser::PRODUCT)
 	{
@@ -716,8 +712,6 @@ string Parser::queryParse(string instr)
 		Table *result = db->crossProduct(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
-		delete tmp1;
-		delete tmp2;
 	}
 	else if (q == Parser::JOIN)
 	{
@@ -823,8 +817,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		Table *tmp1 = queryParseHelper(expr1, depth + 1, pair);
 		Table *tmp2 = queryParseHelper(expr2, depth + 1, pair);
 		Table *result = db->setDifference(tmp1, tmp2);
-		delete tmp1;
-		delete tmp2;
 		return result;
 	}
 	else if (q == Parser::PRODUCT)
@@ -834,8 +826,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		Table *tmp1 = queryParseHelper(expr1, 0, 0);
 		Table *tmp2 = queryParseHelper(expr2, 0, 1);
 		Table *result = db->crossProduct(tmp1, tmp2);
-		delete tmp1;
-		delete tmp2;
 		return result;
 	}
 	else if (q == Parser::JOIN)
