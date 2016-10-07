@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sstream>
 #include "DataBase.h"
 #include "Table.h"
 
