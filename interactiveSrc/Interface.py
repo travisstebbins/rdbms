@@ -7,22 +7,24 @@ PORT = 1337
 
 exit = 0
 error_message = "We didn't quite understand that. Please check your inputs and try again."
-#hello
+
 #TODO: comment out all pass statements as the functions are implemented
 
 def read_in():
 	instruction = raw_input(">")
 	inputsplit = instruction.split(' ') #splits the input string by whitespace
 	if(inputsplit[0] == "Add"):
-		#modify and send instruction socket to parser
-		instr = 'INSERT INTO Users VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);' 
-		#(account number, account name,savings, checking)
+		instr = 'INSERT INTO Users VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);'
+		#creates insert instruction for new user, with balances set to 0
+		
+		sendToSocket(instr)
+	
+	elif(inputsplit[0] == "Delete"):
+		instr = 'DELETE FROM Users WHERE (accountNumber == ' + inputsplit[2] + ');'
+		#creates delete instruction for user, where the account number == desired account number
+		
 		sendToSocket(instr)
 		
-	elif(inputsplit[0] == "Delete"):
-		#modify and send instruction socket to parser
-		instr = 'DELETE FROM Users WHERE (accountNumber == ' + inputsplit[2] + ');'
-		sendToSocket(instr)
 	elif(inputsplit[0] == "Update"):
 		#modify and send instructions socket to parser
 		#inst1 = 'currentbal <- project (' + inputsplit[3] ') (select (accountNumber == ' + inputsplit[2] + ') Users);' #TODO: how to access this number?
@@ -41,18 +43,21 @@ def read_in():
 		pass
 	elif(inputsplit[0] == "Display"):
 		#modify and send instructions socket to parser
-		instr1 = 'thisUser <- select(accountNumber == ' + inputsplit[2] + ') Users;'	#INSERT is the only command that can handle query inputs
-		instr2 = 'SHOW thisUser;'							#splitting Display into these three instructions gets around this issue
+		instr1 = 'thisUser <- select(accountNumber == ' + inputsplit[2] + ') Users;'
+		instr2 = 'SHOW thisUser;' #splitting Display into these three instructions gets around this issue
 		instr3 = 'DROP TABLE thisUser;' #allows us to reuse thisUser without us having to restructure a significant amount of our code
+		
+		instrList = [instr1, instr2, instr3]
+		
+		for instr in instrList:
+			sendToSocket(instr)
 
-		pass
 	elif(inputsplit[0] == "Transfer"):
 		#modify and send instruction socket to parser
 		pass
 	elif(inputsplit[0] == "Exit"):
 		instr = 'EXIT;'
-		exit = 1
-		pass
+		exit = 1 #signifies Bank system is finished
 	else:
 		print error_message
 	sendToSocket(instr)
@@ -85,7 +90,6 @@ def startup():
 def main():
 	startup()
 	
-	
 	while exit == 0:
 		print "Enter a command from the following list of commands."
 		print "Be sure to enter the right parameters!"
@@ -97,5 +101,7 @@ def main():
 		print "Transfer Money <Account Number> <Account(Savings or Checking)> <Money Amount>" #what about the target account?
 		print "Exit"
 		read_in()
+	
+	print "Thank you for using Aggie Bank.\nGoodbye!"
 
 main()

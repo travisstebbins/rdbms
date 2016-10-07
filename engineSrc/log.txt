@@ -53,3 +53,28 @@ Accepted a client
 Message from client:EXIT; Size: 5
 Passing to Parser
 Saved 1 database tables
+Starting Server
+Server Running
+Listening on port: 1337
+Starting Server
+Error in bind, exiting program
+Starting Server
+Error in bind, exiting program
+Accepted a client
+Message from client:CREATE TABLE bank (name VARCHAR(20), account# INTEGER, savings INTEGER, checking INTEGER) PRIMARY KEY (name, account#); Size: 119
+Passing to Parser
+Sending: Success
+Closed connection to client
+Listening on port: 1337
+Accepted a client
+Message from client:INSERT INTO Users VALUES FROM (1234, And, 0, 0); Size: 48
+Passing to Parser
+Sending: Table does not exist.
+Closed connection to client
+Listening on port: 1337
+Accepted a client
+Message from client:INSERT INTO Users VALUES FROM (1234, And, 0, 0); Size: 48
+Passing to Parser
+Sending: Table does not exist.
+Closed connection to client
+Listening on port: 1337
