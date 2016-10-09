@@ -6,13 +6,14 @@ SERVERADDRESS = 'localhost'
 PORT = 1337
 
 exit = 0
-error_message = "We didn't quite understand that. Please check your inputs and try again."
+error_message = "*"*72 + "\nWe didn't quite understand that. Please check your inputs and try again.\n" + "*"*72 + "\n"
 
 #TODO: comment out all pass statements as the functions are implemented
 
 def read_in():
 	instruction = raw_input(">")
 	inputsplit = instruction.split(' ') #splits the input string by whitespace
+	print(chr(27) + "[2J") #clears out terminal
 	if(inputsplit[0] == "Add"):
 		instr = 'INSERT INTO Users VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);'
 		#creates insert instruction for new user, with balances set to 0
@@ -56,11 +57,13 @@ def read_in():
 		#modify and send instruction socket to parser
 		pass
 	elif(inputsplit[0] == "Exit"):
+		global exit
 		instr = 'EXIT;'
 		exit = 1 #signifies Bank system is finished
 	else:
 		print error_message
-	sendToSocket(instr)
+
+	#sendToSocket(instr)
 
 def sendToSocket(msg):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -84,12 +87,13 @@ def startup():
 	print " "
 	print "Welcome to Aggie Bank"
 	
-	instr = "CREATE TABLE bank (name VARCHAR(20), account# INTEGER, savings INTEGER, checking INTEGER) PRIMARY KEY (name, account#);"
+	instr = "CREATE TABLE bank (name VARCHAR(20), account INTEGER, savings INTEGER, checking INTEGER) PRIMARY KEY (name, account);"
 	sendToSocket(instr)
 	
 def main():
 	startup()
-	
+	global exit
+
 	while exit == 0:
 		print "Enter a command from the following list of commands."
 		print "Be sure to enter the right parameters!"
@@ -101,6 +105,7 @@ def main():
 		print "Transfer Money <Account Number> <Account(Savings or Checking)> <Money Amount>" #what about the target account?
 		print "Exit"
 		read_in()
+		
 	
 	print "Thank you for using Aggie Bank.\nGoodbye!"
 
