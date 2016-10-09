@@ -14,10 +14,20 @@ Deliverable 3 was marked as an official release and is under the tag Deliverable
 To view run the following command:  
 `git checkout Deliverable-3`
 
+## Run Interactive System  
+To run the Interactive System on its own:  
+Navigate to `interactiveSrc/` and run `python Interface.py`  
+To run the parser server in the background and start the interactive system in one command run  
+`./start.sh`  
+This starts runs the server in the background on ip `127.0.0.1` and port `1337`. The output from the server gets logged in `log.txt`.
+
 ## Run Parser  
 To run the parser on the command line run the following commands:  
+Navigate to `engineSrc/` and run  
 `make main`  
-`./main`
+`./main -c |-s`  
+`-c` runs the parser on the command line
+`-s` runs the parser on a server with ip `127.0.0.1` and port number `1337`
 
 ## Running Unit Test
 To run the parser unit tests run the following commands:  
