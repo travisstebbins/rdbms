@@ -48,6 +48,8 @@ public:
 	//Delete the table from the hash table of tables 
 	//Table name (string)
 	void dropTable(string tableName);
+
+	void dropView(string tableName);
 	
 	//Wrapper function for Table insertRecord(vector<string> entry)
 	//Calls insertRecord on Table tableName

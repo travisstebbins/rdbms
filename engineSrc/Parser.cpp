@@ -311,10 +311,18 @@ void Parser::commandOpen(string filename)
 	db->readTableFromDisk(filename);//under the impression that the filename string has no ""
 }
 
-void Parser::commandClose(string tablename)
+void Parser::commandClose(string tableName)
 {
-	tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
-	db->dropTable(tablename);//works the exact same way as commandDrop()
+	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
+	bool table = db->containsTable(tableName);
+	bool view = db->containsView(tableName);
+	if(table)
+		db->dropTable(tableName);
+	else if(view)
+		db->dropView(tableName);
+	
+	else
+		throw "Not a table or view";//works the exact same way as commandDrop()
 }
 
 void  Parser::commandWrite(string tableName)
@@ -876,8 +884,16 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 
 void Parser::commandDrop(string tablename)
 {
-	tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
-	db->dropTable(tablename);
+	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
+	bool table = db->containsTable(tableName);
+	bool view = db->containsView(tableName);
+	if(table)
+		db->dropTable(tableName);
+	else if(view)
+		db->dropView(tableName);
+	
+	else
+		throw "Not a table or view";//works the exact same way as commandDrop()
 }
 
 void Parser::commandDelete(string instr)

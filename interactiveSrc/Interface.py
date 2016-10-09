@@ -15,13 +15,13 @@ def read_in():
 	inputsplit = instruction.split(' ') #splits the input string by whitespace
 	print(chr(27) + "[2J") #clears out terminal
 	if(inputsplit[0] == "Add"):
-		instr = 'INSERT INTO Users VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);'
+		instr = 'INSERT INTO bank VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);'
 		#creates insert instruction for new user, with balances set to 0
 		
 		sendToSocket(instr)
 	
 	elif(inputsplit[0] == "Delete"):
-		instr = 'DELETE FROM Users WHERE (accountNumber == ' + inputsplit[2] + ');'
+		instr = 'DELETE FROM bank WHERE (accountNumber == ' + inputsplit[2] + ');'
 		#creates delete instruction for user, where the account number == desired account number
 		
 		sendToSocket(instr)
@@ -44,7 +44,7 @@ def read_in():
 		pass
 	elif(inputsplit[0] == "Display"):
 		#modify and send instructions socket to parser
-		instr1 = 'thisUser <- select(accountNumber == ' + inputsplit[2] + ') Users;'
+		instr1 = 'thisUser <- select(accountNumber == ' + inputsplit[2] + ') bank;'
 		instr2 = 'SHOW thisUser;' #splitting Display into these three instructions gets around this issue
 		instr3 = 'DROP TABLE thisUser;' #allows us to reuse thisUser without us having to restructure a significant amount of our code
 		
@@ -63,7 +63,6 @@ def read_in():
 	else:
 		print error_message
 
-	#sendToSocket(instr)
 
 def sendToSocket(msg):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
