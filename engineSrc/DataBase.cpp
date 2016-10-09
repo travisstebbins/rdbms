@@ -91,6 +91,18 @@ void DataBase::dropTable(string tableName)
 		throw "Table does not exist.";
 }
 
+void DataBase::dropView(string tableName)
+{
+	auto checkNameExist = viewHashTable.find(tableName);
+	
+	if(checkNameExist != viewHashTable.end())
+	{
+		viewHashTable.erase(checkNameExist);
+	}
+	else
+		throw "View does not exist.";
+}
+
 Table* DataBase::getTable(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
