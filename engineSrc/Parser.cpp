@@ -882,7 +882,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	}
 }
 
-void Parser::commandDrop(string tablename)
+void Parser::commandDrop(string tableName)
 {
 	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
 	bool table = db->containsTable(tableName);

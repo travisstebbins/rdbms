@@ -49,6 +49,8 @@ public:
 	//Table name (string)
 	void dropTable(string tableName);
 
+	//Delete the view from the hash table of tables 
+	//Table name (string)
 	void dropView(string tableName);
 	
 	//Wrapper function for Table insertRecord(vector<string> entry)
@@ -69,6 +71,8 @@ public:
 	//Calls show on Table tableName
 	string showTable(string tableName);
 	
+	//Wrapper function for Table show()
+	//Calls show on Table tableName
 	string showView(string viewName);
 	
 	//Wrapper function for Table project(string _name, vector<string> desiredAttributes)
@@ -94,6 +98,7 @@ public:
 	//This is used to access and return a table based on the given name
 	Table* getTable(string tableName);
 	
+	//This is used to access and return a view based on the given name
 	Table* getView(string viewName);
 
 	bool containsTable(string tableName);
@@ -103,6 +108,7 @@ public:
 	//recreating the Table object and inserting it into the hash table of tables
 	void readTableFromDisk(string fileName);
 	
+	// Wrapper function for table writeToDisk()
 	void writeTableToDisk(string tableName);
 
 	// This saves all tables to disk; returns number of tables that
