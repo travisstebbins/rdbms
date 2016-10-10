@@ -34,6 +34,9 @@ def read_in():
 		inst1 = "currentbal <- project (" + inputsplit[3] + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
 		#				    savings or checking				     account number
 
+		rtn = sendToSocket(inst1)
+		print rtn
+		
 		#if ('(' in inputsplit[4]):
 
 		#TODO: check the length of inputsplit[4], which, by default, should contain the amount to update with. however, if the user types, say, "+ amount"
@@ -120,6 +123,7 @@ def read_in():
 		pass
 		#read_in()
 	elif(inputsplit[0] == "Exit"):
+		global exit
 		print" "
 		print" "
 		instr = "EXIT;"
@@ -127,7 +131,6 @@ def read_in():
 		pass
 	else:
 		print error_message
-	#sendToSocket(instr)
 
 def sendToSocket(msg):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
