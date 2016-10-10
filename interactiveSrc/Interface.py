@@ -32,28 +32,29 @@ def read_in():
 		#modify and send instructions socket to parser
 		print" "
 		print" "
-		inst1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
-		print inst1
-		#				    savings or checking				     account number
+		instr1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
 		instr2 = "DROP TABLE currentbal;"
-		rtn = sendToSocket(inst1)
-		sendToSocket(instr2)
-		rtnSplit = rtn.split("data:")
-		rtnVal = re.sub(r"\D", "", rtnSplit[1])
-		print rtnVal
 		
-		#if ('(' in inputsplit[4]):
-
-		#TODO: check the length of inputsplit[4], which, by default, should contain the amount to update with. however, if the user types, say, "+ amount"
-		#      or "- amount" instead of "+amount" or "-amount". if this has happened, inputsplit[4] will be of length 1, and inputsplit[5] will exist and
-		#      will contain the actual amount
-		#      alternatively, we just tell the user not to put a space between the +/- and the amount. I personally like this idea better
-
-		#newNumber = number obtained from database + (or -) inputted amount (inputsplit[4 or 5])
-
-		#instr = 'UPDATE bank SET (' + inputsplit[3] + ') (' + newNumber + ') WHERE (accountNumber = ' + inputsplit[2] + ');' #TODO: double check expected format
-		#				account,		amount,						account number
+		rtn = sendToSocket(instr1)
+		sendToSocket(instr2)#drops view
+		rtnSplit = rtn.split("data:")#cuts off fat of returned message
+		rtnVal = int(re.sub(r"\D", "", rtnSplit[1]))#gets current value of bank account
 		
+		updBal = 0
+		
+		if ('(' in inputsplit[4]):
+			updVal = 100 * int(re.sub(r"\D", "", inputsplit[4]))
+			if (updVal > rtnVal):
+				print "Account drained to $0.00"
+			else:
+				updBal = rtnVal - updVal
+		else:
+			updVal = 100 * int(inputsplit[4])
+			updBal = rtnVal + updVal
+		
+		instr3 = 'UPDATE bank SET (' + inputsplit[3] + " = " + str(updBal) + ') WHERE (accountNumber == ' + inputsplit[2] + ');' 
+		print instr3
+		sendToSocket(instr3)
 		pass
 	elif(inputsplit[0] == "Display"):
 		#modify and send instructions socket to parser
@@ -75,22 +76,34 @@ def read_in():
 		print" "
 		#TODO: make variables and attribute names up to date
 	
-		inst1 = "currentbal <- project (" + inputsplit[3] + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: store this result
-                #                                   savings or checking                              account number
-
-		#sendToSocket(inst1)
-
-	        #if(inst1 < int(inputsplit[4])):
-		#	print 'not enough funds in ' + inputsplit[3]	
-
-		if(inputsplit[3] == "savings"):
-			otherAccount = "checking"
-		elif(inputsplit[3] == "checking"):
-			otherAccount = "savings"
-		else:
-			print error_message
-
-		inst2 = "currentbal <- project (" + otherAccount + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: store this result in a variable
+		#instr1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
+		#instr2 = "DROP TABLE currentbal;"
+		#
+		#rtn = sendToSocket(instr1)
+		#sendToSocket(instr2)#drops view
+		#rtnSplit = rtn.split("data:")#cuts off fat of returned message
+		#rtnVal = int(re.sub(r"\D", "", rtnSplit[1]))#gets current value of bank account
+		#
+		#updBal = 0
+		#
+		#
+		#updVal = 100 * int(re.sub(r"\D", "", inputsplit[4]))
+		#if (updVal > rtnVal):
+		#	print "Account drained to $0.00"
+		#else:
+		#	updBal = rtnVal - updVal
+		#
+		#instr3 = 'UPDATE bank SET (' + inputsplit[3] + " = " + str(updBal) + ') WHERE (accountNumber == ' + inputsplit[2] + ');' 
+		#sendToSocket(instr3)
+        #
+		#if(inputsplit[3] == "savings"):
+		#	otherAccount = "checking"
+		#elif(inputsplit[3] == "checking"):
+		#	otherAccount = "savings"
+		#else:
+		#	print error_message
+        #
+		#inst2 = "currentbal <- project (" + otherAccount + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: store this result in a variable
                 #                                                                                account number
 
 		#subtraction = inst1 - int(inputsplit[4])
