@@ -167,6 +167,14 @@ TEST_CASE("Parser", "[Parser]")
 	{
 		instruction = "WRITE animals;";
 		argParser.commandOrQuery(instruction);
+		string animalTable = "name: animals\nattributes: name 20,kind 8,years -1,\nprimary keys: name,kind,\ndata: Joe,bird,2,\ndata: Tweety,bird,1,\ndata: Snoopy,dog,3,\ndata: Spot,dog,10,\ndata: Joe,cat,4,\n";
+		
+		string fileName = "tableFiles/animals.table";
+		ifstream ifs(fileName);
+		string fileAnimals( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		
+		REQUIRE(animalTable == fileAnimals);
+	
 	}
 	
 	SECTION("Close")
@@ -177,8 +185,10 @@ TEST_CASE("Parser", "[Parser]")
 	
 	SECTION("Delete")
 	{
-		instruction = "DELETE FROM animals VALUES FROM years;";
+		instruction = "DELETE FROM animals Where (kind == \"bird\");";
 		argParser.commandOrQuery(instruction);
+		instruction = instruction = "SHOW animals;";
+		string retn = argParser.commandOrQuery(instruction);
 	}	
 	
 }
