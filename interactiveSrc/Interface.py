@@ -68,7 +68,16 @@ def read_in():
 		rtnStr = sendToSocket(instr2)#prints our table
 		sendToSocket(instr3)
 		
+		rtnStrSplit1 = rtnStr.split("\n")
 		
+		rtnStrSplit2 = rtnStrSplit1[1].split("\t")#gets first row needed
+
+		rtnStrSplit3 = rtnStrSplit1[2].split("\t")#gets second row needed
+
+		print "%-20s %-20s %-20s %-1s" % (rtnStrSplit2[0], rtnStrSplit2[2], rtnStrSplit2[4],rtnStrSplit2[6])
+		print "-------------------------------------------------------------------------------"
+		print "%-20s %-20s %-20s %-1s" % (rtnStrSplit3[0], rtnStrSplit3[2], rtnStrSplit3[4],rtnStrSplit3[6])
+		print ""
 
 	elif(inputsplit[0] == "Transfer"):
 		#modify and send instruction socket to parser
