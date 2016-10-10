@@ -152,7 +152,7 @@ def startup():
 	print "Welcome to Aggie Bank"
 	print" "
 	print" "
-	instr = "CREATE TABLE bank (accountName VARCHAR(20), accountNumber INTEGER, savings INTEGER, checking INTEGER) PRIMARY KEY (accountName, accountNumber);"
+	instr = "CREATE TABLE bank (accountNumber INTEGER, accountName VARCHAR(20), savings INTEGER, checking INTEGER) PRIMARY KEY (accountName, accountNumber);"
 	sendToSocket(instr)
 	
 def main():
