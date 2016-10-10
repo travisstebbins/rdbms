@@ -9,12 +9,20 @@
 
 #include "DataBase.h"
 
+// CONSTRUCTOR
 DataBase::DataBase()
 {
+	// initialize empty unordered_maps
 	dataBaseHashTable = {};
 	viewHashTable = {};
 }
 
+// TABLE CREATE/DROP FUNCTIONS
+
+// creates a new Table object and inserts it into the hash table of tables based
+//	on the following parameters:
+// 	table name (string), list of attribute names and types (vector<pair<string, int>>),
+// 	and list of primary key(s) (vector<string>)
 void DataBase::createTable(string tableName, vector<pair<string, int>> attributes, vector<string> primaryKeys)
 {
 	auto checkNameUniq = dataBaseHashTable.find(tableName);
@@ -29,6 +37,8 @@ void DataBase::createTable(string tableName, vector<pair<string, int>> attribute
 		throw "Table name already in use.";
 }
 
+// creates a new Table object and inserts it into the hash table of tables
+// table newTable table object to be inserted into databse
 void DataBase::createTable(Table *newTable)
 {
 	string tableName = newTable->getTableName();
@@ -42,6 +52,8 @@ void DataBase::createTable(Table *newTable)
 		throw "Table already exists";
 }
 
+// creates a new view Table object and inserts it into the hash table of views
+// table newView table object to be inserted into databse
 void DataBase::createView(Table *newView)
 {
 	string tableName = newView->getTableName();
@@ -55,30 +67,8 @@ void DataBase::createView(Table *newView)
 		throw "Table already exists";
 }
 
-Table* DataBase::projectTable(string tableName, string _name, vector<string> desiredAttributes)
-{
-	auto getTable = dataBaseHashTable.find(tableName);
-	
-	if (getTable != dataBaseHashTable.end())
-	{
-		return getTable->second->project(_name, desiredAttributes);
-	}
-	else
-		throw "Table does not exist";
-}
-
-Table* DataBase::selectTable(string tableName, string _name, vector<string> boolExpressions)
-{
-	auto getTable = dataBaseHashTable.find(tableName);
-	
-	if(getTable != dataBaseHashTable.end())
-	{
-		return getTable->second->select(_name, boolExpressions);
-	}
-	else
-		throw "Table does not exist";
-}
-
+// delete the table from the hash table of tables 
+// table name (string)
 void DataBase::dropTable(string tableName)
 {
 	auto checkNameExist = dataBaseHashTable.find(tableName);
@@ -91,6 +81,8 @@ void DataBase::dropTable(string tableName)
 		throw "Table does not exist.";
 }
 
+// delete the view from the hash table of tables 
+// table name (string)
 void DataBase::dropView(string tableName)
 {
 	auto checkNameExist = viewHashTable.find(tableName);
@@ -103,56 +95,7 @@ void DataBase::dropView(string tableName)
 		throw "View does not exist.";
 }
 
-Table* DataBase::getTable(string tableName)
-{
-	auto getTable = dataBaseHashTable.find(tableName);
-	
-	if(getTable != dataBaseHashTable.end())
-	{
-		return dataBaseHashTable[tableName];
-	}
-	else
-		throw "Table does not exist.";
-}
-
-Table* DataBase::getView(string viewName)
-{
-	auto getTable = viewHashTable.find(viewName);
-	
-	if(getTable != viewHashTable.end())
-	{
-		return getTable->second;
-	}
-	else
-		throw "Table does not exist.";
-}
-
-bool DataBase::containsTable(string tableName)
-{
-	auto getTable = dataBaseHashTable.find(tableName);
-
-	if(getTable != dataBaseHashTable.end())
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-bool DataBase::containsView(string viewName)
-{
-	auto getTable = viewHashTable.find(viewName);
-
-	if(getTable != viewHashTable.end())
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
+// TABLE WRAPPER FUNCTIONS
 
 void DataBase::insertIntoTable(string tableName, vector<string> entry)
 {
@@ -163,8 +106,7 @@ void DataBase::insertIntoTable(string tableName, vector<string> entry)
 		getTable->second->insertRecord(entry);
 	}
 	else
-		throw "Table could not be found";
-	
+		throw "Table could not be found";	
 }
 
 void DataBase::insertIntoTable(string tableName, Table *relationships)
@@ -231,6 +173,32 @@ string DataBase::showView(string viewName)
 	else
 		throw "View could not be found";
 }
+
+Table* DataBase::projectTable(string tableName, string _name, vector<string> desiredAttributes)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	
+	if (getTable != dataBaseHashTable.end())
+	{
+		return getTable->second->project(_name, desiredAttributes);
+	}
+	else
+		throw "Table does not exist";
+}
+
+Table* DataBase::selectTable(string tableName, string _name, vector<string> boolExpressions)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	
+	if(getTable != dataBaseHashTable.end())
+	{
+		return getTable->second->select(_name, boolExpressions);
+	}
+	else
+		throw "Table does not exist";
+}
+
+// TABLE MANIPULATION FUNCTIONS
 
 Table* DataBase::setUnion(string tableName1, string tableName2)
 {
@@ -399,6 +367,60 @@ Table* DataBase::crossProduct(Table *t1, Table *t2)
 	return tableCross;
 }
 
+// GETTER FUNCTIONS
+Table* DataBase::getTable(string tableName)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+	
+	if(getTable != dataBaseHashTable.end())
+	{
+		return dataBaseHashTable[tableName];
+	}
+	else
+		throw "Table does not exist.";
+}
+
+Table* DataBase::getView(string viewName)
+{
+	auto getTable = viewHashTable.find(viewName);
+	
+	if(getTable != viewHashTable.end())
+	{
+		return getTable->second;
+	}
+	else
+		throw "Table does not exist.";
+}
+
+// HELPER FUNCTIONS
+
+bool DataBase::containsTable(string tableName)
+{
+	auto getTable = dataBaseHashTable.find(tableName);
+
+	if(getTable != dataBaseHashTable.end())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+bool DataBase::containsView(string viewName)
+{
+	auto getTable = viewHashTable.find(viewName);
+
+	if(getTable != viewHashTable.end())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void DataBase::writeTableToDisk(string tableName)
 {
 	auto getTable = dataBaseHashTable.find(tableName);
@@ -411,6 +433,12 @@ void DataBase::writeTableToDisk(string tableName)
 		throw "Table could not be found";
 }
 
+/*
+Used these resources to help understand how to implement my readfrom function.
+http://stackoverflow.com/questions/19912751/how-to-initialize-a-vector-of-vector-of-strings-using-for-loop-in-c
+http://www.cplusplus.com/forum/beginner/85227/
+http://www.cplusplus.com/forum/beginner/85227/
+*/
 void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creates a table from it
 {
 	string path = "tableFiles/" + fileName;
@@ -500,13 +528,6 @@ void DataBase::readTableFromDisk(string fileName)//Reads a .table file and creat
 		t->writeToDisk();//saves again for consistency
 	}
 }
-
-/*
-Used these resources to help understand how to implement my readfrom function.
-http://stackoverflow.com/questions/19912751/how-to-initialize-a-vector-of-vector-of-strings-using-for-loop-in-c
-http://www.cplusplus.com/forum/beginner/85227/
-http://www.cplusplus.com/forum/beginner/85227/
-*/
 
 int DataBase::exit()
 {
