@@ -283,9 +283,9 @@ string Parser::commandParse(string instruction)//parses a command
 		instruction.erase(0,10);//removes INSERT INTO
 		commandInsert(instruction);
 	}
-	else if(instruction.find("DROP") != string::npos)
+	else if(instruction.find("DROPTABLE") != string::npos)
 	{
-		instruction.erase(0,4);
+		instruction.erase(0,9);
 		commandDrop(instruction);// may change if the "DROP " part of the string needs to be removed
 	}
 	else if(instruction.find("DELETE") != string::npos)
