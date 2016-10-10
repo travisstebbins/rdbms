@@ -14,6 +14,12 @@ Deliverable 3 was marked as an official release and is under the tag Deliverable
 To view run the following command:  
 `git checkout Deliverable-3`
 
+## View Deliverable 4  
+Deliverable 4 was marked as an official release and is under the tag Deliverable-4.  
+The link to the final report is under the wiki.  
+To view run the following command:  
+`git checkout Deliverable-4`
+
 ## Run Interactive System  
 To run the Interactive System on its own:  
 Navigate to `interactiveSrc/` and run `python Interface.py`  
