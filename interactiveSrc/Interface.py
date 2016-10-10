@@ -7,28 +7,34 @@ PORT = 1337
 
 exit = 0
 error_message = "We didn't quite understand that. Please check your inputs and try again."
-
+#hello
 #TODO: comment out all pass statements as the functions are implemented
 
 def read_in():
+	print" "
+	print" "
 	instruction = raw_input(">")
 	inputsplit = instruction.split(' ') #splits the input string by whitespace
 	if(inputsplit[0] == "Add"):
-		instr = 'INSERT INTO Users VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);'
-		#creates insert instruction for new user, with balances set to 0
-		
+		#modify and send instruction socket to parser
+		instr = 'INSERT INTO bank VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);' 
+		#(account number, account name,savings, checking)
 		sendToSocket(instr)
-	
+		
 	elif(inputsplit[0] == "Delete"):
-		instr = 'DELETE FROM Users WHERE (accountNumber == ' + inputsplit[2] + ');'
-		#creates delete instruction for user, where the account number == desired account number
-		
+		#modify and send instruction socket to parser
+		print" "
+		print" "
+		instr = "DELETE FROM bank WHERE (accountNumber == " + inputsplit[2] + ");"
 		sendToSocket(instr)
-		
 	elif(inputsplit[0] == "Update"):
 		#modify and send instructions socket to parser
-		#inst1 = 'currentbal <- project (' + inputsplit[3] ') (select (accountNumber == ' + inputsplit[2] + ') Users);' #TODO: how to access this number?
+		print" "
+		print" "
+		inst1 = "currentbal <- project (" + inputsplit[3] + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
 		#				    savings or checking				     account number
+
+		#if ('(' in inputsplit[4]):
 
 		#TODO: check the length of inputsplit[4], which, by default, should contain the amount to update with. however, if the user types, say, "+ amount"
 		#      or "- amount" instead of "+amount" or "-amount". if this has happened, inputsplit[4] will be of length 1, and inputsplit[5] will exist and
@@ -37,30 +43,91 @@ def read_in():
 
 		#newNumber = number obtained from database + (or -) inputted amount (inputsplit[4 or 5])
 
-		#instr = 'UPDATE Users SET (' + inputsplit[3] + ') (' + newNumber + ') WHERE (accountNumber = ' + inputsplit[2] + ');' #TODO: double check expected format
+		#instr = 'UPDATE bank SET (' + inputsplit[3] + ') (' + newNumber + ') WHERE (accountNumber = ' + inputsplit[2] + ');' #TODO: double check expected format
 		#				account,		amount,						account number
 		
 		pass
 	elif(inputsplit[0] == "Display"):
 		#modify and send instructions socket to parser
-		instr1 = 'thisUser <- select(accountNumber == ' + inputsplit[2] + ') Users;'
-		instr2 = 'SHOW thisUser;' #splitting Display into these three instructions gets around this issue
-		instr3 = 'DROP TABLE thisUser;' #allows us to reuse thisUser without us having to restructure a significant amount of our code
-		
+		print" "
+		print" "
+		instr1 = "thisUser <- select(accountNumber == " + inputsplit[2] + ") bank;"	#INSERT is the only command that can handle query inputs
+		instr2 = "SHOW thisUser;"							#splitting Display into these three instructions gets around this issue
+		instr3 = "DROP TABLE thisUser;" #allows us to reuse thisUser without us having to restructure a significant amount of our code
+
 		instrList = [instr1, instr2, instr3]
 		
-		for instr in instrList:
-			sendToSocket(instr)
-
+		for instruct in instrList:
+			sendToSocket(instruct)
+		
+		pass
 	elif(inputsplit[0] == "Transfer"):
 		#modify and send instruction socket to parser
+		print" "
+		print" "
+		#TODO: make variables and attribute names up to date
+	
+		inst1 = "currentbal <- project (" + inputsplit[3] + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: store this result
+                #                                   savings or checking                              account number
+
+		#sendToSocket(inst1)
+
+	        #if(inst1 < int(inputsplit[4])):
+		#	print 'not enough funds in ' + inputsplit[3]	
+
+		if(inputsplit[3] == "savings"):
+			otherAccount = "checking"
+		elif(inputsplit[3] == "checking"):
+			otherAccount = "savings"
+		else:
+			print error_message
+
+		inst2 = "currentbal <- project (" + otherAccount + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: store this result in a variable
+                #                                                                                account number
+
+		#subtraction = inst1 - int(inputsplit[4])
+		#addition = inst2 + int(inputsplit[4])
+
+		#instr3 = 'UPDATE bank SET (' + inputsplit[3] + ') (' + subtraction + ') WHERE (accountNumber = ' + inputsplit[2] + ');'
+                #                               account,                 amount,                                         account number
+
+		#instr4 = 'UPDATE bank SET (' + otherAccount + ') (' + addition + ') WHERE (accountNumber = ' + inputsplit[2] + ');'
+                #                               account,               amount,                                  account number
+
 		pass
+		#read_in()
+	elif(inputsplit[0] == "Send"):
+		print" "
+		print" "
+		inst1 = "currentbal <- project (" + inputsplit[3] + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: store this result
+                #                                   savings or checking                              account number
+
+		#if(inst1 < int(inputsplit[4])):
+                #       print 'not enough funds in ' + inputsplit[3]   
+
+		inst2 = "currentbal <- project (checking) (select (accountNumber == " + inputsplit[5] + ") bank);" #TODO: store this result in a variable
+                #                               transfers go to checking by default       target account number
+
+		#subtraction = inst1 - int(inputsplit[4])
+                #addition = inst2 + int(inputsplit[4])
+
+                #instr3 = 'UPDATE bank SET (' + inputsplit[3] + ') (' + subtraction + ') WHERE (accountNumber = ' + inputsplit[2] + ');'
+                #                               account,                 amount,                                     account number
+
+		#instr4 = 'UPDATE bank SET (checking) (' + addition + ') WHERE (accountNumber = ' + inputsplit[5] + ');'
+                #                            account,       amount,                                  target account number
+
+		pass
+		#read_in()
 	elif(inputsplit[0] == "Exit"):
-		instr = 'EXIT;'
-		exit = 1 #signifies Bank system is finished
+		print" "
+		print" "
+		instr = "EXIT;"
+		exit = 1
+		pass
 	else:
 		print error_message
-	sendToSocket(instr)
+	#sendToSocket(instr)
 
 def sendToSocket(msg):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -83,12 +150,14 @@ def startup():
 
 	print " "
 	print "Welcome to Aggie Bank"
-	
-	instr = "CREATE TABLE bank (name VARCHAR(20), account# INTEGER, savings INTEGER, checking INTEGER) PRIMARY KEY (name, account#);"
+	print" "
+	print" "
+	instr = "CREATE TABLE bank (accountNumber INTEGER, accountName VARCHAR(20), savings INTEGER, checking INTEGER) PRIMARY KEY (accountName, accountNumber);"
 	sendToSocket(instr)
 	
 def main():
 	startup()
+	
 	
 	while exit == 0:
 		print "Enter a command from the following list of commands."
@@ -96,12 +165,11 @@ def main():
 		print "--------------------------------------------------------------"
 		print "Add User  <Account Number> <Account Name>"
 		print "Delete User <Account Number>"
-		print "Update Balance <Account Number> <Account(Savings or Checking)> <Money Amount>" 
+		print "Update Balance <Account Number> <Account(savings or checking)> <Money Amount> (put money subtractions in parenthesis like this: (12345))" 
 		print "Display User <Account Number>"
-		print "Transfer Money <Account Number> <Account(Savings or Checking)> <Money Amount>" #what about the target account?
+		print "Transfer Money <Account Number> <Account(savings or checking)> <Money Amount>"
+		print "Send Money <Source Account number> <Target Account Number> <Money Amount>"
 		print "Exit"
 		read_in()
-	
-	print "Thank you for using Aggie Bank.\nGoodbye!"
 
 main()

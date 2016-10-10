@@ -40,8 +40,12 @@ private:
 	
 public:
 
+	// Initialize data base
 	Parser() {db = new DataBase();};
 	
+	// Delete data base
+	~Parser() {delete db;}
+
 	void runOnCommandLine();
 	
 	void runOnSocket();
@@ -59,7 +63,7 @@ public:
 	string commandParse(string instr); 
 	//gets the name of the table on which we are performing the command on
 	//parses through and looks for command instruction keywords: 
-		//OPEN, CLOSE, WRITE, EXIT, SHOW, CREATE, UPDATE, INSERT, DELETE, and DROP
+	//OPEN, CLOSE, WRITE, EXIT, SHOW, CREATE, UPDATE, INSERT, DELETE, and DROP
 	//each of these keywords correspond to a command function. most of those functions take a table name, if any input at all.
 	//the create, update, insert, and delete functions will take a bit more work, as they all require more parsing to determine
 

@@ -1,5 +1,5 @@
 #define CATCH_CONFIG_MAIN
-#include "Catch/include/catch.hpp"
+#include "../Catch/include/catch.hpp"
 #include "DataBase.h"
 #include "Parser.h"
 #include <iostream>
@@ -16,6 +16,19 @@ TEST_CASE("Parser", "[Parser]")
 	Parser argParser;
 	string instruction = "";
 	
+	pair<string, int> p1 {"name", 20};
+	pair<string, int> p2 {"kind", 8};
+	pair<string, int> p3 {"years", -1};
+	vector<pair<string, int>> attributes1 = {p1, p2, p3};
+	vector<string> primaryKeys1 = {"name", "kind"};
+	
+	Table testTable("animals", attributes1, primaryKeys1);
+	vector<string> v1 = {"Joe", "cat", "4"};
+	vector<string> v2 = {"Spot", "dog", "10"};
+	vector<string> v3 = {"Snoopy", "dog", "3"};
+	vector<string> v4 = {"Tweety", "bird", "1"};
+	vector<string> v5 = {"Joe", "bird", "2"};
+
 	SECTION("Create Table")
 	{
 		instruction = "CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);";
@@ -37,7 +50,15 @@ TEST_CASE("Parser", "[Parser]")
 		instruction = "INSERT INTO animals VALUES FROM (\"Joe\", \"bird\", 2);";
 		argParser.commandOrQuery(instruction);
 		instruction = "SHOW animals;";
-		argParser.commandOrQuery(instruction);
+		string retn = argParser.commandOrQuery(instruction);
+
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		testTable.insertRecord(v4);
+		testTable.insertRecord(v5);
+
+		REQUIRE(testTable.show() == retn);
 	}
 	
 	instruction = "CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);";
@@ -56,25 +77,82 @@ TEST_CASE("Parser", "[Parser]")
 	SECTION("Show")
 	{
 		instruction = "SHOW animals;";
-		argParser.commandOrQuery(instruction);
+		string retn = argParser.commandOrQuery(instruction);
+
+		testTable.insertRecord(v1);
+		testTable.insertRecord(v2);
+		testTable.insertRecord(v3);
+		testTable.insertRecord(v4);
+		testTable.insertRecord(v5);
+
+		REQUIRE(testTable.show() == retn);
 	}
 	
 	SECTION("Select")
 	{
+		string retn = "";
+
 		instruction = "dogs <- select (kind == \"dog\") animals;";
 		argParser.commandOrQuery(instruction);
-		instruction = "old_dogs <- select (years > 10) dogs;";
+		instruction = instruction = "SHOW dogs;";
+		retn = argParser.commandOrQuery(instruction);
+
+		Table testTable2("dogs", attributes1, primaryKeys1);
+		testTable2.insertRecord(v3);
+		testTable2.insertRecord(v2);
+
+		REQUIRE(testTable2.show() == retn);
+
+		instruction = "old_dogs <- select (years > 9) dogs;";
 		argParser.commandOrQuery(instruction);
+		instruction = instruction = "SHOW old_dogs;";
+		retn = argParser.commandOrQuery(instruction);
+
+		Table testTable3("old_dogs", attributes1, primaryKeys1);
+		testTable3.insertRecord(v2);
+
+		REQUIRE(testTable3.show() == retn);
+
 		instruction = "cats_or_dogs <- dogs + (select (kind == \"cat\") animals);";
 		argParser.commandOrQuery(instruction);
+		instruction = instruction = "SHOW cats_or_dogs;";
+		retn = argParser.commandOrQuery(instruction);
+
+		Table testTable4("cats_or_dogs", attributes1, primaryKeys1);
+		testTable4.insertRecord(v3);
+		testTable4.insertRecord(v2);
+		testTable4.insertRecord(v1);
+
+		REQUIRE(testTable4.show() == retn);
 	}
 	
 	SECTION("Project")
 	{
+		pair<string, int> p2 {"kind", 8};
+		vector<pair<string, int>> attributes2 = {p1};
+		vector<string> primaryKeys2 = {"kind"};
+
+		vector<string> v6 = {"cat"};
+		vector<string> v7 = {"dog"};
+		vector<string> v8 = {"dog"};
+		vector<string> v9 = {"bird"};
+		vector<string> v10 = {"bird"};
+
+		Table testTable2("species", attributes2, primaryKeys2);
+		testTable2.insertRecord(v10);
+		testTable2.insertRecord(v9);
+		testTable2.insertRecord(v8);
+		testTable2.insertRecord(v7);
+		testTable2.insertRecord(v6);
+
 		instruction = "CREATE TABLE species (kind VARCHAR(10)) PRIMARY KEY (kind);";
 		argParser.commandOrQuery(instruction);
 		instruction = "INSERT INTO species VALUES FROM RELATION project (kind) animals;";
 		argParser.commandOrQuery(instruction);
+		instruction = instruction = "SHOW species;";
+		string retn = argParser.commandOrQuery(instruction);
+
+		REQUIRE(testTable2.show() == retn);
 	}
 	
 	SECTION("Rename")
