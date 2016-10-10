@@ -17,6 +17,9 @@ def read_in():
 	inputsplit = instruction.split(' ') #splits the input string by whitespace
 	print(chr(27) + "[2J")
 	if(inputsplit[0] == "Add"):
+		if (len(inputsplit) < 4):
+			print error_message
+			return
 		#modify and send instruction socket to parser
 		instr = 'INSERT INTO bank VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);' 
 		#(account number, account name,savings, checking)
@@ -26,6 +29,10 @@ def read_in():
 		#modify and send instruction socket to parser
 		print" "
 		print" "
+		if (len(inputsplit) < 3):
+			print error_message
+			return
+			
 		instr = "DELETE FROM bank WHERE (accountNumber == " + inputsplit[2] + ");"
 		sendToSocket(instr)
 		
@@ -33,6 +40,10 @@ def read_in():
 		#modify and send instructions socket to parser
 		print" "
 		print" "
+		if (len(inputsplit) < 5):
+			print error_message
+			return
+			
 		instr1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
 		instr2 = "DROP TABLE currentbal;"
 		
@@ -60,6 +71,10 @@ def read_in():
 		#modify and send instructions socket to parser
 		print" "
 		print" "
+		if (len(inputsplit) < 3):
+			print error_message
+			return
+		
 		instr1 = "thisUser <- select(accountNumber == " + inputsplit[2] + ") bank;"	#INSERT is the only command that can handle query inputs
 		instr2 = "SHOW thisUser;"							#splitting Display into these three instructions gets around this issue
 		instr3 = "DROP TABLE thisUser;" #allows us to reuse thisUser without us having to restructure a significant amount of our code
@@ -80,10 +95,14 @@ def read_in():
 		print ""
 
 	elif(inputsplit[0] == "Transfer"):
-		#modify and send instruction socket to parser
+		#////////////////////////////////////////////////////////////////////////////////////////////
+		#////////////////////////////BEGINS FIRST PART OF TRANSFER //////////////////////////////////
+		#////////////////////////////////////////////////////////////////////////////////////////////
 		print" "
 		print" "
-		#TODO: make variables and attribute names up to date
+		if (len(inputsplit) < 5):
+			print error_message
+			return
 	
 		instr1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
 		instr2 = "DROP TABLE currentbal;"
@@ -103,7 +122,9 @@ def read_in():
 		
 		instr3 = 'UPDATE bank SET (' + inputsplit[3] + " = " + str(updBal) + ') WHERE (accountNumber == ' + inputsplit[2] + ');' 
 		sendToSocket(instr3)
-		
+		#////////////////////////////////////////////////////////////////////////////////////////////
+		#////////////////////////////BEGINS Second PART OF TRANSFER /////////////////////////////////
+		#////////////////////////////////////////////////////////////////////////////////////////////
 		if(inputsplit[3] == "savings"):
 			otherAccount = "checking"
 		elif(inputsplit[3] == "checking"):
@@ -163,7 +184,7 @@ def startup():
 	sendToSocket(instr)
 	
 def main():
-	startup()
+	startup()#initiates startup screen
 	
 	
 	while exit == 0:
