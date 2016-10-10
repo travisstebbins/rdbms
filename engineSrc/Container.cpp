@@ -54,11 +54,9 @@ int Container::getInt() const
 	}
 }
 
-// overloaded copy assignment
+// overloaded assignment operator
 void Container::operator=(const Container &c)
 {
-	// if(&c == this)
-		// return *this;
 	_type = c.getType();
 	if (_type == VARCHAR)
 	{
