@@ -131,7 +131,7 @@ def read_in():
 	else:
 		print error_message
 
-def sendToSocket(msg):
+def sendToSocket(msg):#sends to parser.cpp
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	serverAddress = (SERVERADDRESS, PORT);
 	sock.connect(serverAddress)
