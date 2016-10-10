@@ -129,21 +129,17 @@ TEST_CASE("Parser", "[Parser]")
 	SECTION("Project")
 	{
 		pair<string, int> p2 {"kind", 8};
-		vector<pair<string, int>> attributes2 = {p1};
+		vector<pair<string, int>> attributes2 = {p2};
 		vector<string> primaryKeys2 = {"kind"};
 
 		vector<string> v6 = {"cat"};
 		vector<string> v7 = {"dog"};
-		vector<string> v8 = {"dog"};
-		vector<string> v9 = {"bird"};
-		vector<string> v10 = {"bird"};
+		vector<string> v8 = {"bird"};
 
 		Table testTable2("species", attributes2, primaryKeys2);
-		testTable2.insertRecord(v10);
-		testTable2.insertRecord(v9);
-		testTable2.insertRecord(v8);
-		testTable2.insertRecord(v7);
 		testTable2.insertRecord(v6);
+		testTable2.insertRecord(v7);
+		testTable2.insertRecord(v8);
 
 		instruction = "CREATE TABLE species (kind VARCHAR(10)) PRIMARY KEY (kind);";
 		argParser.commandOrQuery(instruction);
@@ -164,13 +160,31 @@ TEST_CASE("Parser", "[Parser]")
 		instruction = "answer <- common_names;";
 		argParser.commandOrQuery(instruction);
 		instruction = "SHOW answer;";
-		argParser.commandOrQuery(instruction);
+		string retn = argParser.commandOrQuery(instruction);
+		
+		pair<string, int> p2 {"name", 8};
+		vector<pair<string, int>> attributes2 = {p2};
+		vector<string> primaryKeys2 = {"name"};
+		
+		vector<string> v6 = {"Joe"};
+		Table testTable2("answer", attributes2, primaryKeys2);
+		testTable2.insertRecord(v6);
+		
+		REQUIRE(testTable2.show() == retn);
 	}
 	
 	SECTION("Write")
 	{
 		instruction = "WRITE animals;";
 		argParser.commandOrQuery(instruction);
+		string animalTable = "name: animals\nattributes: name 20,kind 8,years -1,\nprimary keys: name,kind,\ndata: Joe,bird,2,\ndata: Tweety,bird,1,\ndata: Snoopy,dog,3,\ndata: Spot,dog,10,\ndata: Joe,cat,4,\n";
+		
+		string fileName = "tableFiles/animals.table";
+		ifstream ifs(fileName);
+		string fileAnimals( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		
+		REQUIRE(animalTable == fileAnimals);
+	
 	}
 	
 	SECTION("Close")
@@ -181,7 +195,7 @@ TEST_CASE("Parser", "[Parser]")
 	
 	SECTION("Delete")
 	{
-		instruction = "DELETE FROM animals VALUES FROM years;";
+		instruction = "DELETE FROM animals Where (kind == \"bird\");";
 		argParser.commandOrQuery(instruction);
 	}	
 	

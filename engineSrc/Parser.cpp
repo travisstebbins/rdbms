@@ -36,7 +36,18 @@ void Parser::runOnCommandLine()
 	{
 		cout << ">";
 		getline(cin, command);
-		commandOrQuery(command);
+		try
+		{
+			commandOrQuery(command);
+		}
+		catch (char const* c)
+		{
+			cout << c << endl;
+		}
+		catch (...)
+		{
+			cout << "Unknown exception thrown" << endl;
+		}
 	}
 }
 
@@ -124,7 +135,7 @@ vector<string> Parser::stringToTokens (string boolExpression)
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\r'), boolExpression.end());
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\n'), boolExpression.end());
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\t'), boolExpression.end());
-	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\"'), boolExpression.end());
+	//boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\"'), boolExpression.end());
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), ' '), boolExpression.end());
 	// convert string to tokens
 	int current = 0;
@@ -167,6 +178,8 @@ vector<string> Parser::stringToTokens (string boolExpression)
 vector<string> Parser::convertBoolExpression (string boolExpression)
 {
 	vector<string> tokens = stringToTokens(boolExpression);
+	cout << "Bool Expression Tokens: ";
+	printVector(tokens);
 	vector<string> postfix;
 	stack<string> opStack;
 	for (int i = 0; i < tokens.size(); ++i)
@@ -234,6 +247,7 @@ string Parser::commandOrQuery(string instruction)
 			return commandParse(instruction);
 		}
 	}
+	
 	catch(char const* c)
 	{
 		return c;
@@ -245,17 +259,17 @@ string Parser::commandParse(string instruction)//parses a command
 {
 	if(instruction.find("OPEN") != string::npos)// <- found 
 	{
-		instruction.erase(0,5);
+		instruction.erase(0,4);
 		commandOpen(instruction);// may change if the "OPEN " part of the string needs to be removed
 	}
 	else if(instruction.find("CLOSE") != string::npos)
 	{
-		instruction.erase(0,6);
+		instruction.erase(0,5);
 		commandClose(instruction);// may change if the "CLOSE " part of the string needs to be removed
 	}
 	else if(instruction.find("WRITE") != string::npos)
 	{
-		instruction.erase(0,6);
+		instruction.erase(0,5);
 		commandWrite(instruction);// may change if the "WRITE " part of the string needs to be removed
 	}
 	else if(instruction.find("SHOW") != string::npos)
@@ -265,7 +279,7 @@ string Parser::commandParse(string instruction)//parses a command
 	}
 	else if(instruction.find("EXIT") != string::npos)
 	{
-		instruction.erase(0,5);
+		instruction.erase(0,4);
 		commandExit();// may change if the "EXIT " part of the string needs to be removed
 	}
 	else if(instruction.find("CREATETABLE") != string::npos)
@@ -745,6 +759,11 @@ string Parser::queryParse(string instr)
 		Table *result = db->setDifference(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
+		fileName += result->getTableName();
+		fileName += ".table";
+		ifstream ifs(fileName);
+		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		returnString = temp;
 	}
 	else if (q == Parser::PRODUCT)
 	{
@@ -755,6 +774,11 @@ string Parser::queryParse(string instr)
 		Table *result = db->crossProduct(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
+		fileName += result->getTableName();
+		fileName += ".table";
+		ifstream ifs(fileName);
+		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		returnString = temp;
 	}
 	else if (q == Parser::JOIN)
 	{
@@ -768,6 +792,31 @@ string Parser::queryParse(string instr)
 		// db->createView(result);
 		// delete tmp1;
 		// delete tmp2;
+	}
+	else if (q == Parser::RELATION)
+	{
+		if(db->containsTable(instr))
+		{
+			Table *result = db->getTable(instr);
+			result->setTableName(name);
+			db->createView(result);
+			fileName += result->getTableName();
+			fileName += ".table";
+			ifstream ifs(fileName);
+			string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+			returnString = temp;
+		}
+		else if(db->containsView(instr))
+		{
+			Table *result = db->getView(instr);
+			result->setTableName(name);
+			db->createView(result);
+			fileName += result->getTableName();
+			fileName += ".table";
+			ifstream ifs(fileName);
+			string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+			returnString = temp;
+		}
 	}
 	else
 	{

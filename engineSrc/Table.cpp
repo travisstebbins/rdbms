@@ -10,6 +10,7 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 	string operand1 = "";
 	string op = "";
 	string operand2 = "";
+	bool operand2IsAttribute = true;
 	// remove new lines, tabs, and spaces
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\r'), boolExpression.end());
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\n'), boolExpression.end());
@@ -21,14 +22,51 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 		operand1 += boolExpression[currentIndex++];
 	}
 	// extractor operator
-	while(!isalnum(boolExpression[currentIndex]))
+	while(!isalnum(boolExpression[currentIndex]) && boolExpression[currentIndex] != '\"')
 	{
 		op += boolExpression[currentIndex++];
 	}
 	// extract operand 2
 	while(currentIndex < boolExpression.size())
 	{
-		operand2 += boolExpression[currentIndex++];
+		if (boolExpression[currentIndex] == '\"')
+		{
+			operand2IsAttribute = false;
+			currentIndex++;
+		}
+		else if (isdigit(boolExpression[currentIndex]))
+		{
+			operand2IsAttribute = false;
+			operand2 += boolExpression[currentIndex++];
+		}
+		else
+		{
+			operand2 += boolExpression[currentIndex++];
+		}		
+	}
+	if (operand2IsAttribute)
+	{
+		bool foundAttribute = false;
+		for (int i = 0; i < attributes.size(); ++i)
+		{
+			if (attributes[i].first == operand2)
+			{
+				foundAttribute = true;
+				if (attributes[i].second > -1)
+				{
+					operand2 = entry[i].getVarchar().getString();
+				}
+				else
+				{
+					int operand2Int = entry[i].getInt();
+					operand2 = to_string(operand2Int);
+				}
+			}
+		}
+		if (!foundAttribute)
+		{
+			throw "attribute \"" + operand2 + "\" does not exist"; 
+		}
 	}
 	// loop through possible attributes
 	for (int i = 0; i < attributes.size(); ++i)
@@ -173,8 +211,8 @@ void Table::insertRecord(vector<Container> entry)
 		data[hash] = entry;
 		writeToDisk();
 	}
-	else
-		throw "Entry already exists.";
+	// else
+	// 	throw "Entry already exists.";
 	writeToDisk();
 }
 
