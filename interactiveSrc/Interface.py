@@ -1,6 +1,7 @@
 import socket
 import sys
 import socket
+import re
 
 SERVERADDRESS = 'localhost'
 PORT = 1337
@@ -31,11 +32,15 @@ def read_in():
 		#modify and send instructions socket to parser
 		print" "
 		print" "
-		inst1 = "currentbal <- project (" + inputsplit[3] + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
+		inst1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
+		print inst1
 		#				    savings or checking				     account number
-
+		instr2 = "DROP TABLE currentbal;"
 		rtn = sendToSocket(inst1)
-		print rtn
+		sendToSocket(instr2)
+		rtnSplit = rtn.split("data:")
+		rtnVal = re.sub(r"\D", "", rtnSplit[1])
+		print rtnVal
 		
 		#if ('(' in inputsplit[4]):
 
