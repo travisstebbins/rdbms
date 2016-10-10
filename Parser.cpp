@@ -1,4 +1,5 @@
 #include "Parser.h"
+//should we include DataBase.h here or in Parser.h?
 
 using namespace std;
 
@@ -15,104 +16,28 @@ void printVector (vector<string> vec)
 	cout << endl;
 }
 
-void printVector (vector<pair<string, int>> vec)
+void printVector (vector<pair<string, int> *> vec)
 {	
 	cout << "{ ";
 	for (int i = 0; i < vec.size(); ++i)
 	{
 		if (i != vec.size() - 1)
-			cout << vec[i].first << " , " << vec[i].second << " | ";
+			cout << vec[i]->first << " , " << vec[i]->second << " | ";
 		else
-			cout << vec[i].first << " , " << vec[i].second << " }";
+			cout << vec[i]->first << " , " << vec[i]->second << " }";
 	}
 	cout << endl;
 }
 
 void Parser::runOnCommandLine()
 {
-	//db = new DataBase();
+	db = new DataBase();
 	string command;
 	while(1)
 	{
 		cout << ">";
 		getline(cin, command);
 		commandOrQuery(command);
-	}
-}
-
-void Parser::runOnSocket()
-{
-	//db = new DataBase();
-	cout << "Starting Server" << endl;
-	int c;
-	int socketFD;
-	int clientSocketFD;
-   	struct sockaddr_in server;
-	struct sockaddr_in client;
-	char buffer[BUFFSIZE];
-	memset(buffer, '\0',BUFFSIZE);
-	string returnString = "";
-	
-	socketFD = socket(AF_INET, SOCK_STREAM, 0); //establish a socket in domain, configure communication for default
-	memset(&server, 0, sizeof(server));
-	server.sin_family      = AF_INET;
-	server.sin_port        = htons(PORT);
-	server.sin_addr.s_addr = htonl(INADDR_ANY);
-	
-	if(bind(socketFD, (struct sockaddr *)&server, sizeof(server)) < 0 ) { //bind master socket to port
-		close(socketFD);
-		throw "Error in bind, exiting program";
-	}
-	cout << "Server Running" << endl;
-	int optval = 1;
-	if (setsockopt(socketFD, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval)) < 0)
-	{
-		close(socketFD);
-		throw "Error in setsockopt, exiting program";
-	}
-		
-	
-	cout << "Server Running" << endl;
-	int msgSize = 0;
-	while(1)
-	{
-		listen(socketFD, 5);
-		cout << "Listening on port: " << PORT << endl;
-		
-		c = sizeof(struct sockaddr_in);
-		clientSocketFD = accept(socketFD, (struct sockaddr *)&client, (socklen_t*)&c);	
-		
-		cout << "Accepted a client" << endl;
-		
-		if(clientSocketFD < 0){							//chech that accept worked
-			throw "Accept Failed!";
-			close(clientSocketFD);
-		}
-		msgSize = recv(clientSocketFD, buffer, BUFFSIZE, 0);			//recieve command
-		
-		cout << "Message from client:" <<  buffer << " Size: " << msgSize << endl;
-		
-		cout << "Passing to Parser" << endl;
-		try
-		{
-			string command(buffer);
-			returnString = commandOrQuery(command);
-		}
-		catch (char const* c)
-		{
-			returnString = c;
-		}
-		catch (...)
-		{
-			returnString = "Failure";
-		}
-		cout << "Sending: " << returnString.c_str() << endl;
-		send(clientSocketFD, returnString.c_str(), returnString.length(), 0);	
-		
-		close(clientSocketFD);
-		cout << "Closed connection to client" << endl;
-		
-		memset(buffer, '\0', BUFFSIZE);
 	}
 }
 
@@ -216,32 +141,25 @@ vector<string> Parser::convertBoolExpression (string boolExpression)
 	return postfix;
 }
 
-string Parser::commandOrQuery(string instruction)
+void Parser::commandOrQuery(string instruction)
 {
 	instruction.erase(remove(instruction.begin(), instruction.end(), '\r'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), '\n'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), '\t'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), ';'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), ' '), instruction.end());
-	
-	try{
-		if(instruction.find("<-") != string::npos)// <- found 
-		{
-			return queryParse(instruction);
-		}
-		else
-		{
-			return commandParse(instruction);
-		}
-	}
-	catch(char const* c)
+	if(instruction.find("<-") != string::npos)// <- found 
 	{
-		return c;
+		queryParse(instruction);
+	}
+	else
+	{
+		commandParse(instruction);
 	}
 }	
 
 
-string Parser::commandParse(string instruction)//parses a command
+void Parser::commandParse(string instruction)//parses a command
 {
 	if(instruction.find("OPEN") != string::npos)// <- found 
 	{
@@ -261,7 +179,7 @@ string Parser::commandParse(string instruction)//parses a command
 	else if(instruction.find("SHOW") != string::npos)
 	{
 		instruction.erase(0,4);
-		return commandShow(instruction);// may change if the "SHOW " part of the string needs to be removed
+		commandShow(instruction);// may change if the "SHOW " part of the string needs to be removed
 	}
 	else if(instruction.find("EXIT") != string::npos)
 	{
@@ -285,7 +203,7 @@ string Parser::commandParse(string instruction)//parses a command
 	}
 	else if(instruction.find("DROP") != string::npos)
 	{
-		instruction.erase(0,4);
+		instruction.erase(0,5);
 		commandDrop(instruction);// may change if the "DROP " part of the string needs to be removed
 	}
 	else if(instruction.find("DELETE") != string::npos)
@@ -295,11 +213,8 @@ string Parser::commandParse(string instruction)//parses a command
 	}
 	else
 	{
-		return "Failure";
 		cout << "Not a valid command\n";
 	}
-	
-	return "Success";
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,18 +226,10 @@ void Parser::commandOpen(string filename)
 	db->readTableFromDisk(filename);//under the impression that the filename string has no ""
 }
 
-void Parser::commandClose(string tableName)
+void Parser::commandClose(string tablename)
 {
-	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
-	bool table = db->containsTable(tableName);
-	bool view = db->containsView(tableName);
-	if(table)
-		db->dropTable(tableName);
-	else if(view)
-		db->dropView(tableName);
-	
-	else
-		throw "Not a table or view";//works the exact same way as commandDrop()
+	tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
+	db->dropTable(tablename);//works the exact same way as commandDrop()
 }
 
 void  Parser::commandWrite(string tableName)
@@ -346,34 +253,10 @@ void Parser::commandExit()//For Travis
 	}
 }
 
-string Parser::commandShow(string tableName)
+void Parser::commandShow(string tablename)
 {
-	try 
-	{		
-		bool table = db->containsTable(tableName);
-		bool view = db->containsView(tableName);
-		if(table)
-		{
-			cout << db->showTable(tableName) << endl;
-			return db->showTable(tableName);
-		}
-		else if(view)
-		{
-			cout << db->showView(tableName) << endl;
-			return db->showView(tableName);
-		}
-		else
-			throw "Not a table or view";			
-	}
-	catch (char const* c)
-	{
-		cout << c << endl;
-		return "Failure";
-	}
-	catch(...)
-	{
-		return "Failure";	
-	}	
+	//tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
+	cout << db->showTable(tablename) << endl;
 }
 
 vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
@@ -394,7 +277,7 @@ vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
 	
 }
 
-vector<pair<string, int>> Parser::commandAttributes(string instr)
+vector< pair<string, int> *> Parser::commandAttributes(string instr)
 {
 	instr = instr.erase(0,1);//eliminates left parenthese
 	instr = instr.substr(0,instr.size()-1);//eliminate right parenthese
@@ -403,7 +286,7 @@ vector<pair<string, int>> Parser::commandAttributes(string instr)
 	string pair;
 	string eOne;//element 1 of pair
 	int eTwo;//element 2 of pair
-	vector<std::pair<string, int>> atList;
+	vector< std::pair<string, int> *> atList;
 	
 	while(getline(inss, pair, ','))
 	{
@@ -412,9 +295,9 @@ vector<pair<string, int>> Parser::commandAttributes(string instr)
 			
 			eOne = pair.substr(0,pair.find("INTEGER")); //get the name of attribute
 			eTwo = -1;//signifies that the attribute is an integer
-			std::pair<string, int> attr;
-			attr.first = eOne;
-			attr.second = eTwo;
+			std::pair<string, int> *attr;
+			attr->first = eOne;
+			attr->second = eTwo;
 			atList.push_back(attr);
 			
 		}
@@ -422,9 +305,9 @@ vector<pair<string, int>> Parser::commandAttributes(string instr)
 		{
 			eOne = pair.substr(0,pair.find("VARCHAR")); //get the name of attribute
 			eTwo = stoi(pair.substr(pair.find("(")+1,pair.find(")")-1));
-			std::pair<string, int> attr;
-			attr.first = eOne;
-			attr.second = eTwo;
+			std::pair<string, int> *attr;
+			attr->first = eOne;
+			attr->second = eTwo;
 			atList.push_back(attr);
 			
 		}
@@ -437,7 +320,7 @@ void Parser::commandCreate(string instr)// We'll need
 {
 	string instruction = instr;
 	string name;
-	vector<std::pair<string, int>> attributes;
+	vector<std::pair<string, int> *> attributes;
 	vector<string> primKeys;
 	name = instruction.substr(0, instruction.find("("));//get name of table
 	instruction.erase(0,instruction.find("("));//erases section of the line containing the name
@@ -457,6 +340,11 @@ void Parser::commandCreate(string instr)// We'll need
 	db->createTable(name, attributes, primKeys);	
 }
 
+void Parser::commandUpdate(string instr)
+{
+	
+}
+
 // split function from here: http://code.runnable.com/VHb0hWMZp-ws1gAr/splitting-a-string-into-a-vector-for-c%2B%2B
 vector<string> split(string str, char delimiter)
 {
@@ -469,35 +357,6 @@ vector<string> split(string str, char delimiter)
   }
   
   return internal;
-}
-
-void Parser::commandUpdate(string instr)
-{
-	string name;//name of relation
-	
-	name = instr.substr(0, instr.find("SET"));//get name of table
-	instr.erase(0, instr.find("SET")+3);//erase previous part of string
-	
-	string sInstr = instr.substr(0, instr.find("WHERE"));//get set commands
-	instr.erase(0, instr.find("WHERE")+5);//erase previous part of string
-	
-	sInstr.erase(remove(sInstr.begin(), sInstr.end(), '('), sInstr.end()); 
-	sInstr.erase(remove(sInstr.begin(), sInstr.end(), ')'), sInstr.end());
-	
-	vector<string> sets = split(sInstr, ',');//splits line into sets for parsing below
-	vector<string> desired;//desired attributes
-	vector<string> values;//values to be changed
-	for(int i = 0; i < sets.size(); i++)
-	{
-		desired.push_back(sets[i].substr(0, sets[i].find("=")));//gets our desired attributes
-		values.push_back(sets[i].substr(sets[i].find("=")+1, sets[i].length()-1));//gets our values
-	}
-	instr.erase(remove(instr.begin(), instr.end(), '('), instr.end()); //both lines eliminate parentheses 
-	instr.erase(remove(instr.begin(), instr.end(), ')'), instr.end());
-	instr.erase(remove(instr.begin(), instr.end(), '"'), instr.end());//eliminates quotes
-	vector<string> cond = convertBoolExpression(instr);//condition
-	
-	db->updateTableRecord(name, desired, values, cond);
 }
 
 vector<string> Parser::extractAttributes (string attributeList)
@@ -578,7 +437,6 @@ Parser::QueryType Parser::firstQuery (string instr) {
 		{
 			firstIndex = index;
 			q = Parser::SELECT;
-			
 		}
 	}
 	if (instr.find("project") != string::npos)
@@ -638,12 +496,9 @@ Parser::QueryType Parser::firstQuery (string instr) {
 	return q;
 }
 
-string Parser::queryParse(string instr)
+void Parser::queryParse(string instr)
 {
 	string name;
-	string fileName = "tableFiles/";
-	string returnString;
-	
 	if (instr.find("<-") != string::npos)
 	{
 		name = instr.substr(0, instr.find("<-"));
@@ -664,11 +519,7 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->select(name, conditions);
 		db->createView(result);
-		fileName += result->getTableName();
-		fileName += ".table";
-		ifstream ifs(fileName);
-		string temp(static_cast<stringstream const&>(stringstream() << ifs.rdbuf()).str());
-		returnString = temp;
+		delete tmp;
 	}
 	else if (q == Parser::PROJECT)
 	{
@@ -686,11 +537,7 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->project(name, attributes);
 		db->createView(result);
-		fileName += result->getTableName();
-		fileName += ".table";
-		ifstream ifs(fileName);
-		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
-		returnString = temp;
+		delete tmp;
 	}
 	else if (q == Parser::RENAME)
 	{
@@ -704,11 +551,7 @@ string Parser::queryParse(string instr)
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->rename(name, newNames);
 		db->createView(result);
-		fileName += result->getTableName();
-		fileName += ".table";
-		ifstream ifs(fileName);
-		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
-		returnString = temp;
+		delete tmp;
 	}
 	else if (q == Parser::UNION)
 	{
@@ -719,12 +562,8 @@ string Parser::queryParse(string instr)
 		Table *result = db->setUnion(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
-		fileName += result->getTableName();
-		fileName += ".table";
-		ifstream ifs(fileName);
-		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
-		cout << temp << endl;
-		returnString = temp;
+		delete tmp1;
+		delete tmp2;
 	}
 	else if (q == Parser::DIFFERENCE)
 	{
@@ -735,6 +574,8 @@ string Parser::queryParse(string instr)
 		Table *result = db->setDifference(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
+		delete tmp1;
+		delete tmp2;
 	}
 	else if (q == Parser::PRODUCT)
 	{
@@ -745,6 +586,8 @@ string Parser::queryParse(string instr)
 		Table *result = db->crossProduct(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
+		delete tmp1;
+		delete tmp2;
 	}
 	else if (q == Parser::JOIN)
 	{
@@ -762,10 +605,7 @@ string Parser::queryParse(string instr)
 	else
 	{
 		cout << "Query Parse failed" << endl;
-		return "Failure";
 	}
-	
-	return returnString;
 }
 
 Table* Parser::queryParseHelper(string instr, int depth, int pair)
@@ -798,6 +638,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair;
 		Table *result = tmp->select(tmpName, conditions);
+		delete tmp;
 		return result;
 	}
 	else if (q == Parser::PROJECT)
@@ -815,6 +656,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair;
 		Table *result = tmp->project(tmpName, attributes);
+		delete tmp;
 		return result;
 	}
 	else if (q == Parser::RENAME)
@@ -832,6 +674,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		tmpName += "_";
 		tmpName += pair; 
 		Table *result = tmp->rename(tmpName, newNames);
+		delete tmp;
 		return result;
 	}
 	else if (q == Parser::UNION)
@@ -841,6 +684,8 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		Table *tmp1 = queryParseHelper(expr1, depth + 1, pair);
 		Table *tmp2 = queryParseHelper(expr2, depth + 1, pair);
 		Table *result = db->setUnion(tmp1, tmp2);
+		delete tmp1;
+		delete tmp2;
 		return result;
 	}
 	else if (q == Parser::DIFFERENCE)
@@ -850,6 +695,8 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		Table *tmp1 = queryParseHelper(expr1, depth + 1, pair);
 		Table *tmp2 = queryParseHelper(expr2, depth + 1, pair);
 		Table *result = db->setDifference(tmp1, tmp2);
+		delete tmp1;
+		delete tmp2;
 		return result;
 	}
 	else if (q == Parser::PRODUCT)
@@ -859,6 +706,8 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		Table *tmp1 = queryParseHelper(expr1, 0, 0);
 		Table *tmp2 = queryParseHelper(expr2, 0, 1);
 		Table *result = db->crossProduct(tmp1, tmp2);
+		delete tmp1;
+		delete tmp2;
 		return result;
 	}
 	else if (q == Parser::JOIN)
@@ -882,23 +731,14 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	}
 }
 
-void Parser::commandDrop(string tableName)
+void Parser::commandDrop(string tablename)
 {
-	bool table = db->containsTable(tableName);
-	bool view = db->containsView(tableName);
-	if(table)
-		db->dropTable(tableName);
-	else if(view)
-		db->dropView(tableName);	
-	else
-		throw "Not a table or view";//works the exact same way as commandDrop()
+	tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
+	db->dropTable(tablename);
 }
 
 void Parser::commandDelete(string instr)
 {
-	string name;
-	name = instr.substr(0, instr.find("WHERE"));//get name of table
-	instr.erase(0, instr.find("("));
-	vector<string> delVect = convertBoolExpression(instr);
-	db->deleteFromTable(name, delVect);
+
 }
+
