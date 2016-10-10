@@ -25,7 +25,7 @@ def read_in():
 		#modify and send instruction socket to parser
 		print" "
 		print" "
-		instr = 'DELETE FROM bank WHERE (accountNumber == ' + inputsplit[2] + ');'
+		instr = "DELETE FROM bank WHERE (accountNumber == " + inputsplit[2] + ");"
 		sendToSocket(instr)
 	elif(inputsplit[0] == "Update"):
 		#modify and send instructions socket to parser
@@ -57,8 +57,8 @@ def read_in():
 
 		instrList = [instr1, instr2, instr3]
 		
-		for instr in instrList:
-			sendToSocket(instr)
+		for instruct in instrList:
+			sendToSocket(instruct)
 		
 		pass
 	elif(inputsplit[0] == "Transfer"):
@@ -70,7 +70,7 @@ def read_in():
 		inst1 = "currentbal <- project (" + inputsplit[3] + ") (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: store this result
                 #                                   savings or checking                              account number
 
-		
+		#sendToSocket(inst1)
 
 	        #if(inst1 < int(inputsplit[4])):
 		#	print 'not enough funds in ' + inputsplit[3]	
@@ -165,9 +165,9 @@ def main():
 		print "--------------------------------------------------------------"
 		print "Add User  <Account Number> <Account Name>"
 		print "Delete User <Account Number>"
-		print "Update Balance <Account Number> <Account(Savings or Checking)> <Money Amount> (put money subtractions in parenthesis like this: (12345))" 
+		print "Update Balance <Account Number> <Account(savings or checking)> <Money Amount> (put money subtractions in parenthesis like this: (12345))" 
 		print "Display User <Account Number>"
-		print "Transfer Money <Account Number> <Account(Savings or Checking)> <Money Amount>"
+		print "Transfer Money <Account Number> <Account(savings or checking)> <Money Amount>"
 		print "Send Money <Source Account number> <Target Account Number> <Money Amount>"
 		print "Exit"
 		read_in()
