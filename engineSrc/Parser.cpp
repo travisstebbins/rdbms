@@ -747,6 +747,11 @@ string Parser::queryParse(string instr)
 		Table *result = db->setDifference(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
+		fileName += result->getTableName();
+		fileName += ".table";
+		ifstream ifs(fileName);
+		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		returnString = temp;
 	}
 	else if (q == Parser::PRODUCT)
 	{
@@ -757,6 +762,11 @@ string Parser::queryParse(string instr)
 		Table *result = db->crossProduct(tmp1, tmp2);
 		result->setTableName(name);
 		db->createView(result);
+		fileName += result->getTableName();
+		fileName += ".table";
+		ifstream ifs(fileName);
+		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+		returnString = temp;
 	}
 	else if (q == Parser::JOIN)
 	{
@@ -770,6 +780,31 @@ string Parser::queryParse(string instr)
 		// db->createView(result);
 		// delete tmp1;
 		// delete tmp2;
+	}
+	else if (q == Parser::RELATION)
+	{
+		if(db->containsTable(instr))
+		{
+			Table *result = db->getTable(instr);
+			result->setTableName(name);
+			db->createView(result);
+			fileName += result->getTableName();
+			fileName += ".table";
+			ifstream ifs(fileName);
+			string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+			returnString = temp;
+		}
+		else if(db->containsView(instr))
+		{
+			Table *result = db->getView(instr);
+			result->setTableName(name);
+			db->createView(result);
+			fileName += result->getTableName();
+			fileName += ".table";
+			ifstream ifs(fileName);
+			string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
+			returnString = temp;
+		}
 	}
 	else
 	{
