@@ -21,30 +21,29 @@ def read_in():
 			print error_message
 			return
 		#modify and send instruction socket to parser
-		instr = 'INSERT INTO bank VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);' 
-		#(account number, account name,savings, checking)
+		instr = 'INSERT INTO bank VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);' #creates sql command, values are set to 0
 		sendToSocket(instr)
 		
-	elif(inputsplit[0] == "Delete"):
-		#modify and send instruction socket to parser
+	elif(inputsplit[0] == "Delete"):#deletes user from bank table
+
 		print" "
 		print" "
 		if (len(inputsplit) < 3):
 			print error_message
 			return
 			
-		instr = "DELETE FROM bank WHERE (accountNumber == " + inputsplit[2] + ");"
+		instr = "DELETE FROM bank WHERE (accountNumber == " + inputsplit[2] + ");"#creates sql command
 		sendToSocket(instr)
 		
-	elif(inputsplit[0] == "Update"):
-		#modify and send instructions socket to parser
+	elif(inputsplit[0] == "Update"):#Updates a user's specific balance for one of the accounts
+
 		print" "
 		print" "
 		if (len(inputsplit) < 5):
 			print error_message
 			return
 			
-		instr1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
+		instr1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #Gets value of selected account
 		instr2 = "DROP TABLE currentbal;"
 		
 		rtn = sendToSocket(instr1)
@@ -52,23 +51,23 @@ def read_in():
 		rtnSplit = rtn.split("data:")#cuts off fat of returned message
 		rtnVal = int(re.sub(r"\D", "", rtnSplit[1]))#gets current value of bank account
 		
-		updBal = 0
+		updBal = 0#the balance going into update parser command
 		
 		if ('(' in inputsplit[4]):
 			updVal = 100 * int(re.sub(r"\D", "", inputsplit[4]))
 			if (updVal > rtnVal):
 				print "Account drained to $0.00"
 			else:
-				updBal = rtnVal - updVal
+				updBal = rtnVal - updVal#get new subtracted value
 		else:
 			updVal = 100 * int(inputsplit[4])
-			updBal = rtnVal + updVal
+			updBal = rtnVal + updVal#get new added up value
 		
 		instr3 = 'UPDATE bank SET (' + inputsplit[3] + " = " + str(updBal) + ') WHERE (accountNumber == ' + inputsplit[2] + ');' 
 		sendToSocket(instr3)
 
-	elif(inputsplit[0] == "Display"):
-		#modify and send instructions socket to parser
+	elif(inputsplit[0] == "Display"):#Displays a specific user
+
 		print" "
 		print" "
 		if (len(inputsplit) < 3):
@@ -76,7 +75,7 @@ def read_in():
 			return
 		
 		instr1 = "thisUser <- select(accountNumber == " + inputsplit[2] + ") bank;"	#INSERT is the only command that can handle query inputs
-		instr2 = "SHOW thisUser;"							#splitting Display into these three instructions gets around this issue
+		instr2 = "SHOW thisUser;"#splitting Display into these three instructions gets around this issue
 		instr3 = "DROP TABLE thisUser;" #allows us to reuse thisUser without us having to restructure a significant amount of our code
 
 		sendToSocket(instr1)
@@ -94,18 +93,17 @@ def read_in():
 		print "%-20s %-20s %-20s %-1s" % (rtnStrSplit3[0], rtnStrSplit3[2], rtnStrSplit3[4],rtnStrSplit3[6])
 		print ""
 
-	elif(inputsplit[0] == "Transfer"):
-		#////////////////////////////////////////////////////////////////////////////////////////////
+	elif(inputsplit[0] == "Transfer"):#transfers money from selected account to other account
+		
 		#////////////////////////////BEGINS FIRST PART OF TRANSFER //////////////////////////////////
-		#////////////////////////////////////////////////////////////////////////////////////////////
 		print" "
 		print" "
 		if (len(inputsplit) < 5):
 			print error_message
 			return
 	
-		instr1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: how to access this number?
-		instr2 = "DROP TABLE currentbal;"
+		instr1 = "currentbal <- project (" + inputsplit[3] + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #gets value of selected account
+		instr2 = "DROP TABLE currentbal;"#drop view
 		
 		rtn = sendToSocket(instr1)
 		sendToSocket(instr2)#drops view
@@ -122,9 +120,9 @@ def read_in():
 		
 		instr3 = 'UPDATE bank SET (' + inputsplit[3] + " = " + str(updBal) + ') WHERE (accountNumber == ' + inputsplit[2] + ');' 
 		sendToSocket(instr3)
-		#////////////////////////////////////////////////////////////////////////////////////////////
+
 		#////////////////////////////BEGINS Second PART OF TRANSFER /////////////////////////////////
-		#////////////////////////////////////////////////////////////////////////////////////////////
+
 		if(inputsplit[3] == "savings"):
 			otherAccount = "checking"
 		elif(inputsplit[3] == "checking"):
@@ -132,7 +130,7 @@ def read_in():
 		else:
 			print error_message
 		
-		instr4 = "currentbal <- project (" + otherAccount + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #TODO: store this result in a variable
+		instr4 = "currentbal <- project (" + otherAccount + ", accountName) (select (accountNumber == " + inputsplit[2] + ") bank);" #gets value of opposite account
        		rtn = sendToSocket(instr4)
 		sendToSocket(instr2)#drops view
 		rtnSplit = rtn.split("data:")#cuts off fat of returned message
@@ -159,7 +157,7 @@ def read_in():
 	else:
 		print error_message
 
-def sendToSocket(msg):#sends to parser.cpp
+def sendToSocket(msg):#sends to Parser.cpp
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	serverAddress = (SERVERADDRESS, PORT);
 	sock.connect(serverAddress)
