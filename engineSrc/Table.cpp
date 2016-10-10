@@ -34,6 +34,11 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 			operand2IsAttribute = false;
 			currentIndex++;
 		}
+		else if (isdigit(boolExpression[currentIndex]))
+		{
+			operand2IsAttribute = false;
+			operand2 += boolExpression[currentIndex++];
+		}
 		else
 		{
 			operand2 += boolExpression[currentIndex++];
