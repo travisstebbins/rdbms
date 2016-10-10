@@ -174,7 +174,7 @@ vector<string> Parser::stringToTokens (string boolExpression)
 	return tokens;
 }
 
-vector<string> Parser::convertBoolExpression (string boolExpression)
+vector<string> Parser::convertBoolExpression (string boolExpression)	//converts a boolean expression from infix to postfix expression
 {
 	vector<string> tokens = stringToTokens(boolExpression);
 	cout << "Bool Expression Tokens: ";
@@ -230,7 +230,7 @@ vector<string> Parser::convertBoolExpression (string boolExpression)
 	return postfix;
 }
 
-string Parser::commandOrQuery(string instruction)
+string Parser::commandOrQuery(string instruction)	//determines if the incoming instruction is a command or a query
 {
 	instruction.erase(remove(instruction.begin(), instruction.end(), '\r'), instruction.end());
 	instruction.erase(remove(instruction.begin(), instruction.end(), '\n'), instruction.end());
@@ -261,36 +261,36 @@ string Parser::commandParse(string instruction)//parses a command
 	if(instruction.find("OPEN") != string::npos)// <- found 
 	{
 		instruction.erase(0,4);
-		commandOpen(instruction);// may change if the "OPEN " part of the string needs to be removed
+		commandOpen(instruction);//opens a table file and brings its table into scope
 	}
 	else if(instruction.find("CLOSE") != string::npos)
 	{
 		instruction.erase(0,5);
-		commandClose(instruction);// may change if the "CLOSE " part of the string needs to be removed
+		commandClose(instruction);
 	}
 	else if(instruction.find("WRITE") != string::npos)
 	{
 		instruction.erase(0,5);
-		commandWrite(instruction);// may change if the "WRITE " part of the string needs to be removed
+		commandWrite(instruction);//stores a table into permanent storage
 	}
 	else if(instruction.find("SHOW") != string::npos)
 	{
 		instruction.erase(0,4);
-		return commandShow(instruction);// may change if the "SHOW " part of the string needs to be removed
+		return commandShow(instruction);//displays a requested table, its attributes, and all of its entries
 	}
 	else if(instruction.find("EXIT") != string::npos)
 	{
 		instruction.erase(0,4);
-		commandExit();// may change if the "EXIT " part of the string needs to be removed
+		commandExit();// exits the interactive system
 	}
 	else if(instruction.find("CREATETABLE") != string::npos)
 	{
-		instruction.erase(0,11);
+		instruction.erase(0,11);	//creates a table and initializes its attributes
 		commandCreate(instruction);
 	}
 	else if(instruction.find("UPDATE") != string::npos)
 	{
-		instruction.erase(0,6);
+		instruction.erase(0,6);		//changes the value of an attribute of one table entry
 		commandUpdate(instruction);
 	}
 	else if(instruction.find("INSERTINTO") != string::npos)//since whitespace will be eliminated
@@ -301,12 +301,12 @@ string Parser::commandParse(string instruction)//parses a command
 	else if(instruction.find("DROPTABLE") != string::npos)
 	{
 		instruction.erase(0,9);
-		commandDrop(instruction);// may change if the "DROP " part of the string needs to be removed
+		commandDrop(instruction);//deletes an entire table
 	}
 	else if(instruction.find("DELETE") != string::npos)
 	{
 		instruction.erase(0,6);
-		commandDelete(instruction);
+		commandDelete(instruction); //deletes a single entry from a table
 	}
 	else
 	{
@@ -355,7 +355,7 @@ void  Parser::commandWrite(string tableName)
 	db->writeTableToDisk(tableName);
 }
 
-void Parser::commandExit()//For Travis
+void Parser::commandExit()
 {
 	cout << "commandExit" << endl;
 	
@@ -544,7 +544,7 @@ void Parser::commandUpdate(string instr)
 	db->updateTableRecord(name, desired, values, cond);
 }
 
-vector<string> Parser::extractAttributes (string attributeList)
+vector<string> Parser::extractAttributes (string attributeList) //returns a list of attributes
 {
 	
 	attributeList.erase(remove(attributeList.begin(), attributeList.end(), '('), attributeList.end()); 
@@ -556,7 +556,7 @@ vector<string> Parser::extractAttributes (string attributeList)
 	return attributes;
 }
 
-void Parser::commandInsert(string instr)
+void Parser::commandInsert(string instr)	//inserts a new entry to a table
 {
 	cout << "commandInsert: " << instr << endl;
 	
