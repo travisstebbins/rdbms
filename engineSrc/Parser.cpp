@@ -285,7 +285,7 @@ string Parser::commandParse(string instruction)//parses a command
 	}
 	else if(instruction.find("DROP") != string::npos)
 	{
-		instruction.erase(0,5);
+		instruction.erase(0,4);
 		commandDrop(instruction);// may change if the "DROP " part of the string needs to be removed
 	}
 	else if(instruction.find("DELETE") != string::npos)
@@ -876,7 +876,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 
 void Parser::commandDrop(string tablename)
 {
-	tablename = tablename.substr(0, tablename.size()-1);//eliminates semicolon at end of command
 	db->dropTable(tablename);
 }
 
