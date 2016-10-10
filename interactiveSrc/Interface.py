@@ -6,7 +6,7 @@ import re
 SERVERADDRESS = 'localhost'
 PORT = 1337
 
-exit = 0
+exit = 0#signifies when the program should exit
 error_message = "We didn't quite understand that. Please check your inputs and try again."
 
 
@@ -127,6 +127,13 @@ def read_in():
 		print" "
 		instr = "EXIT;"
 		exit = 1
+	elif(inputsplit[0] == "Quit"):
+		global exit
+		print" "
+		print" "
+		instr = "EXIT;"
+		exit = 1
+		sendToSocket(instr)
 
 	else:
 		print error_message
@@ -168,7 +175,8 @@ def main():
 		print "Update Balance <Account Number> <Account(savings or checking)> <Money Amount> (put money subtractions in parenthesis like this: (12345))" 
 		print "Display User <Account Number>"
 		print "Transfer Money <Account Number> <Account(savings or checking)> <Money Amount>"
-		print "Exit"
+		print "Exit (Doesn't shut down rdbms)"
+		print "Quit (Shuts down rdbms as well)"
 		read_in()
 
 main()
