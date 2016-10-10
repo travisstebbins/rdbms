@@ -36,7 +36,18 @@ void Parser::runOnCommandLine()
 	{
 		cout << ">";
 		getline(cin, command);
-		commandOrQuery(command);
+		try
+		{
+			commandOrQuery(command);
+		}
+		catch (char const* c)
+		{
+			cout << c << endl;
+		}
+		catch (...)
+		{
+			cout << "Unknown exception thrown" << endl;
+		}
 	}
 }
 
@@ -236,6 +247,7 @@ string Parser::commandOrQuery(string instruction)
 			return commandParse(instruction);
 		}
 	}
+	
 	catch(char const* c)
 	{
 		return c;
@@ -247,17 +259,17 @@ string Parser::commandParse(string instruction)//parses a command
 {
 	if(instruction.find("OPEN") != string::npos)// <- found 
 	{
-		instruction.erase(0,5);
+		instruction.erase(0,4);
 		commandOpen(instruction);// may change if the "OPEN " part of the string needs to be removed
 	}
 	else if(instruction.find("CLOSE") != string::npos)
 	{
-		instruction.erase(0,6);
+		instruction.erase(0,5);
 		commandClose(instruction);// may change if the "CLOSE " part of the string needs to be removed
 	}
 	else if(instruction.find("WRITE") != string::npos)
 	{
-		instruction.erase(0,6);
+		instruction.erase(0,5);
 		commandWrite(instruction);// may change if the "WRITE " part of the string needs to be removed
 	}
 	else if(instruction.find("SHOW") != string::npos)
@@ -267,7 +279,7 @@ string Parser::commandParse(string instruction)//parses a command
 	}
 	else if(instruction.find("EXIT") != string::npos)
 	{
-		instruction.erase(0,5);
+		instruction.erase(0,4);
 		commandExit();// may change if the "EXIT " part of the string needs to be removed
 	}
 	else if(instruction.find("CREATETABLE") != string::npos)
