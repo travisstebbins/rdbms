@@ -124,7 +124,7 @@ vector<string> Parser::stringToTokens (string boolExpression)
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\r'), boolExpression.end());
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\n'), boolExpression.end());
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\t'), boolExpression.end());
-	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\"'), boolExpression.end());
+	//boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\"'), boolExpression.end());
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), ' '), boolExpression.end());
 	// convert string to tokens
 	int current = 0;
@@ -167,6 +167,8 @@ vector<string> Parser::stringToTokens (string boolExpression)
 vector<string> Parser::convertBoolExpression (string boolExpression)
 {
 	vector<string> tokens = stringToTokens(boolExpression);
+	cout << "Bool Expression Tokens: ";
+	printVector(tokens);
 	vector<string> postfix;
 	stack<string> opStack;
 	for (int i = 0; i < tokens.size(); ++i)
