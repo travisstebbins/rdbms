@@ -691,8 +691,7 @@ string Parser::queryParse(string instr)
 		instr.erase(0, closeParen + 1);
 		if (instr[instr.length() - 1] == ')')
 		{
-			cout << "removing close parenthesis" << endl;
-			instr = instr.substr(0, instr.length() - 2);
+			instr = instr.substr(0, instr.length() - 1);
 		}
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->project(name, attributes);
@@ -792,10 +791,13 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	}
 	cout << "recursive query table name: " << name << endl;
 	QueryType q = firstQuery(instr);
+	if (instr[0] == '(')
+	{
+		instr = instr.substr(1);
+	}
 	cout << "recursive query instruction: " << instr << endl;
 	if (q == Parser::SELECT)
 	{
-
 		instr.erase(0, instr.find("select") + 6);
 		int conditionEnd = getConditionEnd(instr);
 		string conditionString = instr.substr(1, conditionEnd - 2);
@@ -822,6 +824,10 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		vector<string> attributes = split(attributeListString, ',');
 		printVector(attributes);
 		instr.erase(0, closeParen + 1);
+		if (instr[instr.length() - 1] == ')')
+		{
+			instr = instr.substr(0, instr.length() - 1);
+		}
 		Table *tmp = queryParseHelper(instr, depth + 1, pair);
 		string tmpName = "tmp_";
 		tmpName += depth;
@@ -839,6 +845,10 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		vector<string> newNames = split(newNameListString, ',');
 		printVector(newNames);
 		instr.erase(0, closeParen + 1);
+		if (instr[instr.length() - 1] == ')')
+		{
+			instr = instr.substr(0, instr.length() - 1);
+		}
 		Table *tmp = queryParseHelper(instr, depth + 1, pair);
 		string tmpName = "tmp_";
 		tmpName += depth;
