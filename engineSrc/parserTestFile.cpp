@@ -129,21 +129,17 @@ TEST_CASE("Parser", "[Parser]")
 	SECTION("Project")
 	{
 		pair<string, int> p2 {"kind", 8};
-		vector<pair<string, int>> attributes2 = {p1};
+		vector<pair<string, int>> attributes2 = {p2};
 		vector<string> primaryKeys2 = {"kind"};
 
 		vector<string> v6 = {"cat"};
 		vector<string> v7 = {"dog"};
-		vector<string> v8 = {"dog"};
-		vector<string> v9 = {"bird"};
-		vector<string> v10 = {"bird"};
+		vector<string> v8 = {"bird"};
 
 		Table testTable2("species", attributes2, primaryKeys2);
-		testTable2.insertRecord(v10);
-		testTable2.insertRecord(v9);
-		testTable2.insertRecord(v8);
-		testTable2.insertRecord(v7);
 		testTable2.insertRecord(v6);
+		testTable2.insertRecord(v7);
+		testTable2.insertRecord(v8);
 
 		instruction = "CREATE TABLE species (kind VARCHAR(10)) PRIMARY KEY (kind);";
 		argParser.commandOrQuery(instruction);
