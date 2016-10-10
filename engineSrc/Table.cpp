@@ -2,14 +2,56 @@
 
 using namespace std;
 
-// evaluates an inndividual boolean expression, given an entry and a string
-//  boolean expression
+// PRIVATE FUNCTIONS
+// evaluates an entire boolean expression and returns if it is true or false
+bool Table::evaluate(vector<Container>& entry, vector<string> boolExpressions)
+{
+	// stack used for evaluating expression
+	stack<int> evalStack;
+	// iterate through expresssion
+	for (int i = 0; i < boolExpressions.size(); ++i)
+	{
+		// if element is a condition, not a connector (|| and &&),
+		//  push it on the stack
+		if (boolExpressions[i] != "||" && boolExpressions[i] != "&&")
+		{
+			evalStack.push(evaluateHelper(entry, boolExpressions[i]));
+		}
+		// if element is a connector (|| and &&), pop the last 2 values
+		//  and evaluate the result
+		else
+		{
+			int val1 = evalStack.top();
+			evalStack.pop();
+			int val2 = evalStack.top();
+			evalStack.pop();
+			if (boolExpressions[i] == "||")
+			{
+				evalStack.push(max(val1, val2));
+			}
+			else
+			{
+				evalStack.push(min(val1, val2));
+			}
+		}
+	}
+	// return the result of the boolean expression
+	return (evalStack.top());
+}
+
+// evaluates an individual boolean condition, given an entry and a string
+//  boolean condition
 int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 {
+	// used for extracting components
 	int currentIndex = 0;
+	// first operand
 	string operand1 = "";
+	// operator
 	string op = "";
+	// second operand
 	string operand2 = "";
+	// stores if the second operand is a literal or the name of an attribute
 	bool operand2IsAttribute = true;
 	// remove new lines, tabs, and spaces
 	boolExpression.erase(remove(boolExpression.begin(), boolExpression.end(), '\r'), boolExpression.end());
@@ -21,7 +63,7 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 	{
 		operand1 += boolExpression[currentIndex++];
 	}
-	// extractor operator
+	// extract operator
 	while(!isalnum(boolExpression[currentIndex]) && boolExpression[currentIndex] != '\"')
 	{
 		op += boolExpression[currentIndex++];
@@ -29,11 +71,13 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 	// extract operand 2
 	while(currentIndex < boolExpression.size())
 	{
+		// if the operand begins with ", it is a literal; skip the "
 		if (boolExpression[currentIndex] == '\"')
 		{
 			operand2IsAttribute = false;
 			currentIndex++;
 		}
+		// if the operand begins with a digit, it is a literal
 		else if (isdigit(boolExpression[currentIndex]))
 		{
 			operand2IsAttribute = false;
@@ -44,14 +88,19 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 			operand2 += boolExpression[currentIndex++];
 		}		
 	}
+	// if the second operand is another attribute (not a literal)
 	if (operand2IsAttribute)
 	{
+		// stores if the second attribute has been found
 		bool foundAttribute = false;
+		// iterate through all attributes
 		for (int i = 0; i < attributes.size(); ++i)
 		{
+			// if the attribute has been found
 			if (attributes[i].first == operand2)
 			{
 				foundAttribute = true;
+				// set operand2 to be the value of the attribute
 				if (attributes[i].second > -1)
 				{
 					operand2 = entry[i].getVarchar().getString();
@@ -63,12 +112,13 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 				}
 			}
 		}
+		// if the second attribute does not exist, throw an error
 		if (!foundAttribute)
 		{
 			throw "attribute \"" + operand2 + "\" does not exist"; 
 		}
 	}
-	// loop through possible attributes
+	// iterate through possible attributes
 	for (int i = 0; i < attributes.size(); ++i)
 	{
 		// if the current attribute is the one being compared
@@ -146,79 +196,14 @@ int Table::evaluateHelper(vector<Container>& entry, string boolExpression)
 				}
 			}
 		}
-	}
-	
+	}	
 }
 
-// evaluates an entire boolean expression
-bool Table::evaluate(vector<Container>& entry, vector<string> boolExpressions)
-{
-	// stack used for evaluating expression
-	stack<int> evalStack;
-	for (int i = 0; i < boolExpressions.size(); ++i)
-	{
-		// if element is an expression, not a connector (|| and &&),
-		//  push it on the stack
-		if (boolExpressions[i] != "||" && boolExpressions[i] != "&&")
-		{
-			evalStack.push(evaluateHelper(entry, boolExpressions[i]));
-		}
-		// if element is a connector (|| and &&), pop the last 2 values
-		//  and evaluate the result
-		else
-		{
-			int val1 = evalStack.top();
-			evalStack.pop();
-			int val2 = evalStack.top();
-			evalStack.pop();
-			if (boolExpressions[i] == "||")
-			{
-				evalStack.push(max(val1, val2));
-			}
-			else
-			{
-				evalStack.push(min(val1, val2));
-			}
-		}
-	}
-	return (evalStack.top());
-}
-
-// inserts a record into the table from a vector of Container objects
-void Table::insertRecord(vector<Container> entry)
-{
-	// compute the entry's hash key based on its primary keys
-	string hashString = "";
-	for (int i = 0; i < primaryKeyIndices.size(); ++i)
-	{
-		if (entry[primaryKeyIndices[i]].getType() == Container::VARCHAR)
-		{
-			hashString += entry[primaryKeyIndices[i]].getVarchar().getString();
-		}
-		else
-		{
-			hashString += entry[primaryKeyIndices[i]].getInt();
-		}		
-	}
-	hash<string> str_hash;
-	size_t hash = str_hash(hashString);
-
-	// check if the entry is already in the table
-	unordered_map<size_t, vector<Container>>::const_iterator checkEntryUniq = data.find(hash);
-	// if not, add to the table
-	if(checkEntryUniq == data.end())
-	{
-		data[hash] = entry;
-		writeToDisk();
-	}
-	// else
-	// 	throw "Entry already exists.";
-	writeToDisk();
-}
-
-// constructor
+// CONSTRUCTORS
+// creates a new table object based off of passed data
 Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string> _primaryKeys)
 {
+	// copy variables
 	name = _name;
 	vector<pair<string, int>> copyAttributes = _attributes;
 	attributes = copyAttributes;
@@ -230,7 +215,6 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 		{
 			if (primaryKeys[i] == attributes[j].first)
 			{
-				// cout << "logged primary key index" << endl;
 				primaryKeyIndices.push_back(j);
 			}
 		}
@@ -239,9 +223,10 @@ Table::Table(string _name, vector<pair<string, int>> _attributes, vector<string>
 	writeToDisk();
 }
 
+// copy constructor
 Table::Table(const Table& other)
 {
-	cout << "Table copy constructor called" << endl;
+	// copy variables
 	name = other.name;
 	data = other.data;
 	attributes = other.attributes;
@@ -249,17 +234,16 @@ Table::Table(const Table& other)
 	primaryKeyIndices = other.primaryKeyIndices;
 }
 
-Table::~Table()
-{
-
-}
-
-// select entries from the table and return as a new Table object
+// DATA MANIPULATION FUNCTIONS
+// creates a new Table object (to be stored as a View) with the user’s desired conditions
 Table* Table::select(string _name, vector<string> boolExpressions)
 {
+	// copy the table attributes
 	vector<pair<string, int>> copyAttributes;
 	copy(attributes.begin(), attributes.end(), back_inserter(copyAttributes));
+	// create a new view table
 	Table* view = new Table(_name, copyAttributes, primaryKeys);
+	// iterate through data, copying entries that satisfy the boolean expression
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
 		// if the entry satisfies the boolean expression,
@@ -272,8 +256,7 @@ Table* Table::select(string _name, vector<string> boolExpressions)
 	return view;
 }
 
-// select a subset of the table's attributes and return as a new
-//  Table object, with associated entry values included
+// creates a new Table object (to be stored as a View) with the user’s desired subset of attributes
 Table* Table::project(string _name, vector<string> desiredAttributes)
 {
 	// check to ensure at least one primary key is included
@@ -289,13 +272,14 @@ Table* Table::project(string _name, vector<string> desiredAttributes)
 			}
 		}
 	}
+	// if no primary keys are included, throw an error
 	if (primaryKeyMatches.size() == 0)
 	{
 		throw "At least one primary key must be projected";
 	}
 	vector<pair<string, int>> newAttributes;
 	vector<int> newAttributeIndices;
-	// loop through attributes and desired attributes to
+	// iterate through attributes and desired attributes to
 	//  find matches
 	for (int i = 0; i < attributes.size(); ++i)
 	{
@@ -308,16 +292,19 @@ Table* Table::project(string _name, vector<string> desiredAttributes)
 			}
 		}
 	}
+	// create a new view table with the new name, attributes, and primary keys
 	Table* view = new Table(_name, newAttributes, primaryKeyMatches);
-	// loop through table, inserting desired attributes of
+	// iterate through table, inserting desired attributes of
 	//  all entries into new table
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
 		vector<Container> newEntry;
+		// iterate through and add all desired attributes
 		for (int i = 0; i < newAttributeIndices.size(); ++i)
 		{
 			newEntry.push_back((it->second)[newAttributeIndices[i]]);
 		}
+		// add the new entry to the view table
 		try
 		{
 			view->insertRecord(newEntry);
@@ -331,17 +318,17 @@ Table* Table::project(string _name, vector<string> desiredAttributes)
 			cout << "Unknown exception in project function" << endl;
 		}
 	}
+	writeToDisk();
 	return view;
 }
 
 // written assuming attributes and newNames have same size
-// rename all of the table's attributes with new names and
-//  return as a new table
+// creates a new Table object (to be stored as a View) with the user's desired new names
 Table* Table::rename(string _name, vector<string> newNames)
 {
 	vector<pair<string, int>> newAttributes = attributes;
 	vector<string> newPrimaryKeys = primaryKeys;
-	// loop through attributes to set new primary key names
+	// iterate through attributes to set new primary key names
 	//  and new attribute names
 	for (int i = 0; i < newAttributes.size(); ++i)
 	{
@@ -354,6 +341,7 @@ Table* Table::rename(string _name, vector<string> newNames)
 		}
 		newAttributes[i].first = newNames[i];
 	}
+	// create new view table
 	Table* view = new Table(_name, newAttributes, newPrimaryKeys);
 	// copy over all of the entries
 	for (auto it = data.begin(); it != data.end(); ++it)
@@ -375,25 +363,34 @@ Table* Table::rename(string _name, vector<string> newNames)
 	return view;
 }
 
-// return the table in human-readable format as a string
+// displays the table in a human readable format (returns string representation)// return the table in human-readable format as a string
 string Table::show()
 {
-	string s = "Table: " + name + "\n";
-	// loop and print attributes
+	string s = "TABLE: " + name + "\n";
+	// iterate through attributes
 	for (int i = 0; i < attributes.size(); ++i)
 	{
 		s += attributes[i].first + "\t\t";
 	}
+	// add seperator line
+	for (int i = 0; i < attributes.size(); ++i)
+	{
+		s += "---------------";
+	}
 	s += "\n";
-	// loop and print data
+	// iterate through data
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
+		// iterate through all entries
 		for (int i = 0; i < it->second.size(); ++i)
 		{
+			// iterate through all attributes in the entry
+			// if the attribute is a varchar
 			if ((it->second)[i].getType() == Container::VARCHAR)
 			{
 				s += (it->second)[i].getVarchar().getString() + "\t\t";
 			}
+			// else if the attribute is an integer
 			else
 			{
 				s += to_string((it->second)[i].getInt()) + "\t\t";
@@ -405,36 +402,18 @@ string Table::show()
 	return s;
 }
 
-vector<pair<string, int>> Table::getAttributes()
-{
-	return attributes;
-}
-
-string Table::getTableName()
-{
-	return name;
-}
-
-// insert a record given a vector of strings
-const unordered_map<size_t, vector<Container>>& Table::getData()
-{
-	return data;
-}
-
-vector<string> Table::getPrimaryKeys()
-{
-	return primaryKeys;
-}
-
+// inserts a record into the table based on a given list of items (calls container version)
 void Table::insertRecord(vector<string> entry)
 {
+	// create new entry (vector<Container>) tol hold data
 	vector<Container> newEntry;
-	// loop through entry
+	// iterate through string
 	for (int i = 0; i < entry.size(); ++i)
 	{
 		// if the value data type is a VARCHAR
 		if (attributes[i].second > -1)
 		{
+			// create new varchar and add to entry
 			varchar vc(attributes[i].second);
 			vc.setString(entry[i]);
 			Container c(Container::VARCHAR, vc);
@@ -443,24 +422,59 @@ void Table::insertRecord(vector<string> entry)
 		// else if the value data type is an INTEGER
 		else
 		{
+			// create new integer and add to entry
 			int value = strtol(entry[i].c_str(), NULL, 10);
 			Container c(Container::INTEGER, value);
 			newEntry.push_back(c);
 		}
 	}
+	// call insertRecord(vector<Container> entry)
 	insertRecord(newEntry);
 	writeToDisk();
 }
 
-// insert an entire existing table's entries into this table
+// inserts a record into the table based on a given entry (vector<Container>)
+void Table::insertRecord(vector<Container> entry)
+{
+	// compute the entry's hash key based on its primary keys
+	string hashString = "";
+	for (int i = 0; i < primaryKeyIndices.size(); ++i)
+	{
+		if (entry[primaryKeyIndices[i]].getType() == Container::VARCHAR)
+		{
+			hashString += entry[primaryKeyIndices[i]].getVarchar().getString();
+		}
+		else
+		{
+			hashString += entry[primaryKeyIndices[i]].getInt();
+		}		
+	}
+	// computation
+	hash<string> str_hash;
+	size_t hash = str_hash(hashString);
+
+	// check if the entry is already in the table
+	unordered_map<size_t, vector<Container>>::const_iterator checkEntryUniq = data.find(hash);
+	// if not, add to the table
+	if(checkEntryUniq == data.end())
+	{
+		data[hash] = entry;
+		writeToDisk();
+	}
+	writeToDisk();
+}
+
+// inserts a record into the table based on an existing table
 void Table::insertRecord(Table* relationship)
 {
+	// copy the data from the existing table
 	unordered_map<size_t, vector<Container>> newData = relationship->data;
-	// loop through table, inserting records
+	// iterate through table, inserting records
 	for (auto it = newData.begin(); it != newData.end(); ++it)
 	{
 		try
 		{
+			// calls insertRecord(vector<Container> entry)
 			insertRecord(it->second);
 		}
 		catch(char const* c)
@@ -475,15 +489,16 @@ void Table::insertRecord(Table* relationship)
 	writeToDisk();
 }
 
-// delete all records that satisfy the boolean expression
+// deletes a record from the table based on the given boolean expression
 void Table::deleteRecord(vector<string> boolExpressions)
 {
-	// loop through table
+	// iterate through table
 	auto it = data.begin();
 	while(it != data.end())
 	{
 		auto temp = it;
 		it++;
+		// if the entry satisfies the boolean expression, erase it
 		if (evaluate(temp->second, boolExpressions))
 		{
 			data.erase(temp);
@@ -492,33 +507,37 @@ void Table::deleteRecord(vector<string> boolExpressions)
 	writeToDisk();
 }
 
+// deletes a record from the table based on the given key
 void Table::deleteRecord(size_t key)
 {
+	// iterate through table
 	auto it = data.begin();
 	while(it != data.end())
 	{
 		auto temp = it;
 		it++;
+		// if the keys match, erase record
 		if(temp->first == key)
 			data.erase(temp);
 	}
 	writeToDisk();
 }
 
-// update the desired attributes with the given new values for all entries that satisfy
-//  the boolean expression
+// changes the value of the records in the table based on the following parameters:
+// 	list of attributes to update (vector<string>), new values for the attributes (vector<string>),
+// 	boolean expression of records to search and update (vector<string>)
 void Table::updateRecord(vector<string> desiredAttributes, vector<string> values, vector<string> boolExpressions)
 {
-	// loop through the table
+	// iterate through the table
 	for (auto it = data.begin(); it != data.end(); ++it)
 	{
 		// if the entry satisfies the boolean expression
 		if (evaluate(it->second, boolExpressions))
 		{
-			// loop through the table's attributes
+			// iterate through the table's attributes
 			for (int i = 0; i < attributes.size(); ++i)
 			{
-				// loop through the desired to change atatributes
+				// iterate through the attributes desired to change
 				for (int j = 0; j < desiredAttributes.size(); ++j)
 				{
 					// if they match
@@ -527,6 +546,7 @@ void Table::updateRecord(vector<string> desiredAttributes, vector<string> values
 						// if the value data type is a VARCHAR
 						if (attributes[i].second > -1)
 						{
+							// create new varchar and update entry
 							varchar vc(attributes[i].second);
 							vc.setString(values[j]);
 							(it->second)[i].setVarchar(vc);
@@ -534,6 +554,7 @@ void Table::updateRecord(vector<string> desiredAttributes, vector<string> values
 						// else if the value data type is an INTEGER
 						else
 						{
+							// create new integer and update entry
 							int newInt = strtol(values[j].c_str(), NULL, 10);
 							(it->second)[i].setInt(newInt);
 						}
@@ -545,20 +566,8 @@ void Table::updateRecord(vector<string> desiredAttributes, vector<string> values
 	writeToDisk();
 }
 
-// overloaded = operator
-Table& Table::operator=(const Table& other)
-{
-	if(&other == this)
-		return *this;
-	this->name = other.name;
-	this->data = other.data;
-	this->attributes = other.attributes;
-	this->primaryKeys = other.primaryKeys;
-	this->primaryKeyIndices = other.primaryKeyIndices;
-	return *this;
-}
-
-
+// HELPER FUNCTIONS
+// writes the table to disk every time the table is modified or created
 void Table::writeToDisk()//writes a table to a .table file
 {
 	string path = "tableFiles/" + name + ".table";
@@ -611,9 +620,35 @@ void Table::writeToDisk()//writes a table to a .table file
 	ofs.close();//close file
 }
 
+// OVERLOADED OPERATORS
+// overloaded assignment operator for table
+Table& Table::operator=(const Table& other)
+{
+	if(&other == this)
+		return *this;
+	this->name = other.name;
+	this->data = other.data;
+	this->attributes = other.attributes;
+	this->primaryKeys = other.primaryKeys;
+	this->primaryKeyIndices = other.primaryKeyIndices;
+	return *this;
+}
+
+// overloaded comparison operator for table
+inline bool Table::operator==(const Table& rhs) const
+{
+	if(!(this->attributes == rhs.attributes))
+		return false;
+	if(!(this->primaryKeys == rhs.primaryKeys))
+		return false;
+	if(!(this->data == rhs.data))
+		return false;
+	return true;
+}	
+
+// overloaded assignment operator for attribute vector (vector<pair<string, int>>)
 inline vector<pair<string, int>> Table::operator=(const vector<pair<string, int>> &vec)
 {
-	cout << "vector<pair<string, int>> assignment operator called" << endl;
 	vector<pair<string, int>> newVec;
 	for (int i = 0; i < vec.size(); ++i)
 	{
