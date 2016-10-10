@@ -28,6 +28,7 @@ class Container {
 		
 		inline bool operator==(const Container rhs) const
 		{
+			//cant figure out how to solve segfault
 			return true;//(this->data._varchar == rhs.data._varchar) || (this->data._int == rhs.data._int);
 		}
 
@@ -35,7 +36,7 @@ class Container {
 		union Data {
 			varchar _varchar;
 			int _int;
-			Data() { new(&_varchar) varchar(0);}
+			Data() { new(&_varchar) varchar(0); int _int = 0;}
 			~Data() {}
 		} data;
 

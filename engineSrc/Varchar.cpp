@@ -1,7 +1,7 @@
 #include "Varchar.h"
 
 varchar::varchar(int _limit)
-	: limit (_limit) {}//{data = "t";}
+	: limit (_limit), data("") {}//{data = "t";}
 
 void varchar::setString(string s)
 {

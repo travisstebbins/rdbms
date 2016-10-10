@@ -60,7 +60,7 @@ TEST_CASE("Initialize and Insert Into Table", "[Table]")
 		cout << "testTable before\n" << testTable.show() << endl;
 		cout << "testTable2 before\n" << testTable2.show() << endl;
 
-		testTable.insertRecord(testTable2);
+		testTable.insertRecord(&testTable2);
 		cout << "testTable after testTable.insertRecord(testTable2)" << endl;
 		cout << testTable.show() << endl;
 
@@ -180,7 +180,7 @@ TEST_CASE("Test Table Select, Project, and Rename", "[Table]")
 		testTable3.insertRecord(v2);
 		testTable3.insertRecord(v3);
 
-		testTable2 = testTable.select("dogs",{"kind == dog"});
+		testTable2 = *(testTable.select("dogs",{"kind == dog"}));
 
 		cout << "Section: Test Select" << endl;
 		cout << "Table of dogs\n" << testTable3.show() << endl;
@@ -209,7 +209,7 @@ TEST_CASE("Test Table Select, Project, and Rename", "[Table]")
 		testTable.insertRecord(v2);
 		testTable.insertRecord(v3);
 		
-		Table testTable3 = testTable.project("projection", {"name", "kind"});
+		Table testTable3 = *(testTable.project("projection", {"name", "kind"}));
 		
 		cout << "Section: Test Project" << endl;
 		cout << "How the projected table should look\n" << testTable2.show() << endl;
@@ -246,7 +246,7 @@ TEST_CASE("Test Table Select, Project, and Rename", "[Table]")
 		testTable2.insertRecord(v9);
 		testTable2.insertRecord(v10);
 		
-		Table testTable3 = testTable.rename("rename", {"nickname", "type", "days"});
+		Table testTable3 = *(testTable.rename("rename", {"nickname", "type", "days"}));
 		
 		cout << "Section: Test rename" << endl;
 		cout << "How renamed table should look\n" << testTable2.show() << endl;
@@ -271,7 +271,7 @@ TEST_CASE("Test DataBase Initialize, Insert, and Delete", "[DataBase]")
 		DataBase db;
 		db.createTable("animals", attributes1, primaryKeys1);
 
-		Table testTable = db.getTable("animals");
+		Table testTable = *(db.getTable("animals"));
 
 		REQUIRE(testTable.getAttributes() == attributes1);
 		REQUIRE(testTable.getPrimaryKeys() == primaryKeys1);
@@ -313,7 +313,7 @@ TEST_CASE("Test DataBase Initialize, Insert, and Delete", "[DataBase]")
 		cout << testTable.show() << endl;
 		cout << db.showTable("animals") << endl;
 
-		REQUIRE(testTable == db.getTable("animals"));
+		REQUIRE(testTable == *(db.getTable("animals")));
 	}
 
 	SECTION("Test void insertIntoTable(string tableName, Table relationships)")
@@ -332,9 +332,9 @@ TEST_CASE("Test DataBase Initialize, Insert, and Delete", "[DataBase]")
 		testTable2.insertRecord(v4);
 		testTable2.insertRecord(v5);
 
-		db.insertIntoTable("animals", testTable);
+		db.insertIntoTable("animals", &testTable);
 
-		REQUIRE(testTable2 == db.getTable("animals"));
+		REQUIRE(testTable2 == *(db.getTable("animals")));
 	}
 
 	SECTION("Test void deleteFromTable(string name, vector<string> boolExpressions)")
@@ -345,9 +345,15 @@ TEST_CASE("Test DataBase Initialize, Insert, and Delete", "[DataBase]")
 		db.insertIntoTable("animals", v4);
 		db.insertIntoTable("animals", v5);
 
+		Table testTable2("testTable2", attributes1, primaryKeys1);
 		
-		
-		//not going to work until deleteRecord is fixed
+		testTable2.insertRecord(v1);
+		testTable2.insertRecord(v4);
+		testTable2.insertRecord(v5);
+
+		db.deleteFromTable("animals", {"kind == dog"});
+
+		REQUIRE(testTable2 == *(db.getTable("animals")));
 	}
 
 }
@@ -382,7 +388,7 @@ TEST_CASE("Test DataBase Select Table and Project Table", "[DataBase]")
 		testTable.insertRecord(v2);
 		testTable.insertRecord(v3);
 
-		Table testTable2 = db.selectTable("animals", "dogs",{"kind == dog"});
+		Table testTable2 = *(db.selectTable("animals", "dogs",{"kind == dog"}));
 
 		REQUIRE("testTable == testTable2");
 	}
@@ -408,7 +414,7 @@ TEST_CASE("Test DataBase Select Table and Project Table", "[DataBase]")
 		db.insertIntoTable("animals", v3);
 
 
-		Table testTable3 = db.projectTable("animals", "projection", {"name", "kind"});
+		Table testTable3 = *(db.projectTable("animals", "projection", {"name", "kind"}));
 		REQUIRE(testTable2 == testTable3);
 	}
 }
@@ -452,14 +458,12 @@ TEST_CASE("Test Union Difference and Cross Product", "[DataBase]")
 		testTable3.insertRecord(v4);
 		testTable3.insertRecord(v5);
 
-		Table testTable4 = db.setUnion("testTable", "testTable2");
+		Table testTable4 = *(db.setUnion("testTable", "testTable2"));
 		REQUIRE(testTable4 == testTable3);
 	}
 
 	SECTION("Test Table setDifference(string tableName1, string tableName2)")
 	{
-		// not going to work until deleteRecord works
-
 		db.createTable("testTable", attributes1, primaryKeys1);
 		db.createTable("testTable2", attributes1, primaryKeys1);
 
@@ -477,7 +481,7 @@ TEST_CASE("Test Union Difference and Cross Product", "[DataBase]")
 		testTable3.insertRecord(v2);
 		testTable3.insertRecord(v3);
 
-		Table testTable4 = db.setDifference("testTable", "testTable2");
+		Table testTable4 = *(db.setDifference("testTable", "testTable2"));
 
 		REQUIRE(testTable3 == testTable4);
 	}
@@ -514,7 +518,7 @@ TEST_CASE("Test Union Difference and Cross Product", "[DataBase]")
 		testTable2.insertRecord(v11);
 
 
-		Table testTable3 = db.crossProduct("animals", "testTable");
+		Table testTable3 = *(db.crossProduct("animals", "testTable"));
 		
 		cout << testTable3.show() << endl;
 		
@@ -553,6 +557,6 @@ TEST_CASE("Test Read and Write to Disk", "[DataBase]")
 
 		db.readTableFromDisk("testTable.table");
 
-		REQUIRE(testTable == db.getTable("testTable"));
+		REQUIRE(testTable == *(db.getTable("testTable")));
 	}
 }
