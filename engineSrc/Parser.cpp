@@ -307,12 +307,14 @@ string Parser::commandParse(string instruction)//parses a command
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void Parser::commandOpen(string filename)
 {
+	cout << "commandOpen: " << filename << endl;
 	filename = filename.substr(0, filename.size()-1);//eliminates semicolon at end of command
 	db->readTableFromDisk(filename);//under the impression that the filename string has no ""
 }
 
 void Parser::commandClose(string tableName)
 {
+	cout << "commandClose: " << tableName << endl;
 	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
 	bool table = db->containsTable(tableName);
 	bool view = db->containsView(tableName);
@@ -327,12 +329,14 @@ void Parser::commandClose(string tableName)
 
 void  Parser::commandWrite(string tableName)
 {
+	cout << "commandWrite: " << tableName << endl;
 	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
 	db->writeTableToDisk(tableName);
 }
 
 void Parser::commandExit()//For Travis
 {
+	cout << "commandExit" << endl;
 	int success = db->exit();
 	if (success != -1)
 	{
@@ -348,8 +352,10 @@ void Parser::commandExit()//For Travis
 
 string Parser::commandShow(string tableName)
 {
+	cout << "commandShow: " << tableName << endl;
 	try 
-	{		
+	{
+		cout << "commandShow passed table name: " << tableName << endl;
 		bool table = db->containsTable(tableName);
 		bool view = db->containsView(tableName);
 		if(table)
@@ -435,6 +441,7 @@ vector<pair<string, int>> Parser::commandAttributes(string instr)
 
 void Parser::commandCreate(string instr)// We'll need 
 {
+	cout << "commandCreate: " << instr << endl;
 	string instruction = instr;
 	string name;
 	vector<std::pair<string, int>> attributes;
@@ -473,6 +480,7 @@ vector<string> split(string str, char delimiter)
 
 void Parser::commandUpdate(string instr)
 {
+	cout << "commandUpdate: " << instr << endl;
 	string name;//name of relation
 	
 	name = instr.substr(0, instr.find("SET"));//get name of table
@@ -512,6 +520,7 @@ vector<string> Parser::extractAttributes (string attributeList)
 
 void Parser::commandInsert(string instr)
 {
+	cout << "commandInsert: " << instr << endl;
 	instr.erase(remove(instr.begin(), instr.end(), ';'), instr.end());
 	string name;
 	vector<string> attributes;
@@ -642,8 +651,7 @@ string Parser::queryParse(string instr)
 {
 	string name;
 	string fileName = "tableFiles/";
-	string returnString;
-	
+	string returnString;	
 	if (instr.find("<-") != string::npos)
 	{
 		name = instr.substr(0, instr.find("<-"));
@@ -652,8 +660,10 @@ string Parser::queryParse(string instr)
 	{
 		name = "tmp";
 	}
+	cout << "query table name: " << name << endl;
 	instr.erase(0, instr.find("<-") + 2);
 	QueryType q = firstQuery(instr);
+	cout << "query instruction: " << instr << endl;
 	if (q == Parser::SELECT)
 	{
 		instr.erase(0, instr.find("select") + 6);
@@ -681,7 +691,8 @@ string Parser::queryParse(string instr)
 		instr.erase(0, closeParen + 1);
 		if (instr[instr.length() - 1] == ')')
 		{
-			instr = instr.substr(0, instr.length() - 1);
+			cout << "removing close parenthesis" << endl;
+			instr = instr.substr(0, instr.length() - 2);
 		}
 		Table *tmp = queryParseHelper(instr, 0, 0);
 		Table *result = tmp->project(name, attributes);
@@ -779,7 +790,9 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	{
 		name = "tmp";
 	}
+	cout << "recursive query table name: " << name << endl;
 	QueryType q = firstQuery(instr);
+	cout << "recursive query instruction: " << instr << endl;
 	if (q == Parser::SELECT)
 	{
 
@@ -884,6 +897,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 
 void Parser::commandDrop(string tableName)
 {
+	cout << "commandDrop: " << tableName << endl;
 	bool table = db->containsTable(tableName);
 	bool view = db->containsView(tableName);
 	if(table)
@@ -896,6 +910,7 @@ void Parser::commandDrop(string tableName)
 
 void Parser::commandDelete(string instr)
 {
+	cout << "commandDelete: " << instr << endl;
 	string name;
 	name = instr.substr(0, instr.find("WHERE"));//get name of table
 	instr.erase(0, instr.find("("));
