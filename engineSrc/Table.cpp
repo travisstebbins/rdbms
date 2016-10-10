@@ -211,8 +211,8 @@ void Table::insertRecord(vector<Container> entry)
 		data[hash] = entry;
 		writeToDisk();
 	}
-	else
-		throw "Entry already exists.";
+	// else
+	// 	throw "Entry already exists.";
 	writeToDisk();
 }
 
