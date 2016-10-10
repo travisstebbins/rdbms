@@ -160,7 +160,17 @@ TEST_CASE("Parser", "[Parser]")
 		instruction = "answer <- common_names;";
 		argParser.commandOrQuery(instruction);
 		instruction = "SHOW answer;";
-		argParser.commandOrQuery(instruction);
+		string retn = argParser.commandOrQuery(instruction);
+		
+		pair<string, int> p2 {"name", 8};
+		vector<pair<string, int>> attributes2 = {p2};
+		vector<string> primaryKeys2 = {"name"};
+		
+		vector<string> v6 = {"Joe"};
+		Table testTable2("answer", attributes2, primaryKeys2);
+		testTable2.insertRecord(v6);
+		
+		REQUIRE(testTable2.show() == retn);
 	}
 	
 	SECTION("Write")
@@ -187,8 +197,6 @@ TEST_CASE("Parser", "[Parser]")
 	{
 		instruction = "DELETE FROM animals Where (kind == \"bird\");";
 		argParser.commandOrQuery(instruction);
-		instruction = instruction = "SHOW animals;";
-		string retn = argParser.commandOrQuery(instruction);
 	}	
 	
 }
