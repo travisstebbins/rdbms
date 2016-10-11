@@ -16,7 +16,7 @@ def read_in():
 	instruction = raw_input(">")
 	inputsplit = instruction.split(' ') #splits the input string by whitespace
 	print(chr(27) + "[2J")
-	if(inputsplit[0] == "Add"):
+	if(inputsplit[0].lower() == "add"):
 		if (len(inputsplit) < 4):
 			print error_message
 			return
@@ -24,7 +24,7 @@ def read_in():
 		instr = 'INSERT INTO bank VALUES FROM (' + inputsplit[2] + ', ' + inputsplit[3] + ', 0, 0);' #creates sql command, values are set to 0
 		sendToSocket(instr)
 		
-	elif(inputsplit[0] == "Delete"):#deletes user from bank table
+	elif(inputsplit[0].lower() == "delete"):#deletes user from bank table
 
 		print" "
 		print" "
@@ -35,7 +35,7 @@ def read_in():
 		instr = "DELETE FROM bank WHERE (accountNumber == " + inputsplit[2] + ");"#creates sql command
 		sendToSocket(instr)
 		
-	elif(inputsplit[0] == "Update"):#Updates a user's specific balance for one of the accounts
+	elif(inputsplit[0].lower() == "update"):#Updates a user's specific balance for one of the accounts
 
 		print" "
 		print" "
@@ -66,7 +66,7 @@ def read_in():
 		instr3 = 'UPDATE bank SET (' + inputsplit[3] + " = " + str(updBal) + ') WHERE (accountNumber == ' + inputsplit[2] + ');' 
 		sendToSocket(instr3)
 
-	elif(inputsplit[0] == "Display"):#Displays a specific user
+	elif(inputsplit[0].lower() == "display"):#Displays a specific user
 
 		print" "
 		print" "
@@ -93,7 +93,7 @@ def read_in():
 		print "%-20s %-20s %-20s %-1s" % (rtnStrSplit3[0], rtnStrSplit3[2], rtnStrSplit3[4],rtnStrSplit3[6])
 		print ""
 
-	elif(inputsplit[0] == "Transfer"):#transfers money from selected account to other account
+	elif(inputsplit[0].lower() == "transfer"):#transfers money from selected account to other account
 		
 		#////////////////////////////BEGINS FIRST PART OF TRANSFER //////////////////////////////////
 		print" "
@@ -140,7 +140,7 @@ def read_in():
 		instr5 = 'UPDATE bank SET (' + otherAccount + " = " + str(updBal) + ') WHERE (accountNumber == ' + inputsplit[2] + ');' 
 		sendToSocket(instr5)
 		
-	elif(inputsplit[0] == "Exit"):
+	elif(inputsplit[0].lower() == "exit"):
 		global exit
 		print" "
 		print" "
