@@ -733,7 +733,6 @@ string Parser::queryParse(string instr)
 		string attributeListString = instr.substr(openParen + 1, closeParen - openParen - 1);
 		vector<string> attributes = split(attributeListString, ',');
 		
-		printVector(attributes);
 		instr.erase(0, closeParen + 1);
 		
 		if (instr[instr.length() - 1] == ')')
@@ -761,8 +760,6 @@ string Parser::queryParse(string instr)
 		
 		string newNameListString = instr.substr(openParen + 1, closeParen - openParen - 1);
 		vector<string> newNames = split(newNameListString, ',');
-		
-		printVector(newNames);
 		
 		instr.erase(0, closeParen + 1);
 		
@@ -941,8 +938,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		
 		vector<string> attributes = split(attributeListString, ',');
 		
-		printVector(attributes);
-		
 		instr.erase(0, closeParen + 1);
 		
 		if (instr[instr.length() - 1] == ')')
@@ -969,8 +964,6 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 		string newNameListString = instr.substr(openParen + 1, closeParen - openParen - 1);
 		
 		vector<string> newNames = split(newNameListString, ',');
-		
-		printVector(newNames);
 		
 		instr.erase(0, closeParen + 1);
 		
