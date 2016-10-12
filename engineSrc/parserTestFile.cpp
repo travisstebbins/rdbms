@@ -112,19 +112,36 @@ TEST_CASE("Parser", "[Parser]")
 		testTable3.insertRecord(v2);
 
 		REQUIRE(testTable3.show() == retn);
+	}
+	instruction = "dogs <- select (kind == \"dog\") animals;";
+	argParser.commandOrQuery(instruction);
+	instruction = instruction = "SHOW dogs;";
+	argParser.commandOrQuery(instruction);
 
-		instruction = "cats_or_dogs <- dogs + (select (kind == \"cat\") animals);";
-		argParser.commandOrQuery(instruction);
-		instruction = instruction = "SHOW cats_or_dogs;";
-		retn = argParser.commandOrQuery(instruction);
+	instruction = "old_dogs <- select (years > 9) dogs;";
+	argParser.commandOrQuery(instruction);
+	instruction = instruction = "SHOW old_dogs;";
+	argParser.commandOrQuery(instruction);
 
+	SECTION("Union")
+	{
 		Table testTable4("cats_or_dogs", attributes1, primaryKeys1);
 		testTable4.insertRecord(v3);
 		testTable4.insertRecord(v2);
 		testTable4.insertRecord(v1);
 
+		instruction = "cats_or_dogs <- dogs + (select (kind == \"cat\") animals);";
+		argParser.commandOrQuery(instruction);
+		instruction = "SHOW cats_or_dogs;";
+		string retn = argParser.commandOrQuery(instruction);
+
 		REQUIRE(testTable4.show() == retn);
 	}
+
+	instruction = "cats_or_dogs <- dogs + (select (kind == \"cat\") animals);";
+	argParser.commandOrQuery(instruction);
+	instruction = "SHOW cats_or_dogs;";
+	argParser.commandOrQuery(instruction);
 	
 	SECTION("Project")
 	{
@@ -136,10 +153,10 @@ TEST_CASE("Parser", "[Parser]")
 		vector<string> v7 = {"dog"};
 		vector<string> v8 = {"bird"};
 
-		Table testTable2("species", attributes2, primaryKeys2);
-		testTable2.insertRecord(v6);
-		testTable2.insertRecord(v7);
-		testTable2.insertRecord(v8);
+		Table testTable5("species", attributes2, primaryKeys2);
+		testTable5.insertRecord(v6);
+		testTable5.insertRecord(v7);
+		testTable5.insertRecord(v8);
 
 		instruction = "CREATE TABLE species (kind VARCHAR(10)) PRIMARY KEY (kind);";
 		argParser.commandOrQuery(instruction);
@@ -148,31 +165,77 @@ TEST_CASE("Parser", "[Parser]")
 		instruction = instruction = "SHOW species;";
 		string retn = argParser.commandOrQuery(instruction);
 
-		REQUIRE(testTable2.show() == retn);
+		REQUIRE(testTable5.show() == retn);
 	}
+
+	instruction = "CREATE TABLE species (kind VARCHAR(10)) PRIMARY KEY (kind);";
+	argParser.commandOrQuery(instruction);
+	instruction = "INSERT INTO species VALUES FROM RELATION project (kind) animals;";
+	argParser.commandOrQuery(instruction);
+	instruction = instruction = "SHOW species;";
+	argParser.commandOrQuery(instruction);
 	
 	SECTION("Rename")
 	{
+		pair<string, int> p3 {"aname", 20};
+		pair<string, int> p4 {"akind", 8};
+		vector<pair<string, int>> attributes3 = {p3, p4};
+		vector<string> primaryKeys3 = {"aname", "akind"};
+
+		vector<string> v9 = {"Joe", "cat"};
+		vector<string> v10 = {"Spot", "dog"};
+		vector<string> v11 = {"Snoopy", "dog"};
+		vector<string> v12 = {"Tweety", "bird"};
+		vector<string> v13 = {"Joe", "bird"};
+
+		Table testTable6("a", attributes3, primaryKeys3);
+		testTable6.insertRecord(v9);
+		testTable6.insertRecord(v10);
+		testTable6.insertRecord(v11);
+		testTable6.insertRecord(v12);
+		testTable6.insertRecord(v13);
+
 		instruction = "a <- rename (aname, akind) (project (name, kind) animals);";
-		argParser.commandOrQuery(instruction);
+		argParser.commandOrQuery(instruction);		
+		instruction = "SHOW a;";
+		string retn = argParser.commandOrQuery(instruction);
+		
+		REQUIRE(testTable6.show() == retn);
+	}
+
+	instruction = "a <- rename (aname, akind) (project (name, kind) animals);";
+	argParser.commandOrQuery(instruction);		
+	instruction = "SHOW a;";
+	argParser.commandOrQuery(instruction);
+
+	SECTION("Cross Product")
+	{
+		pair<string, int> p2 {"name", 8};
+		vector<pair<string, int>> attributes4 = {p2};
+		vector<string> primaryKeys4 = {"name"};
+		
+		vector<string> v14 = {"Joe"};
+
+		Table testTable7("answer", attributes4, primaryKeys4);
+		testTable7.insertRecord(v14);
+
 		instruction = "common_names <- project (name) (select (aname == name && akind != kind) (a * animals));";
 		argParser.commandOrQuery(instruction);
 		instruction = "answer <- common_names;";
 		argParser.commandOrQuery(instruction);
 		instruction = "SHOW answer;";
 		string retn = argParser.commandOrQuery(instruction);
-		
-		pair<string, int> p2 {"name", 8};
-		vector<pair<string, int>> attributes2 = {p2};
-		vector<string> primaryKeys2 = {"name"};
-		
-		vector<string> v6 = {"Joe"};
-		Table testTable2("answer", attributes2, primaryKeys2);
-		testTable2.insertRecord(v6);
-		
-		REQUIRE(testTable2.show() == retn);
+
+		REQUIRE(testTable7.show() == retn);
 	}
-	
+
+	instruction = "common_names <- project (name) (select (aname == name && akind != kind) (a * animals));";
+	argParser.commandOrQuery(instruction);
+	instruction = "answer <- common_names;";
+	argParser.commandOrQuery(instruction);
+	instruction = "SHOW answer;";
+	argParser.commandOrQuery(instruction);
+
 	SECTION("Write")
 	{
 		instruction = "WRITE animals;";
@@ -183,20 +246,32 @@ TEST_CASE("Parser", "[Parser]")
 		ifstream ifs(fileName);
 		string fileAnimals( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
 		
-		REQUIRE(animalTable == fileAnimals);
-	
+		REQUIRE(animalTable == fileAnimals);	
 	}
+
+	SECTION("Delete")
+	{
+		Table testTable8("animals", attributes1, primaryKeys1);
+		testTable8.insertRecord(v1);
+		testTable8.insertRecord(v2);
+		testTable8.insertRecord(v3);
+
+		instruction = "DELETE FROM animals WHERE (kind == \"bird\");";
+		argParser.commandOrQuery(instruction);
+		instruction = "SHOW animals;";
+		string retn = argParser.commandOrQuery(instruction);
+
+		REQUIRE(testTable8.show() == retn);
+	}
+
+	instruction = "DELETE FROM animals WHERE (kind == \"bird\");";
+	argParser.commandOrQuery(instruction);
+	instruction = "SHOW animals;";
+	string retn = argParser.commandOrQuery(instruction);
 	
 	SECTION("Close")
 	{
 		instruction = "CLOSE animals;";
 		argParser.commandOrQuery(instruction);
-	}
-	
-	SECTION("Delete")
-	{
-		instruction = "DELETE FROM animals Where (kind == \"bird\");";
-		argParser.commandOrQuery(instruction);
 	}	
-	
 }
