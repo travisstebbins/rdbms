@@ -372,6 +372,7 @@ string Table::show()
 	{
 		s += attributes[i].first + "\t\t";
 	}
+	s += "\n";
 	// add seperator line
 	for (int i = 0; i < attributes.size(); ++i)
 	{
