@@ -301,9 +301,9 @@ string Parser::commandParse(string instruction)//parses a command
 		instruction.erase(0,9);
 		commandDrop(instruction);//deletes an entire table
 	}
-	else if(instruction.find("DELETE") != string::npos)
+	else if(instruction.find("DELETEFROM") != string::npos)
 	{
-		instruction.erase(0,6);
+		instruction.erase(0,10);
 		commandDelete(instruction); //deletes a single entry from a table
 	}
 	else
@@ -1052,10 +1052,8 @@ void Parser::commandDrop(string tableName)
 void Parser::commandDelete(string instr)
 {	
 	string name;
-	name = instr.substr(0, instr.find("WHERE"));//get name of table
-	
+	name = instr.substr(0, instr.find("WHERE"));//get name of table	
 	instr.erase(0, instr.find("("));
 	vector<string> delVect = convertBoolExpression(instr);
-	
 	db->deleteFromTable(name, delVect);
 }
