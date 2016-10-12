@@ -2,7 +2,7 @@
 
 ## Cloning Repo
 Since there are submodules you have to recursively clone in the repo.  
-`git clone --recursive https://github.tamu.edu/ameserole/rdbms.git`  
+`git clone --recursive https://github.tamu.edu/ameserole/rdbms.git` 
 
 ## View Deliverable 2  
 Deliverable 2 was marked as an official release and is under the tag Deliverable-2.  
@@ -13,6 +13,11 @@ To view run the following command:
 Deliverable 3 was marked as an official release and is under the tag Deliverable-3.  
 To view run the following command:  
 `git checkout Deliverable-3`
+
+## View Deliverable 3 Resubmission
+Deliverable 3 resubmission was marked as an official release and is under the tag Deliverable-3-Resubmit.
+To view run the following command:
+`git checkout Deliverable-3-Resubmit`
 
 ## View Deliverable 4  
 Deliverable 4 was marked as an official release and is under the tag Deliverable-4.  
@@ -40,7 +45,6 @@ To run the parser unit tests run the following commands:
 `make parserTest`  
 `./parserTests`  
 
-There is currently a Seg Fault in the Unit Tests for the Parser but it runs with standard input  
 To test from standard input you can run:  
 `make main`  
 `./main < parserCLITest`  
