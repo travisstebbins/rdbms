@@ -177,8 +177,6 @@ vector<string> Parser::stringToTokens (string boolExpression)
 vector<string> Parser::convertBoolExpression (string boolExpression)	//converts a boolean expression from infix to postfix expression
 {
 	vector<string> tokens = stringToTokens(boolExpression);
-	cout << "Bool Expression Tokens: ";
-	printVector(tokens);
 	
 	vector<string> postfix;
 	stack<string> opStack;
@@ -311,7 +309,6 @@ string Parser::commandParse(string instruction)//parses a command
 	else
 	{
 		return "Failure";
-		cout << "Not a valid command\n";
 	}
 	
 	return "Success";
@@ -322,16 +319,13 @@ string Parser::commandParse(string instruction)//parses a command
 /////////////////////////////////////////////////////////////////////////////////////////////////
 void Parser::commandOpen(string filename)
 {
-	cout << "commandOpen: " << filename << endl;
 	filename = filename.substr(0, filename.size()-1);//eliminates semicolon at end of command
 	
 	db->readTableFromDisk(filename);//under the impression that the filename string has no ""
 }
 
 void Parser::commandClose(string tableName)
-{
-	cout << "commandClose: " << tableName << endl;
-	
+{	
 	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
 	
 	bool table = db->containsTable(tableName);
@@ -347,18 +341,14 @@ void Parser::commandClose(string tableName)
 }
 
 void  Parser::commandWrite(string tableName)
-{
-	cout << "commandWrite: " << tableName << endl;
-	
+{	
 	tableName = tableName.substr(0, tableName.size()-1);//eliminates semicolon at end of command
 	
 	db->writeTableToDisk(tableName);
 }
 
 void Parser::commandExit()
-{
-	cout << "commandExit" << endl;
-	
+{	
 	int success = db->exit();
 	
 	if (success != -1)
@@ -374,13 +364,9 @@ void Parser::commandExit()
 }
 
 string Parser::commandShow(string tableName)
-{
-	cout << "commandShow: " << tableName << endl;
-	
+{	
 	try 
-	{
-		cout << "commandShow passed table name: " << tableName << endl;
-		
+	{		
 		bool table = db->containsTable(tableName);
 		bool view = db->containsView(tableName);
 		
@@ -422,8 +408,7 @@ vector<string> Parser::commandPrimKeys(string instr)//example input (name,kind)
 		keyList.push_back(key);
 	}
 	
-	return keyList;
-	
+	return keyList;	
 }
 
 vector<pair<string, int>> Parser::commandAttributes(string instr)
@@ -470,9 +455,7 @@ vector<pair<string, int>> Parser::commandAttributes(string instr)
 }
 
 void Parser::commandCreate(string instr)// We'll need 
-{
-	cout << "commandCreate: " << instr << endl;
-	
+{	
 	string instruction = instr;
 	string name;
 	vector<std::pair<string, int>> attributes;
@@ -513,7 +496,6 @@ vector<string> split(string str, char delimiter)
 
 void Parser::commandUpdate(string instr)
 {
-	cout << "commandUpdate: " << instr << endl;
 	string name;	//name of relation
 	
 	name = instr.substr(0, instr.find("SET"));	//get name of table
@@ -557,9 +539,7 @@ vector<string> Parser::extractAttributes (string attributeList) //returns a list
 }
 
 void Parser::commandInsert(string instr)	//inserts a new entry to a table
-{
-	cout << "commandInsert: " << instr << endl;
-	
+{	
 	instr.erase(remove(instr.begin(), instr.end(), ';'), instr.end());
 	
 	string name;
@@ -718,14 +698,10 @@ string Parser::queryParse(string instr)
 	{
 		name = "tmp";
 	}
-	
-	cout << "query table name: " << name << endl;
-	
+		
 	instr.erase(0, instr.find("<-") + 2);
 	QueryType q = firstQuery(instr);
-	
-	cout << "query instruction: " << instr << endl;
-	
+		
 	if (q == Parser::SELECT)
 	{
 		instr.erase(0, instr.find("select") + 6);
@@ -817,7 +793,6 @@ string Parser::queryParse(string instr)
 		fileName += ".table";
 		ifstream ifs(fileName);
 		string temp( (std::istreambuf_iterator<char>(ifs) ), (std::istreambuf_iterator<char>()) );
-		cout << temp << endl;
 		
 		returnString = temp;
 	}
@@ -861,7 +836,7 @@ string Parser::queryParse(string instr)
 	}
 	else if (q == Parser::JOIN)
 	{
-		cout << "no join right now" << endl;
+		cout << "no natural join right now" << endl;
 		// string expr1 = instr.substr(0, instr.find("JOIN"));
 		// string expr2 = instr.substr(instr.find("JOIN") + 4);
 		// Table *tmp1 = queryParseHelper(expr1, 0, 0);
@@ -922,18 +897,14 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	{
 		name = "tmp";
 	}
-	
-	cout << "recursive query table name: " << name << endl;
-	
+		
 	QueryType q = firstQuery(instr);
 	
 	if (instr[0] == '(')
 	{
 		instr = instr.substr(1);
 	}
-	
-	cout << "recursive query instruction: " << instr << endl;
-	
+		
 	if (q == Parser::SELECT)
 	{
 		instr.erase(0, instr.find("select") + 6);
@@ -1053,7 +1024,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 	}
 	else if (q == Parser::JOIN)
 	{
-		cout << "no join right now" << endl;
+		cout << "no natural join right now" << endl;
 	}
 	else if (q == Parser::RELATION)
 	{
@@ -1073,9 +1044,7 @@ Table* Parser::queryParseHelper(string instr, int depth, int pair)
 }
 
 void Parser::commandDrop(string tableName)
-{
-	cout << "commandDrop: " << tableName << endl;
-	
+{	
 	bool table = db->containsTable(tableName);
 	bool view = db->containsView(tableName);
 	
@@ -1088,9 +1057,7 @@ void Parser::commandDrop(string tableName)
 }
 
 void Parser::commandDelete(string instr)
-{
-	cout << "commandDelete: " << instr << endl;
-	
+{	
 	string name;
 	name = instr.substr(0, instr.find("WHERE"));//get name of table
 	
