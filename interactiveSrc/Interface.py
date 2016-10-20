@@ -170,9 +170,9 @@ def displayUser():
 		print "Account does not exist"
 		return
 	
-	print "%-20s %-20s %-20s %-20s %-20s" % ("Account Number", "First Name", "Last Name", "Savings", "Checking")
-	print "--------------------------------------------------------------------------------------------------"
-	print "%-20s %-20s %-20s %-20s %-20s" % (rtnStrSplit3[0], rtnStrSplit3[1], rtnStrSplit3[2], int(rtnStrSplit3[3]) / 100.0, int(rtnStrSplit3[4]) / 100.0)
+	print "%-15s %-20s %-20s %20s %20s" % ("Account #", "First Name", "Last Name", "Savings", "Checking")
+	print "-----------------------------------------------------------------------------------------------------------"
+	print "%-15s %-20s %-20s %20.2f %20.2f" % (rtnStrSplit3[0], rtnStrSplit3[1], rtnStrSplit3[2], int(rtnStrSplit3[3]) / 100.0, int(rtnStrSplit3[4]) / 100.0)
 	print ""
 
 def transferMoney():
@@ -276,7 +276,7 @@ def displayAllUsers():
 	rtnStrSplit1 = rtnStr.split("\n")
 	rtnStrSplit2 = rtnStrSplit1[1].split("\t\t") #gets attribute names
 
-	print "%-15s %-20s %-20s %20s %20s" % ("Account Number", "First Name", "Last Name", "Savings", "Checking")
+	print "%-15s %-20s %-20s %20s %20s" % ("Account #", "First Name", "Last Name", "Savings", "Checking")
 	print "-----------------------------------------------------------------------------------------------------------"
 	for i in range(3,len(rtnStrSplit1) - 1):
 		rtnStrSplit3 = rtnStrSplit1[i].split("\t\t") #gets row of data
