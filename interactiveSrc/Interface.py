@@ -256,6 +256,36 @@ def transferMoney():
 		print "Error transferring money"
 		return
 
+def displayAllUsers():
+	print "Display All Users"
+	print "------------------------"
+	instr1 = "allUsers <- select (accountNumber > 0) bank;"
+	instr2 = "SHOW allUsers;" 
+	instr3 = "DROP TABLE allUsers;"
+
+	result = sendToSocket(instr1)
+	if (result == "Failure"):
+		print "Error displaying all users"
+		return
+	rtnStr = sendToSocket(instr2)
+	if (rtnStr == "Failure"):
+		print "Error displaying all users"
+		return
+	sendToSocket(instr3)
+
+	rtnStrSplit1 = rtnStr.split("\n")
+	rtnStrSplit2 = rtnStrSplit1[1].split("\t\t") #gets attribute names
+
+	print "%-15s %-20s %-20s %20s %20s" % ("Account Number", "First Name", "Last Name", "Savings", "Checking")
+	print "-----------------------------------------------------------------------------------------------------------"
+	for i in range(3,len(rtnStrSplit1) - 1):
+		rtnStrSplit3 = rtnStrSplit1[i].split("\t\t") #gets row of data
+		if(len(rtnStrSplit3) == 1):
+			print "Account does not exist"
+			return	
+		print "%-15s %-20s %-20s %20.2f %20.2f" % (rtnStrSplit3[0], rtnStrSplit3[1], rtnStrSplit3[2], int(rtnStrSplit3[3]) / 100.0, int(rtnStrSplit3[4]) / 100.0)
+	print ""
+
 def disconnect():
 	global exit
 	exit = 1
@@ -278,8 +308,9 @@ def main():
 		print "4) Withdraw money" 
 		print "5) Display a user"
 		print "6) Transfer money"
-		print "7) Disconnect"
-		print "8) Disconnect and shut down database"
+		print "7) Display all users"
+		print "8) Disconnect"
+		print "9) Disconnect and shut down database"
 
 		option = raw_input("Option: ")
 		print ""
@@ -296,8 +327,10 @@ def main():
 		elif (option == "6"):
 			transferMoney()
 		elif (option == "7"):
-			disconnect()
+			displayAllUsers()
 		elif (option == "8"):
+			disconnect()
+		elif (option == "9"):
 			shutDown()
 			disconnect()
 		else:
