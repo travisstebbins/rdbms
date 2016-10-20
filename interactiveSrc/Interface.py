@@ -4,7 +4,7 @@ import socket
 import re
 
 SERVERADDRESS = 'localhost'
-PORT = 12002
+PORT = 10018
 
 exit = 0 #signifies when the program should exit
 error_message = "Please enter a valid option."
@@ -57,8 +57,10 @@ def depositMoney():
 	print "2) Checking"
 	accountType = raw_input("Option: ")
 	if (accountType == "1"):
+		global accountType
 		accountType = "savings"
 	elif (accountType == "2"):
+		global accountType
 		accountType = "checking"
 	depositAmount = eval(raw_input("Deposit Amount: "))
 
@@ -68,9 +70,8 @@ def depositMoney():
 	sendToSocket(instr2)#drops view
 
 	rtnSplit = rtn.split("data:")#cuts off fat of returned message
-	print rtnSplit
-	rtnVal = int(re.sub(r"\D", "", rtnSplit[1]))#gets current value of bank account
-	print "CURRENT BALANCE BEFORE DEPOSIT: " + str(rtnVal)
+	rtnSplit2 = rtnSplit[1].split(",")
+	rtnVal = int(rtnSplit2[1]) #gets current value of bank account
 	updBal = 0 #the balance going into update parser command
 	updVal = 100 * depositAmount
 	updBal = rtnVal + updVal
@@ -89,12 +90,15 @@ def withdrawMoney():
 	elif (accountType == "2"):
 		accountType = "checking"
 	withdrawAmount = eval(raw_input("Withdraw Amount: "))
+
 	instr1 = "currentbal <- project (" + accountType + ", accountNumber) (select (accountNumber == " + accountNumber + ") bank);" #Gets value of selected account
 	rtn = sendToSocket(instr1)
 	instr2 = "DROP TABLE currentbal;"
 	sendToSocket(instr2)#drops view
+
 	rtnSplit = rtn.split("data:")#cuts off fat of returned message
-	rtnVal = int(re.sub(r"\D", "", rtnSplit[1]))#gets current value of bank account
+	rtnSplit2 = rtnSplit[1].split(",");
+	rtnVal = int(rtnSplit2[1]) #gets current value of bank account
 	updBal = 0 #the balance going into update parser command
 	updVal = 100 * withdrawAmount
 	if (updVal >= rtnVal):
@@ -126,7 +130,7 @@ def displayUser():
 	
 	print "%-20s %-20s %-20s %-20s %-20s" % ("Account Number", "First Name", "Last Name", "Savings", "Checking")
 	print "--------------------------------------------------------------------------------------------------"
-	print "%-20s %-20s %-20s %-20s %-20s" % (rtnStrSplit3[0], rtnStrSplit3[1], rtnStrSplit3[2], rtnStrSplit3[3], rtnStrSplit3[4])
+	print "%-20s %-20s %-20s %-20s %-20s" % (rtnStrSplit3[0], rtnStrSplit3[1], rtnStrSplit3[2], int(rtnStrSplit3[3]) / 100.0, int(rtnStrSplit3[4]) / 100.0)
 	print ""
 
 def transferMoney():
@@ -151,8 +155,10 @@ def transferMoney():
 
 	rtn = sendToSocket(instr1)
 	sendToSocket(instr2) #drops view
+
 	rtnSplit = rtn.split("data:")#cuts off fat of returned message
-	rtnVal = int(re.sub(r"\D", "", rtnSplit[1])) #gets current value of bank account
+	rtnSplit2 = rtnSplit[1].split(",")
+	rtnVal = int(rtnSplit2[1]) #gets current value of bank account
 
 	updBal = 0
 
@@ -172,8 +178,9 @@ def transferMoney():
    	rtn = sendToSocket(instr4)
 	sendToSocket(instr2) #drops view
 
-	rtnSplit = rtn.split("data:") #cuts off fat of returned message
-	rtnVal = int(re.sub(r"\D", "", rtnSplit[1])) #gets current value of bank account
+	rtnSplit = rtn.split("data:")#cuts off fat of returned message
+	rtnSplit2 = rtnSplit[1].split(",")
+	rtnVal = int(rtnSplit2[1]) #gets current value of bank account
 	
 	updBal = rtnVal + updVal
 	instr5 = "UPDATE bank SET (" + otherAccount + " = " + str(updBal) + ") WHERE (accountNumber == " + accountNumber + ");" 

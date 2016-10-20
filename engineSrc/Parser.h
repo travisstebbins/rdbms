@@ -22,7 +22,7 @@ using namespace std;
 
 class Parser{
 private:
-	int PORT = 12002;
+	int PORT = 10018;
 	int BUFFSIZE = 1024;
 	
 	DataBase *db;
