@@ -1,5 +1,8 @@
 # rdbms
 
+## Note
+This code was originally developed using TAMU enterprise accounts. In order to make it publicly available, it has been copied into a public personal repository. Credit for the development of this code goes to Andrew Meserole, Ryan Branson, and Brent Lanson, as well as myself.
+
 ## Cloning Repo
 Since there are submodules you have to recursively clone in the repo.  
 `git clone --recursive https://github.tamu.edu/ameserole/rdbms.git` 
